@@ -4,9 +4,87 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
-  runtime  = "nodejs"
+  // runtime  = "nodejs"
 }
 
 datasource db {
   provider = "sqlite"
+}
+
+model User {
+  id            String   @id
+  name          String
+  email         String
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  sessions Session[]
+  accounts Account[]
+
+  // Attributes
+  @@unique([email])
+  @@index([createdAt])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Attributes
+  @@unique([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([createdAt])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Attributes
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Attributes
+  @@index([identifier])
+  @@index([expiresAt])
+  @@map("verification")
 }
