@@ -1,10 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
-  // runtime  = "nodejs"
 }
 
 datasource db {
@@ -12,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id            String   @id
+  id            String   @id @default(uuid())
   name          String
   email         String
   emailVerified Boolean  @default(false)
@@ -21,17 +17,26 @@ model User {
   updatedAt     DateTime @updatedAt
 
   // Relations
-  sessions Session[]
-  accounts Account[]
+  sessions    Session[]
+  accounts    Account[]
+  wallpapers  Wallpaper[]
+  collections Collection[]
+  likes       Like[]
+  downloads   Download[]
 
-  // Attributes
+  // Permissions and Access
+  role       String?
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+
   @@unique([email])
   @@index([createdAt])
   @@map("user")
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(uuid())
   expiresAt DateTime
   token     String
   createdAt DateTime @default(now())
@@ -43,7 +48,9 @@ model Session {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  // Attributes
+  // Access Control
+  impersonatedBy String?
+
   @@unique([token])
   @@index([userId])
   @@index([expiresAt])
@@ -52,7 +59,7 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id @default(uuid())
   accountId             String
   providerId            String
   accessToken           String?
@@ -69,22 +76,154 @@ model Account {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  // Attributes
   @@unique([providerId, accountId])
   @@index([userId])
   @@map("account")
 }
 
 model Verification {
-  id         String   @id
+  id         String   @id @default(uuid())
   identifier String
   value      String
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  // Attributes
   @@index([identifier])
   @@index([expiresAt])
   @@map("verification")
+}
+
+model Wallpaper {
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  imageUrl      String
+  thumbnailUrl  String?
+  width         Int?
+  height        Int?
+  fileSize      Int?
+  format        String?
+  isPublic      Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  downloadCount Int      @default(0)
+  viewCount     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId      String?
+  category        Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags            WallpaperTag[]
+  likes           Like[]
+  downloads       Download[]
+  collectionItems CollectionItem[]
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([createdAt])
+  @@index([downloadCount])
+  @@index([isFeatured])
+  @@index([isPublic])
+  @@map("wallpaper")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  wallpapers Wallpaper[]
+
+  @@unique([slug])
+  @@index([name])
+  @@map("category")
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String
+  createdAt DateTime @default(now())
+
+  wallpapers WallpaperTag[]
+
+  @@unique([slug])
+  @@unique([name])
+  @@map("tag")
+}
+
+model WallpaperTag {
+  wallpaperId String
+  tagId       String
+  wallpaper   Wallpaper @relation(fields: [wallpaperId], references: [id], onDelete: Cascade)
+  tag         Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([wallpaperId, tagId])
+  @@index([tagId])
+  @@map("wallpaper_tag")
+}
+
+model Collection {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  CollectionItem[]
+
+  @@index([userId])
+  @@index([isPublic])
+  @@map("collection")
+}
+
+model CollectionItem {
+  collectionId String
+  wallpaperId  String
+  createdAt    DateTime @default(now())
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  wallpaper  Wallpaper  @relation(fields: [wallpaperId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, wallpaperId])
+  @@index([wallpaperId])
+  @@map("collection_item")
+}
+
+model Like {
+  userId      String
+  wallpaperId String
+  createdAt   DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallpaper Wallpaper @relation(fields: [wallpaperId], references: [id], onDelete: Cascade)
+
+  @@id([userId, wallpaperId])
+  @@index([wallpaperId])
+  @@map("like")
+}
+
+model Download {
+  id           String   @id @default(uuid())
+  userId       String
+  wallpaperId  String
+  downloadedAt DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallpaper Wallpaper @relation(fields: [wallpaperId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([wallpaperId])
+  @@index([downloadedAt])
+  @@map("download")
 }

@@ -10,7 +10,8 @@
     "lint": "eslint",
     "prod": "prisma generate && eslint && next build && next start",
     "migrate": "prisma migrate dev && prisma generate",
-    "studio": "prisma studio --browser none"
+    "studio": "prisma studio --browser none",
+    "seed": "prisma db seed"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
