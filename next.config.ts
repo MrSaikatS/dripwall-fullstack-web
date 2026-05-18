@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
-import "./app/env";
+import "./src/lib/env/clientEnv";
+import "./src/lib/env/serverEnv";
 
 const nextConfig: NextConfig = {
   /* config options here */

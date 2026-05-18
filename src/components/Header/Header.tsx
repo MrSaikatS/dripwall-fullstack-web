@@ -11,12 +11,22 @@ const Header = () => {
           <h1
             className="text-2xl font-semibold"
             aria-label="App Name">
-            NSF App
+            DripWall
           </h1>
         </Link>
 
         <nav className="flex items-center gap-4">
-          <Link href={"/"}>Home</Link>
+          <Link
+            href="/login"
+            className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+            Sign in
+          </Link>
+
+          <Link
+            href="/register"
+            className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+            Sign up
+          </Link>
 
           <ThemeToggleButton />
         </nav>
