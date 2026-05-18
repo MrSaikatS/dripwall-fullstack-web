@@ -10,12 +10,17 @@
     "lint": "eslint",
     "prod": "prisma generate && eslint && next build && next start",
     "migrate": "prisma migrate dev && prisma generate",
-    "studio": "prisma studio --browser none"
+    "studio": "prisma studio --browser none",
+    "seed": "prisma db seed"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
+    "@hookform/resolvers": "^5.2.2",
+    "@node-rs/argon2": "^2.0.2",
     "@prisma/adapter-libsql": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@t3-oss/env-nextjs": "^0.13.11",
+    "better-auth": "^1.6.11",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
@@ -24,6 +29,7 @@
     "next-themes": "^0.4.6",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-hook-form": "^7.76.0",
     "react-toastify": "^11.1.0",
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.5.0",
