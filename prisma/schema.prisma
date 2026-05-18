@@ -55,6 +55,7 @@ model Session {
   @@index([userId])
   @@index([expiresAt])
   @@index([createdAt])
+  @@index([userId, expiresAt])
   @@map("session")
 }
 
@@ -113,9 +114,9 @@ model Wallpaper {
 
   // Relations
   userId          String
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId      String?
-  category        Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  category        Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   tags            WallpaperTag[]
   likes           Like[]
   downloads       Download[]
@@ -127,6 +128,9 @@ model Wallpaper {
   @@index([downloadCount])
   @@index([isFeatured])
   @@index([isPublic])
+  @@index([isPublic, viewCount])
+  @@index([categoryId, createdAt])
+  @@index([userId, createdAt])
   @@map("wallpaper")
 }
 
@@ -184,6 +188,7 @@ model Collection {
 
   @@index([userId])
   @@index([isPublic])
+  @@index([userId, isPublic])
   @@map("collection")
 }
 
@@ -225,5 +230,6 @@ model Download {
   @@index([userId])
   @@index([wallpaperId])
   @@index([downloadedAt])
+  @@index([userId, downloadedAt])
   @@map("download")
 }
