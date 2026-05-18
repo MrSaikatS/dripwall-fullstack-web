@@ -57,7 +57,9 @@ const RegisterForm = () => {
           err.message
         : "Something went wrong. Please try again.",
       );
-      console.error(err);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(err);
+      }
     }
   };
 

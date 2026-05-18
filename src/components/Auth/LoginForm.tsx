@@ -24,7 +24,7 @@ const LoginForm = () => {
     defaultValues: {
       email: "",
       password: "",
-      rememberMe: true,
+      rememberMe: false,
     },
     mode: "all",
   });
