@@ -42,7 +42,8 @@ const LoginForm = () => {
       });
 
       if (error) {
-        toast.error(error.message);
+        console.error(error);
+        toast.error("Login failed. Please try again.");
       } else {
         toast.success("Login successful!");
 
@@ -50,12 +51,9 @@ const LoginForm = () => {
 
         replace("/");
       }
-    } catch (error) {
-      toast.error(
-        error instanceof Error ?
-          error.message
-        : "Something went wrong. Please try again.",
-      );
+    } catch (err) {
+      console.error(err);
+      toast.error("Login failed. Please try again.");
     }
   };
 

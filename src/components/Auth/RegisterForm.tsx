@@ -43,7 +43,8 @@ const RegisterForm = () => {
       });
 
       if (error) {
-        toast.error(error.message);
+        console.error(error);
+        toast.error("Registration failed. Please try again.");
       } else {
         toast.success("Registration successful!");
 
@@ -52,14 +53,8 @@ const RegisterForm = () => {
         replace("/");
       }
     } catch (err) {
-      toast.error(
-        err instanceof Error ?
-          err.message
-        : "Something went wrong. Please try again.",
-      );
-      if (process.env.NODE_ENV !== "production") {
-        console.error(err);
-      }
+      console.error(err);
+      toast.error("Registration failed. Please try again.");
     }
   };
 

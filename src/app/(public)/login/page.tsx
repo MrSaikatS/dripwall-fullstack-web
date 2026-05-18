@@ -30,14 +30,6 @@ const LoginPage = () => {
 
         <CardContent>
           <LoginForm />
-
-          <div className="mt-4 text-center text-sm">
-            <Link
-              href="/forgot-password"
-              className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline">
-              Forgot password?
-            </Link>
-          </div>
         </CardContent>
 
         <div className="text-muted-foreground border-t px-4 py-4 text-center text-sm">

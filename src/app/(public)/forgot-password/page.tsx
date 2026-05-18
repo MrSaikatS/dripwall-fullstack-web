@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/shadcnui/card";
@@ -21,14 +20,12 @@ const ForgotPasswordPage = () => {
         className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Forgot password?</CardTitle>
-          <CardDescription>
-            {"Enter your email and we\u2019ll send you a reset link."}
-          </CardDescription>
         </CardHeader>
 
         <CardContent>
           <p className="text-muted-foreground text-sm">
-            Password reset functionality coming soon.
+            Password reset is not available yet. Please contact support for
+            assistance.
           </p>
         </CardContent>
 
