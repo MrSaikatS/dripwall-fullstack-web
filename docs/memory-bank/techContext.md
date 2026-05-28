@@ -76,7 +76,8 @@ BETTER_AUTH_TELEMETRY=0
 - `BETTER_AUTH_URL` must be a valid URL
 - Rate limiting is IP-based (in-memory, resets on server restart)
 - Email verification is disabled (TODO)
-- Password reset not yet implemented (Forgot Password page is placeholder)
+- Password reset is implemented via Better Auth's built-in `forgetPassword`/`resetPassword` APIs
+- Reset token is logged to console (no email transport configured yet)
 
 ### UI Framework (shadcn)
 

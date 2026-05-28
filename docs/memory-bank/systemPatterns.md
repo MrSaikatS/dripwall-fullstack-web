@@ -80,7 +80,7 @@ src/
 
 ## Component Relationships
 
-```
+````
 RootLayout
 ├── ThemeProvider (next-themes)
 │   ├── ToastProvider (react-toastify)
@@ -96,8 +96,11 @@ RootLayout
     │   └── LoginForm (authClient.signIn.email)
     ├── Register Page
     │   └── RegisterForm (authClient.signUp.email)
-    └── Forgot Password Page (placeholder)
-```
+    ├── Forgot Password Page
+    │   └── ForgotPasswordForm (authClient.forgetPassword)
+    └── Reset Password Page
+        └── ResetPasswordForm (authClient.resetPassword)
+    ```
 
 ## Critical Implementation Paths
 
@@ -124,3 +127,4 @@ RootLayout
 3. On success: toast + reset form + router.replace("/")
 4. On error: toast error message
 5. Button disabled during `isSubmitting`
+````

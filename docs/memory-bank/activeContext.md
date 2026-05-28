@@ -2,13 +2,12 @@
 
 ## Current Work Focus
 
-The project is in **initial scaffolding phase** with authentication fully implemented. The core authentication flow (register, login, logout, session management) is complete and functional. The primary focus areas are:
+The project is in **initial scaffolding phase** with authentication nearly fully implemented. The core authentication flow (register, login, logout, session management, forgot/reset password) is complete and functional. The primary focus areas are:
 
-1. **Authentication**: Complete and working (register, login, logout, session)
-2. **Forgot Password**: Placeholder page - needs implementation
-3. **Email Verification**: Disabled (TODO flag in auth.ts)
-4. **Wallpaper Features**: Schema defined but no CRUD UI yet
-5. **Private Routes**: Layout group exists (`(private)`) but empty
+1. **Authentication**: Complete and working (register, login, logout, session, forgot/reset password)
+2. **Email Verification**: Disabled (TODO flag in auth.ts)
+3. **Wallpaper Features**: Schema defined but no CRUD UI yet
+4. **Private Routes**: Layout group exists (`(private)`) but empty
 
 ## Recent Changes
 
@@ -24,31 +23,38 @@ The project is in **initial scaffolding phase** with authentication fully implem
 - Prettier configured with Tailwind CSS plugin
 - Prisma schema defined with all models (User, Session, Account, Verification, Wallpaper, Category, Tag, WallpaperTag, Collection, CollectionItem, Like, Download)
 - Database migrations applied, seed script created
+- **Forgot/Reset password flow implemented**: ForgotPasswordForm, ResetPasswordForm components, server actions via Better Auth `forgetPassword`/`resetPassword` APIs
+- Auth config updated with reset password endpoints and token expiration settings
+- Zod schemas added for forgot/reset password validation
+- LoginForm updated with "Forgot password?" link
+- Memory bank documentation established
 
 ## Next Steps
 
-1. **Implement forgot password flow**: Server action to send reset email, reset password form
-2. **Enable email verification**: Update auth.ts `requireEmailVerification: true`, implement verification flow
-3. **Build wallpaper CRUD**: Server actions for wallpaper upload/update/delete, gallery UI
-4. **Create private layout**: Apply layout group with auth guard for authenticated routes
-5. **User profile page**: Display user info, collections, downloads, likes
-6. **Admin dashboard**: User management, wallpaper moderation
-7. **Seed more data**: Additional wallpapers, categories, tags for demo
+1. **Enable email verification**: Update auth.ts `requireEmailVerification: true`, implement verification flow
+2. **Build wallpaper CRUD**: Server actions for wallpaper upload/update/delete, gallery UI
+3. **Create private layout**: Apply layout group with auth guard for authenticated routes
+4. **User profile page**: Display user info, collections, downloads, likes
+5. **Admin dashboard**: User management, wallpaper moderation
+6. **Seed more data**: Additional wallpapers, categories, tags for demo
+7. **Email transport**: Configure email service for password reset emails and verification
 
 ## Active Decisions & Considerations
 
 ### Forgot Password Implementation
 
-- Need to decide: use Better Auth's built-in reset flow or custom implementation
-- Better Auth supports `forgetPassword` and `resetPassword` via the email/password plugin
-- Will need email sending service (currently none configured)
-- Temporary approach: Use console-based OTP or disable password reset until email service is ready
+- Implemented using Better Auth's built-in `forgetPassword`/`resetPassword` via the email/password plugin
+- Reset token generated and stored by Better Auth, with configurable expiration
+- Currently logs reset token to console (no email sending service configured yet)
+- Will need email sending service for production use
+- Both forgot password and reset password pages complete with form validation
 
 ### Email Verification
 
 - Better Auth supports email verification via `sendVerificationEmail`
 - Requires email transport configuration
 - Currently disabled to simplify development
+- Same email transport will serve both verification and password reset emails
 
 ### Private Route Guard
 

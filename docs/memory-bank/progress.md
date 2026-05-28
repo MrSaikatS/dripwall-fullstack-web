@@ -31,13 +31,16 @@
 
 - [x] Login form
 - [x] Register form (with confirm password validation)
+- [x] Forgot password form
+- [x] Reset password form (with confirm password validation)
 
 ### Pages
 
 - [x] Home page (landing hero)
 - [x] Login page
 - [x] Register page
-- [x] Forgot Password page (placeholder)
+- [x] Forgot Password page (implemented)
+- [x] Reset Password page
 
 ### Infrastructure
 
@@ -61,7 +64,7 @@
 
 ### High Priority
 
-- [ ] **Forgot password flow** (reset email, reset password form)
+- [x] **Forgot password flow** (reset email, reset password form)
 - [ ] **Email verification** (`requireEmailVerification: true`)
 - [ ] **Private route guard** (middleware or layout-level auth check)
 - [ ] **Wallpaper CRUD** (upload, edit, delete wallpapers with server actions)
@@ -105,13 +108,12 @@
 
 ## Known Issues
 
-1. **Forgot Password**: Placeholder page, not functional
-2. **Email Verification**: Disabled (TODO in auth.ts line 28)
+1. **Email Verification**: Disabled (TODO in auth.ts line 28)
+2. **Password Reset**: Uses console-based token display (no email sending service configured)
 3. **SQLite**: Only suitable for development, not production
 4. **Rate Limiting**: In-memory, resets on server restart
-5. **Password Reset**: Better Auth supports it but no UI implemented
-6. **Server Actions**: `src/server/` directory empty (no server actions yet)
-7. **Custom Hooks**: `src/hooks/` directory empty (no custom hooks yet)
+5. **Server Actions**: `src/server/` directory empty (no server actions yet)
+6. **Custom Hooks**: `src/hooks/` directory empty (no custom hooks yet)
 
 ## Evolution of Project Decisions
 
