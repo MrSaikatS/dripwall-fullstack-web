@@ -14,6 +14,18 @@ export const serverEnv = createEnv({
     BETTER_AUTH_URL: z.url({ error: "BETTER_AUTH_URL must be a valid URL" }),
     BETTER_AUTH_ALLOWED_ORIGINS: z.string().optional(),
     BETTER_AUTH_TELEMETRY: z.string().optional(),
+    S3_ENDPOINT: z.url({ error: "S3_ENDPOINT must be a valid URL" }),
+    S3_REGION: z.string().default("us-west-004"),
+    S3_ACCESS_KEY_ID: z
+      .string()
+      .min(1, { error: "S3_ACCESS_KEY_ID is required" }),
+    S3_SECRET_ACCESS_KEY: z
+      .string()
+      .min(1, { error: "S3_SECRET_ACCESS_KEY is required" }),
+    S3_BUCKET_NAME: z
+      .string()
+      .min(1, { error: "S3_BUCKET_NAME is required" }),
+    S3_PUBLIC_URL: z.url().optional(),
   },
   experimental__runtimeEnv: process.env,
 });
