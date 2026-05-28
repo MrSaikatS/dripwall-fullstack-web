@@ -8,20 +8,32 @@ The project follows **Next.js 16 App Router** architecture with a strict separat
 src/
 ├── app/                    # Next.js App Router pages & API routes
 │   ├── (private)/          # Authenticated routes (layout group)
-│   ├── (public)/           # Public routes (login, register, forgot-password, home)
+│   │   ├── upload/         # Wallpaper upload
+│   │   ├── collections/    # User collections
+│   │   ├── dashboard/      # User dashboard
+│   │   └── admin/          # Admin panel
+│   ├── (public)/           # Public routes
 │   │   ├── login/
 │   │   ├── register/
 │   │   ├── forgot-password/
+│   │   ├── reset-password/
+│   │   ├── wallpapers/     # Wallpaper browsing & detail
+│   │   ├── categories/     # Category browsing
 │   │   └── page.tsx        # Home page
 │   ├── api/auth/[...all]/  # Better Auth API handlers
 │   ├── globals.css         # Tailwind CSS 4 + Shadcn theme
 │   └── layout.tsx          # Root layout with ThemeProvider, Header
 ├── components/             # React components
+│   ├── Admin/              # Admin panel components
 │   ├── Auth/               # Auth-related (LoginForm, RegisterForm, AuthHeader, LogoutButton)
 │   ├── Buttons/            # ThemeToggleButton
+│   ├── Category/           # Category components
+│   ├── Collection/         # Collection components
+│   ├── Dashboard/          # Dashboard components
 │   ├── Header/             # App Header
 │   ├── Providers/          # ThemeProvider, ToastProvider
-│   └── shadcnui/           # Shadcn UI primitives (button, card, field, input, label, etc.)
+│   ├── shadcnui/           # Shadcn UI primitives (button, card, field, input, label, etc.)
+│   └── Wallpaper/          # Wallpaper components
 ├── hooks/                  # Custom hooks (empty, .gitkeep)
 ├── lib/                    # Shared utilities and configuration
 │   ├── auth.ts             # Better Auth server instance
@@ -29,11 +41,17 @@ src/
 │   ├── argon2.ts           # Password hashing utilities
 │   ├── database/dbClient.ts # Prisma client singleton
 │   ├── env/                # Server and client env validation (T3 Env)
+│   ├── fileStorage.ts      # S3-compatible cloud storage client
 │   ├── fonts.ts            # Geist font configuration
+│   ├── imageProcessor.ts   # Sharp image processing
 │   ├── types.ts            # Shared TypeScript types
 │   ├── utils.ts            # cn() utility (clsx + tailwind-merge)
 │   └── zodSchema.ts        # Zod schemas for forms
-└── server/                 # Server-side logic (empty, .gitkeep)
+└── server/                 # Server actions (one file per action)
+    ├── wallpaper/          # Wallpaper CRUD, likes, downloads, queries
+    ├── collection/         # Collection CRUD, add/remove items
+    ├── admin/              # Admin wallpaper/category operations
+    └── user/               # User dashboard queries
 ```
 
 ## Key Technical Decisions
@@ -45,6 +63,41 @@ src/
 - Prisma adapter with SQLite for persistence
 - `nextCookies()` plugin for seamless Next.js integration
 - `admin()` plugin for role-based access control
+
+### Server Actions (No API Routes)
+
+All domain operations use `"use server"` functions in `src/server/{domain}/{action}.ts` files:
+
+- **One file per action** — clear separation of concerns
+- Each file exports a single async function with `"use server"` directive
+- File uploads handled via `file.arrayBuffer()` pattern in server actions
+- No `src/app/api/*` files beyond the existing Better Auth route handler
+- Session access: `auth.api.getSession({ headers: await headers() })` within each action
+
+### User Management: Better Auth Admin API (No Custom Server Actions)
+
+User management operations use Better Auth's built-in admin plugin API directly:
+
+- `auth.api.listUsers()` — paginated user list with search, filter, sort
+- `auth.api.setRole()` — role changes
+- `auth.api.banUser()` — ban with optional expiry + session revocation
+- `auth.api.unbanUser()` — unban
+
+These are called directly from page/layout server components or client components, not wrapped in custom server actions.
+
+### Image Storage: Backblaze B2 via S3 API
+
+- Using `@aws-sdk/client-s3` v3 with Backblaze B2's S3-compatible API
+- `@aws-sdk/s3-request-presigner` for generating signed download URLs
+- File naming: `wallpapers/{userId}/{uuid}-{original-name}`
+- Thumbnails: `wallpapers/{userId}/thumb-{uuid}-{original-name}`
+
+### Image Processing: Sharp
+
+- `processImage(buffer)` in `src/lib/imageProcessor.ts`
+- Extracts original dimensions, format, file size
+- Generates WebP thumbnail (max 400px width, quality 80)
+- Returns both original + thumbnail buffers + metadata
 
 ### Database: Prisma 7 + LibSQL (SQLite)
 
@@ -60,6 +113,7 @@ src/
 - Tailwind CSS 4 with CSS variables for theming
 - `tw-animate-css` for animation utilities
 - Custom field pattern using `react-hook-form` + `zodResolver` + `Controller`
+- 5 components to add: dropdown-menu, dialog, badge, select, textarea
 
 ### Form Pattern (Established Convention)
 
@@ -80,7 +134,7 @@ src/
 
 ## Component Relationships
 
-````
+```
 RootLayout
 ├── ThemeProvider (next-themes)
 │   ├── ToastProvider (react-toastify)
@@ -91,16 +145,21 @@ RootLayout
 │       │   └── Sign in / Sign up links (unauthenticated)
 │       └── ThemeToggleButton
 └── <main> children
-    ├── Home Page (public)
-    ├── Login Page
-    │   └── LoginForm (authClient.signIn.email)
-    ├── Register Page
-    │   └── RegisterForm (authClient.signUp.email)
-    ├── Forgot Password Page
-    │   └── ForgotPasswordForm (authClient.forgetPassword)
-    └── Reset Password Page
-        └── ResetPasswordForm (authClient.resetPassword)
-    ```
+    ├── (public) routes
+    │   ├── Home Page (public)
+    │   ├── Login Page → LoginForm
+    │   ├── Register Page → RegisterForm
+    │   ├── Forgot Password Page → ForgotPasswordForm
+    │   ├── Reset Password Page → ResetPasswordForm
+    │   ├── Wallpapers List → WallpaperGrid > WallpaperCard
+    │   ├── Wallpaper Detail → WallpaperDetail > LikeButton, DownloadButton
+    │   └── Categories → CategoryCard
+    └── (private) routes [auth guard]
+        ├── Upload → WallpaperUploadForm
+        ├── Collections → CollectionCard, CollectionForm, AddToCollectionModal
+        ├── Dashboard → DashboardNav
+        └── Admin → UserTable, CategoryManager
+```
 
 ## Critical Implementation Paths
 
@@ -115,16 +174,32 @@ RootLayout
 
 ### Session Validation
 
-1. `AuthHeader` calls `authClient.useSession()` (React hook)
-2. Shows skeleton during `isPending`/`isRefetching`
-3. Renders `LogoutButton` if session exists, auth links otherwise
-4. Rate-limited: `/get-session` allows 60 requests per minute
+1. Server component/layout calls `auth.api.getSession({ headers: await headers() })`
+2. Server action calls `auth.api.getSession({ headers: await headers() })` at the start
+3. Client uses `authClient.useSession()` React hook
+4. Cookie cache enabled (5 min) for reducing DB lookups
+
+### Server Action Pattern
+
+1. File at `src/server/{domain}/{action}.ts` with `"use server"`
+2. Export a single async function
+3. Get session: `const session = await auth.api.getSession({ headers: await headers() })`
+4. Validate permissions (admin check, ownership check)
+5. Perform operation (DB query, S3 upload, etc.)
+6. Return result or throw error
 
 ### Form Submission Pattern
 
 1. Client validates with Zod schema (all mode)
-2. Submit handler calls auth API
+2. Submit handler calls server action or auth API
 3. On success: toast + reset form + router.replace("/")
 4. On error: toast error message
 5. Button disabled during `isSubmitting`
-````
+
+### Admin User Management (via Better Auth API)
+
+1. Server component calls `auth.api.listUsers({ query: { limit, offset }, headers: await headers() })`
+2. Client component calls `authClient.admin.setRole()`, `authClient.admin.banUser()`, etc.
+3. Better Auth handles authentication check (must be admin role)
+4. Ban operation automatically revokes all user sessions
+5. No custom server actions needed for these operations
