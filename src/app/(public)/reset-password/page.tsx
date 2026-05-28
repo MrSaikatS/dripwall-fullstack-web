@@ -1,4 +1,4 @@
-import ForgotPasswordForm from "@/components/Auth/ForgotPasswordForm";
+import ResetPasswordForm from "@/components/Auth/ResetPasswordForm";
 import {
   Card,
   CardContent,
@@ -7,27 +7,35 @@ import {
 } from "@/components/shadcnui/card";
 import { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Forgot Password | DripWall",
-  description: "Reset your DripWall account password.",
+  title: "Reset Password | DripWall",
+  description: "Create a new password for your DripWall account.",
 };
 
-const ForgotPasswordPage = () => {
+const ResetPasswordPage = () => {
   return (
     <section className="flex min-h-dvh items-center justify-center px-4">
       <Card
         size="default"
         className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Forgot password?</CardTitle>
+          <CardTitle>Reset your password</CardTitle>
           <p className="text-muted-foreground mt-1.5 text-sm">
-            Enter your email address to receive a password reset link.
+            Enter your new password below.
           </p>
         </CardHeader>
 
         <CardContent>
-          <ForgotPasswordForm />
+          <Suspense
+            fallback={
+              <div className="text-muted-foreground text-center text-sm">
+                Loading...
+              </div>
+            }>
+            <ResetPasswordForm />
+          </Suspense>
         </CardContent>
 
         <div className="text-muted-foreground border-t px-4 py-4 text-center text-sm">
@@ -42,4 +50,4 @@ const ForgotPasswordPage = () => {
   );
 };
 
-export default ForgotPasswordPage;
+export default ResetPasswordPage;

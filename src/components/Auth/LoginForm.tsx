@@ -4,6 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import { loginFormSchema, LoginFormType } from "@/lib/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon, LockIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -102,22 +103,31 @@ const LoginForm = () => {
         )}
       />
 
-      {/* Remember Me checkbox */}
-      <Controller
-        name="rememberMe"
-        control={control}
-        render={({ field }) => (
-          <label className="text-muted-foreground flex cursor-pointer items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={field.value}
-              onChange={field.onChange}
-              className="border-border bg-background text-primary accent-primary size-4 rounded"
-            />
-            Remember me
-          </label>
-        )}
-      />
+      <div className="flex items-center justify-between">
+        {/* Remember Me checkbox */}
+        <Controller
+          name="rememberMe"
+          control={control}
+          render={({ field }) => (
+            <label className="text-muted-foreground flex cursor-pointer items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={field.value}
+                onChange={field.onChange}
+                className="border-border bg-background text-primary accent-primary size-4 rounded"
+              />
+              Remember me
+            </label>
+          )}
+        />
+
+        {/* Forgot password link */}
+        <Link
+          href="/forgot-password"
+          className="text-primary font-medium underline-offset-4 hover:underline">
+          Forgot password?
+        </Link>
+      </div>
 
       <Button
         className="w-full"

@@ -30,6 +30,13 @@ export const auth = betterAuth({
       hash: hashPasswordFunction,
       verify: verifyPasswordFunction,
     },
+    sendResetPassword: async ({ user, url, token }) => {
+      // TODO: Replace with actual email sending service
+      // For development, log the reset URL to the server console
+      console.log(`[DEV] Password reset request for user ${user.email}`);
+      console.log(`[DEV] Reset URL: ${url}`);
+      console.log(`[DEV] Reset token: ${token}`);
+    },
   },
 
   session: {
