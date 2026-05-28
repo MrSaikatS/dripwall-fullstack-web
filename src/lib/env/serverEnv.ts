@@ -3,9 +3,15 @@ import z from "zod";
 
 export const serverEnv = createEnv({
   server: {
-    DATABASE_URL: z.url(),
-    BETTER_AUTH_SECRET: z.string().min(32),
-    BETTER_AUTH_URL: z.url(),
+    DATABASE_URL: z
+      .string()
+      .startsWith("file:./")
+      .min(1, { error: "DATABASE_URL is required" }),
+    CHECKPOINT_DISABLE: z.enum(["1", "0"]).optional(),
+    BETTER_AUTH_SECRET: z
+      .string()
+      .min(32, { error: "BETTER_AUTH_SECRET must be at least 32 characters" }),
+    BETTER_AUTH_URL: z.url({ error: "BETTER_AUTH_URL must be a valid URL" }),
     BETTER_AUTH_ALLOWED_ORIGINS: z.string().optional(),
     BETTER_AUTH_TELEMETRY: z.string().optional(),
   },

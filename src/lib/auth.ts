@@ -19,7 +19,7 @@ export const auth = betterAuth({
     provider: "sqlite",
   }),
 
-  plugins: [nextCookies(), admin()],
+  plugins: [admin(), nextCookies()],
 
   emailAndPassword: {
     enabled: true,
