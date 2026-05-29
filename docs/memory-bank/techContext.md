@@ -21,6 +21,7 @@
 | Image Storage | @aws-sdk/client-s3            | ^3.1056.0     |
 | Signed URLs   | @aws-sdk/s3-request-presigner | ^3.1056.0     |
 | Image Proc    | sharp                         | ^0.34.5       |
+| File Picker   | use-file-picker               | ^2.1.4        |
 
 ## Development Setup
 
@@ -167,6 +168,18 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 5. Use shadcn Field/Input/Button components
 6. Handle submission with toast notifications
 7. Navigate on success with `router.replace()`
+
+### File Upload Pattern (Server Action)
+
+1. Client: `use-file-picker` selects file with type/size validation
+2. Client: Construct `FormData` with metadata fields + `file`
+3. Client: Call `createWallpaper(fd)` server action
+4. Server: Read file buffer via `file.arrayBuffer()`
+5. Server: Validate buffer via `validateImageBuffer()` (header bytes, size)
+6. Server: Process via `processImage()` (Sharp resize + thumbnail)
+7. Server: Upload to S3 via `uploadFile()` from `fileStorage.ts`
+8. Server: Create DB record with URLs + metadata
+9. Client: On success, toast -> reset -> redirect
 
 ### Database Access Pattern
 

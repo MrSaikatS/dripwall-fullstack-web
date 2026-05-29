@@ -38,6 +38,7 @@
 - [x] Register form (with confirm password validation)
 - [x] Forgot password form
 - [x] Reset password form (with confirm password validation)
+- [x] Wallpaper upload form (with file picker, category select, title, description)
 
 ### Pages
 
@@ -46,6 +47,7 @@
 - [x] Register page
 - [x] Forgot Password page (implemented)
 - [x] Reset Password page
+- [x] Upload page (auth-guarded, with category list from DB)
 
 ### Infrastructure
 
@@ -72,6 +74,12 @@
 - [x] serverEnv.ts configured with Backblaze B2 env vars
 - [x] clientEnv.ts configured with NEXT_PUBLIC_S3_PUBLIC_URL
 
+### Shared Types
+
+- [x] `PageParams<T>` generic type for route params
+- [x] `PaginatedResponse<T>` and `ApiResponse<T>` response types
+- [x] `WallpaperUploadFormType` with title, description, categoryId, tags
+
 ## What's Left to Build
 
 ### Phase 1: Image Processing + S3 Storage ✅ Complete
@@ -79,12 +87,16 @@
 - [x] Create `src/lib/imageProcessor.ts` (Sharp resize/thumbnail/metadata extraction)
 - [x] Create `src/lib/fileStorage.ts` (S3 upload/delete/signed URL)
 
-### Phase 2: Wallpaper Upload
+### Phase 2: Wallpaper Upload ✅ Complete
 
-- [ ] Create `src/app/(private)/upload/page.tsx`
-- [ ] Create `src/components/Wallpaper/WallpaperUploadForm.tsx`
-- [ ] Create `src/app/(private)/layout.tsx` (auth guard)
-- [ ] Create `src/server/wallpaper/createWallpaper.ts`
+- [x] Create `src/app/(private)/upload/page.tsx` — server component fetching categories
+- [x] Create `src/components/Wallpaper/WallpaperUploadForm.tsx` — upload form with file picker + metadata
+- [x] Create `src/app/(private)/layout.tsx` — auth guard redirect
+- [x] Create `src/server/wallpaper/createWallpaper.ts` — server action (Sharp → S3 → DB)
+- [x] Add `wallpaperUploadSchema` to `src/lib/zodSchema.ts`
+- [x] Add generic types to `src/lib/types.ts`
+- [x] Remove `.gitkeep` files
+- [x] Lint verified — 0 errors, 0 warnings
 
 ### Phase 3: Wallpaper Browsing & Detail
 
@@ -131,8 +143,8 @@
 
 ### Phase 9: Polish & Cleanup
 
-- [ ] Remove `.gitkeep` files
-- [ ] Run `bun run lint`
+- [x] Remove `.gitkeep` files
+- [x] Run `bun run lint` — 0 errors, 0 warnings
 - [ ] Run `bun run build`
 - [ ] Fix any issues
 
@@ -147,7 +159,7 @@
 
 ## Current Status
 
-- **Phase**: 1 (Image Processing + S3 Storage) — ✅ Complete
+- **Phase**: 2 (Wallpaper Upload) — ✅ Complete
 - **Auth**: ✅ Complete (core flow functional)
 - **Implementation Plan**: ✅ Complete + Audited against Better Auth/Prisma/shadcn best practices
 - **UI**: ✅ All 13 shadcn components installed and available
@@ -156,10 +168,13 @@
 - **Env Vars**: ✅ Server + client env configured for S3
 - **Image Processor**: ✅ Complete (Phase 1)
 - **File Storage**: ✅ Complete (Phase 1)
-- **Wallpapers**: ❌ Not started (implementation plan ready)
-- **Collections**: ❌ Not started (implementation plan ready)
-- **Dashboard**: ❌ Not started (implementation plan ready)
-- **Admin Panel**: ❌ Not started (implementation plan ready)
+- **Shared Types**: ✅ Complete (PageParams, ApiResponse types + wallpaper upload schema)
+- **Wallpaper Upload**: ✅ Complete (Phase 2) — server action, form, auth-guarded page
+- **Private Route Guard**: ✅ Complete (layout-level auth check)
+- **Wallpaper Browsing**: ❌ Not started (Phase 3 next)
+- **Collections**: ❌ Not started
+- **Dashboard**: ❌ Not started
+- **Admin Panel**: ❌ Not started
 - **Testing**: ❌ None
 - **Production Deploy**: ❌ Not configured
 
@@ -169,8 +184,7 @@
 2. **Password Reset**: Uses console-based token display (no email sending service configured)
 3. **SQLite**: Only suitable for development, not production
 4. **Rate Limiting**: In-memory, resets on server restart
-5. **Server Actions**: `src/server/` directory empty (no server actions yet)
-6. **Custom Hooks**: `src/hooks/` directory empty (no custom hooks yet)
+5. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]` once Phase 3 creates that route
 
 ## Evolution of Project Decisions
 
@@ -207,3 +221,10 @@
 - Better Auth's admin plugin (`auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()`) already provides full user CRUD with built-in pagination, search, filtering, and session revocation
 - Avoids duplicating logic that Better Auth handles (auth checks, session invalidation on ban, etc.)
 - Custom server actions only needed for domain-specific operations (wallpaper/collection/category management) not covered by Better Auth
+
+### Why node:crypto.randomUUID() instead of the uuid package?
+
+- Node.js 22+ has built-in `randomUUID()` via `node:crypto`
+- Avoids an extra dependency
+- Same API as `uuid.v4()` — returns a random UUID string
+- Used in `createWallpaper.ts` for generating unique file identifiers

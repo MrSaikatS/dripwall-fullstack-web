@@ -33,8 +33,8 @@ src/
 │   ├── Header/             # App Header
 │   ├── Providers/          # ThemeProvider, ToastProvider
 │   ├── shadcnui/           # Shadcn UI primitives (button, card, field, input, label, etc.)
-│   └── Wallpaper/          # Wallpaper components
-├── hooks/                  # Custom hooks (empty, .gitkeep)
+│   └── Wallpaper/          # Wallpaper components (WallpaperUploadForm)
+├── hooks/                  # Custom hooks (empty)
 ├── lib/                    # Shared utilities and configuration
 │   ├── auth.ts             # Better Auth server instance
 │   ├── auth-client.ts      # Better Auth client instance
@@ -44,11 +44,11 @@ src/
 │   ├── fileStorage.ts      # S3-compatible cloud storage client
 │   ├── fonts.ts            # Geist font configuration
 │   ├── imageProcessor.ts   # Sharp image processing
-│   ├── types.ts            # Shared TypeScript types
+│   ├── types.ts            # Shared TypeScript types (+ PageParams, PaginatedResponse, ApiResponse)
 │   ├── utils.ts            # cn() utility (clsx + tailwind-merge)
-│   └── zodSchema.ts        # Zod schemas for forms
+│   └── zodSchema.ts        # Zod schemas for forms (+ wallpaperUploadSchema)
 └── server/                 # Server actions (one file per action)
-    ├── wallpaper/          # Wallpaper CRUD, likes, downloads, queries
+    ├── wallpaper/          # Wallpaper CRUD — createWallpaper.ts
     ├── collection/         # Collection CRUD, add/remove items
     ├── admin/              # Admin wallpaper/category operations
     └── user/               # User dashboard queries
@@ -85,6 +85,20 @@ User management operations use Better Auth's built-in admin plugin API directly:
 
 These are called directly from page/layout server components or client components, not wrapped in custom server actions.
 
+### Wallpaper Upload Flow (Phase 2)
+
+1. Client: `WallpaperUploadForm` validates metadata (title, description, category) via react-hook-form + Zod
+2. Client: `use-file-picker` handles file selection with type/size constraints
+3. Client: Constructs `FormData` with metadata fields + file, calls `createWallpaper` server action
+4. Server Action: Validates session via `auth.api.getSession()`
+5. Server Action: Validates file type (JPEG/PNG/WebP/GIF/AVIF/TIFF) and size (max 50MB)
+6. Server Action: Validates image buffer header bytes via `validateImageBuffer()`
+7. Server Action: Sharp processes image — extracts metadata (width, height, format, fileSize), generates WebP thumbnail (400px, quality 80)
+8. Server Action: Uploads original + thumbnail to S3 via `@aws-sdk/client-s3`
+9. Server Action: Creates DB record with URLs, metadata, userId, categoryId, tags
+10. Server Action: Revalidates paths (`/wallpapers`, `/`), returns success result
+11. Client: On success, resets form, clears file, redirects to home
+
 ### Image Storage: Backblaze B2 via S3 API
 
 - Using `@aws-sdk/client-s3` v3 with Backblaze B2's S3-compatible API
@@ -113,7 +127,7 @@ These are called directly from page/layout server components or client component
 - Tailwind CSS 4 with CSS variables for theming
 - `tw-animate-css` for animation utilities
 - Custom field pattern using `react-hook-form` + `zodResolver` + `Controller`
-- 5 components to add: dropdown-menu, dialog, badge, select, textarea
+- 13 shadcn components installed: avatar, badge, button, card, dialog, dropdown-menu, field, input, label, select, separator, skeleton, textarea
 
 ### Form Pattern (Established Convention)
 
@@ -155,7 +169,7 @@ RootLayout
     │   ├── Wallpaper Detail → WallpaperDetail > LikeButton, DownloadButton
     │   └── Categories → CategoryCard
     └── (private) routes [auth guard]
-        ├── Upload → WallpaperUploadForm
+        ├── Upload → WallpaperUploadForm ← Phase 2 ✅
         ├── Collections → CollectionCard, CollectionForm, AddToCollectionModal
         ├── Dashboard → DashboardNav
         └── Admin → UserTable, CategoryManager
@@ -178,6 +192,13 @@ RootLayout
 2. Server action calls `auth.api.getSession({ headers: await headers() })` at the start
 3. Client uses `authClient.useSession()` React hook
 4. Cookie cache enabled (5 min) for reducing DB lookups
+
+### Private Route Guard
+
+1. `src/app/(private)/layout.tsx` is an async server component
+2. Calls `auth.api.getSession({ headers: await headers() })`
+3. If no session, redirects to `/login`
+4. If authenticated, renders children normally
 
 ### Server Action Pattern
 

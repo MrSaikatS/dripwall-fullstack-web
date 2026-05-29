@@ -65,3 +65,19 @@ export const resetPasswordFormSchema = z
   });
 
 export type ResetPasswordFormType = z.infer<typeof resetPasswordFormSchema>;
+
+export const wallpaperUploadSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(3, { error: "Title must be at least 3 characters" })
+    .max(128, { error: "Title must not exceed 128 characters" }),
+  description: z
+    .string()
+    .max(500, { error: "Description must not exceed 500 characters" })
+    .optional(),
+  categoryId: z.string().uuid({ error: "Invalid category" }),
+  tags: z.array(z.string().uuid({ error: "Invalid tag" })).optional(),
+});
+
+export type WallpaperUploadFormType = z.infer<typeof wallpaperUploadSchema>;

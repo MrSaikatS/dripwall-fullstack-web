@@ -2,13 +2,18 @@
 
 ## Current Work Focus
 
-Phase 1 (Image Processing + S3 Storage) is now **complete**. The project is ready to begin Phase 2 (Wallpaper Upload) implementation.
+Phase 2 (Wallpaper Upload) is now **complete**. The project is ready to begin Phase 3 (Wallpaper Browsing & Detail).
 
-### Completed in Phase 1:
+### Completed in Phase 2:
 
-- ✅ `src/lib/imageProcessor.ts` created with Sharp resize/thumbnail/metadata extraction + `validateImageBuffer` helper
-- ✅ `src/lib/fileStorage.ts` created with S3 upload/delete/signed URL + `deleteWallpaperAssets` convenience method
-- ✅ Lint and TypeScript compilation verified (zero errors)
+- ✅ `src/lib/types.ts` updated with `PageParams<T>`, `PaginatedResponse<T>`, `ApiResponse<T>` types
+- ✅ `src/lib/zodSchema.ts` updated with `wallpaperUploadSchema` + `WallpaperUploadFormType`
+- ✅ `src/server/wallpaper/createWallpaper.ts` created — handles Sharp processing → S3 upload → DB insert with file validation, type/size checks, tag support
+- ✅ `src/app/(private)/layout.tsx` created — auth guard that redirects unauthenticated users to `/login`
+- ✅ `src/components/Wallpaper/WallpaperUploadForm.tsx` created — form with `use-file-picker`, shadcn Select/Input/Textarea/Button, react-hook-form + zod validation
+- ✅ `src/app/(private)/upload/page.tsx` created — server component that fetches categories and renders upload form
+- ✅ `.gitkeep` files removed from `src/hooks/`, `src/server/`, `src/app/(private)/`
+- ✅ Lint verified — zero errors, zero warnings
 
 ## Recent Changes
 
@@ -19,12 +24,7 @@ Phase 1 (Image Processing + S3 Storage) is now **complete**. The project is read
 
 ## Next Steps
 
-### Phase 2: Wallpaper Upload (immediate)
-
-- Create upload page, WallpaperUploadForm, createWallpaper server action
-- Create `(private)` layout auth guard
-
-### Phase 3: Wallpaper Browsing & Detail
+### Phase 3: Wallpaper Browsing & Detail (immediate)
 
 - Create listing/grid/card/pagination components
 - Create detail page with LikeButton and DownloadButton
