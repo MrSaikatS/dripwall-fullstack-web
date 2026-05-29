@@ -98,17 +98,19 @@
 - [x] Remove `.gitkeep` files
 - [x] Lint verified — 0 errors, 0 warnings
 
-### Phase 3: Wallpaper Browsing & Detail
+### Phase 3: Wallpaper Browsing & Detail ✅ Complete
 
-- [ ] Create `src/app/(public)/wallpapers/page.tsx`
-- [ ] Create `src/components/Wallpaper/WallpaperGrid.tsx`
-- [ ] Create `src/components/Wallpaper/WallpaperCard.tsx`
-- [ ] Create `src/components/Wallpaper/Pagination.tsx`
-- [ ] Create `src/app/(public)/wallpapers/[id]/page.tsx`
-- [ ] Create `src/components/Wallpaper/WallpaperDetail.tsx`
-- [ ] Create `src/components/Wallpaper/LikeButton.tsx`
-- [ ] Create `src/components/Wallpaper/DownloadButton.tsx`
-- [ ] Create server actions: likeWallpaper, downloadWallpaper, getWallpapers, getWallpaperById, getFeaturedWallpapers
+- [x] Create `src/app/(public)/wallpapers/page.tsx`
+- [x] Create `src/app/(public)/wallpapers/WallpapersPageContent.tsx`
+- [x] Create `src/components/Wallpaper/WallpaperGrid.tsx`
+- [x] Create `src/components/Wallpaper/WallpaperCard.tsx`
+- [x] Create `src/components/Wallpaper/Pagination.tsx`
+- [x] Create `src/app/(public)/wallpapers/[id]/page.tsx`
+- [x] Create `src/components/Wallpaper/WallpaperDetail.tsx`
+- [x] Create `src/components/Wallpaper/LikeButton.tsx`
+- [x] Create `src/components/Wallpaper/DownloadButton.tsx`
+- [x] Create server actions: likeWallpaper, downloadWallpaper, getWallpapers, getWallpaperById, getFeaturedWallpapers
+- [x] Lint verified — 0 errors, 0 warnings
 
 ### Phase 4: Categories
 
@@ -159,7 +161,7 @@
 
 ## Current Status
 
-- **Phase**: 2 (Wallpaper Upload) — ✅ Complete
+- **Phase**: 3 (Wallpaper Browsing & Detail) — ✅ Complete
 - **Auth**: ✅ Complete (core flow functional)
 - **Implementation Plan**: ✅ Complete + Audited against Better Auth/Prisma/shadcn best practices
 - **UI**: ✅ All 13 shadcn components installed and available
@@ -171,7 +173,7 @@
 - **Shared Types**: ✅ Complete (PageParams, ApiResponse types + wallpaper upload schema)
 - **Wallpaper Upload**: ✅ Complete (Phase 2) — server action, form, auth-guarded page
 - **Private Route Guard**: ✅ Complete (layout-level auth check)
-- **Wallpaper Browsing**: ❌ Not started (Phase 3 next)
+- **Wallpaper Browsing & Detail**: ✅ Complete (Phase 3) — listing, search, sort, pagination, detail view, likes, downloads
 - **Collections**: ❌ Not started
 - **Dashboard**: ❌ Not started
 - **Admin Panel**: ❌ Not started

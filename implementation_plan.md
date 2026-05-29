@@ -335,7 +335,7 @@ Build features in dependency order, where each phase builds on the previous.
 
 3. **Phase 2: Wallpaper Upload** — Create upload page + `WallpaperUploadForm` component, private layout, and `createWallpaper` server action (Sharp → S3 → DB). Enables adding content.
 
-4. **Phase 3: Wallpaper Browsing & Detail** — Create listing page (search/filter), `WallpaperGrid`/`WallpaperCard`/`Pagination` components, detail view, `likeWallpaper`/`downloadWallpaper` server actions.
+4. ~~**Phase 3: Wallpaper Browsing & Detail**~~ ✅ **Complete** — Listing page (search/filter, sort), `WallpaperGrid`/`WallpaperCard`/`Pagination`/`WallpaperDetail`/`LikeButton`/`DownloadButton` components, detail view with metadata, `likeWallpaper`/`downloadWallpaper`/`getWallpapers`/`getWallpaperById`/`getFeaturedWallpapers` server actions. Lint verified — 0 errors, 0 warnings.
 
 5. **Phase 4: Categories** — Create category browsing pages, `CategoryCard` component, category server actions in admin. Enables content organization.
 

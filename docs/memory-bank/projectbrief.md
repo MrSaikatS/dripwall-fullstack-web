@@ -47,14 +47,14 @@ DripWall is a full-stack wallpaper sharing platform that allows users to discove
 
 ## Project Status
 
-- **Phase**: 2 (Wallpaper Upload) — ✅ Complete
+- **Phase**: 3 (Wallpaper Browsing & Detail) — ✅ Complete
 - **Auth**: ✅ Complete (core flow functional)
 - **Database**: ✅ Schema defined, seeded, signed URLs ready
 - **UI**: ✅ All 13 shadcn components installed
 - **S3 Storage**: ✅ Client configured, upload/delete/signed URL functions ready
 - **Image Processing**: ✅ Sharp processor installed (resize, thumbnail, metadata)
 - **Wallpaper Upload**: ✅ Complete — server action, form, auth-guarded page
-- **Wallpaper Browsing**: ❌ Not started (next phase)
+- **Wallpaper Browsing & Detail**: ✅ Complete — listing, search, sort, pagination, detail view, likes, downloads
 - **Collections**: ❌ Not started
 - **Dashboard**: ❌ Not started
 - **Admin Panel**: ❌ Not started
