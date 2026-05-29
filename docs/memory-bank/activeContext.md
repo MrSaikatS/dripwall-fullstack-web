@@ -2,14 +2,13 @@
 
 ## Current Work Focus
 
-Phase 0 (Dependency Setup) is now **complete**. The project is ready to begin Phase 1 (Image Processing + S3 Storage) implementation.
+Phase 1 (Image Processing + S3 Storage) is now **complete**. The project is ready to begin Phase 2 (Wallpaper Upload) implementation.
 
-### Completed in Phase 0:
+### Completed in Phase 1:
 
-- ✅ All 5 shadcn components installed: dropdown-menu, dialog, badge, select, textarea
-- ✅ npm packages installed: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
-- ✅ serverEnv.ts updated with Backblaze B2 env vars (S3_ENDPOINT, S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET_NAME, S3_PUBLIC_URL)
-- ✅ clientEnv.ts updated with NEXT_PUBLIC_S3_PUBLIC_URL
+- ✅ `src/lib/imageProcessor.ts` created with Sharp resize/thumbnail/metadata extraction + `validateImageBuffer` helper
+- ✅ `src/lib/fileStorage.ts` created with S3 upload/delete/signed URL + `deleteWallpaperAssets` convenience method
+- ✅ Lint and TypeScript compilation verified (zero errors)
 
 ## Recent Changes
 
@@ -20,12 +19,7 @@ Phase 0 (Dependency Setup) is now **complete**. The project is ready to begin Ph
 
 ## Next Steps
 
-### Phase 1: Image Processing + S3 Storage (immediate)
-
-- Create `src/lib/imageProcessor.ts` (Sharp resize/thumbnail/metadata)
-- Create `src/lib/fileStorage.ts` (S3 upload/delete/signed URL)
-
-### Phase 2: Wallpaper Upload
+### Phase 2: Wallpaper Upload (immediate)
 
 - Create upload page, WallpaperUploadForm, createWallpaper server action
 - Create `(private)` layout auth guard

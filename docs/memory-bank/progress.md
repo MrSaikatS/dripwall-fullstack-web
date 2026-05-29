@@ -74,10 +74,10 @@
 
 ## What's Left to Build
 
-### Phase 1: Image Processing + S3 Storage
+### Phase 1: Image Processing + S3 Storage ✅ Complete
 
-- [ ] Create `src/lib/imageProcessor.ts` (Sharp resize/thumbnail/metadata extraction)
-- [ ] Create `src/lib/fileStorage.ts` (S3 upload/delete/signed URL)
+- [x] Create `src/lib/imageProcessor.ts` (Sharp resize/thumbnail/metadata extraction)
+- [x] Create `src/lib/fileStorage.ts` (S3 upload/delete/signed URL)
 
 ### Phase 2: Wallpaper Upload
 
@@ -147,15 +147,15 @@
 
 ## Current Status
 
-- **Phase**: 0 (Dependency Setup) — ✅ Complete
+- **Phase**: 1 (Image Processing + S3 Storage) — ✅ Complete
 - **Auth**: ✅ Complete (core flow functional)
 - **Implementation Plan**: ✅ Complete + Audited against Better Auth/Prisma/shadcn best practices
 - **UI**: ✅ All 13 shadcn components installed and available
 - **Database**: ✅ Schema defined, seeded
 - **S3 Storage Deps**: ✅ @aws-sdk/client-s3 + @aws-sdk/s3-request-presigner installed
 - **Env Vars**: ✅ Server + client env configured for S3
-- **Image Processor**: ❌ Not started (Phase 1)
-- **File Storage**: ❌ Not started (Phase 1)
+- **Image Processor**: ✅ Complete (Phase 1)
+- **File Storage**: ✅ Complete (Phase 1)
 - **Wallpapers**: ❌ Not started (implementation plan ready)
 - **Collections**: ❌ Not started (implementation plan ready)
 - **Dashboard**: ❌ Not started (implementation plan ready)
