@@ -5,6 +5,28 @@ Complete the DripWall full-stack wallpaper sharing platform by implementing all 
 
 The project currently has authentication fully implemented (login, register, forgot/reset password) with Next.js 16 + Better Auth + Prisma 7 (SQLite) + Tailwind CSS 4. The database schema defines all necessary models (Wallpaper, Category, Tag, Collection, Like, Download, etc.) but no feature pages or API routes exist beyond auth. This implementation will build the complete wallpaper platform using S3-compatible cloud storage (Backblaze B2 via S3 API) for images optimized/transformed via Sharp, console-level dev email logging, shadcn/ui components throughout, and the established form/component patterns.
 
+**Current Status (as of 2026-05-30):**
+
+**Completed (Core Foundation):**
+- Phase 0: ✅ Complete
+- Phase 1: ✅ Complete  
+- Phase 2: ✅ Complete
+- Phase 3: ✅ Complete
+- Lint: ✅ 0 errors, 0 warnings
+- Build: ✅ Success (9 pages generated)
+
+**Partially Complete:**
+- Types & Schemas: ⚠️ Wallpaper upload schema complete, missing collection/category schemas
+- Header: ✅ AuthHeader complete, Header needs refactoring for session-aware nav
+
+**Not Started:**
+- Phase 4: Categories — No category browsing pages or CategoryCard component
+- Phase 5: Collections — No collection CRUD pages or components
+- Phase 6: User Dashboard — No dashboard pages
+- Phase 7: Navigation Update — Header needs session-aware links
+- Phase 8: Admin Panel — No admin pages
+- Phase 9: Polish & Cleanup — Pending
+
 ## Phase 0 Status: ✅ COMPLETE
 
 All Phase 0 dependency setup tasks have been completed:
@@ -17,27 +39,32 @@ All Phase 0 dependency setup tasks have been completed:
 [Types]
 New Zod schemas and TypeScript types will be added to support wallpaper management, collections, categories, and user interactions.
 
-**Wallpaper Upload Schema** (`src/lib/zodSchema.ts`)
+**Wallpaper Upload Schema** (`src/lib/zodSchema.ts`) ✅
 
-- `title`: `z.string().trim().min(3).max(128)`
-- `description`: `z.string().max(500).optional()`
-- `categoryId`: `z.string().uuid()`
-- `tags`: `z.array(z.string().uuid())` (tag IDs)
+- `title`: `z.string().trim().min(3).max(128)` ✅
+- `description`: `z.string().max(500).optional()` ✅
+- `categoryId`: `z.string().uuid()` ✅
+- `tags`: `z.array(z.string().uuid())` (tag IDs) ✅
 
-**Collection Schema** (`src/lib/zodSchema.ts`)
+**Collection Schema** (`src/lib/zodSchema.ts`) ❌
 
-- `name`: `z.string().trim().min(1).max(64)`
-- `description`: `z.string().max(300).optional()`
-- `isPublic`: `z.boolean()`
+- `name`: `z.string().trim().min(1).max(64)` ❌
+- `description`: `z.string().max(300).optional()` ❌
+- `isPublic`: `z.boolean()` ❌
 
-**Category Create Schema** (`src/lib/zodSchema.ts`)
+**Category Create Schema** (`src/lib/zodSchema.ts`) ❌
 
-- `name`: `z.string().trim().min(1).max(32)`
-- `description`: `z.string().max(300).optional()`
+- `name`: `z.string().trim().min(1).max(32)` ❌
+- `description`: `z.string().max(300).optional()` ❌
 
-**Update `LayoutChildrenProps`** in `src/lib/types.ts` to also export `PageParams` generic type for route params.
+**Missing schemas to add:**
 
-**API Route Response Types:**
+- Collection schema needed for `src/components/Collection/CollectionForm.tsx`
+- Category schema needed for admin category management
+
+**Update `LayoutChildrenProps`** in `src/lib/types.ts` ✅ — Already exports `PageParams` generic type
+
+**API Route Response Types:** ✅ Already in `src/lib/types.ts`
 
 ```typescript
 type PaginatedResponse<T> = {
@@ -55,7 +82,7 @@ type ApiResponse<T> = {
 };
 ```
 
-**New route params type:**
+**New route params type:** ✅ Already in `src/lib/types.ts`
 
 ```typescript
 type PageParams<T extends Record<string, string>> = {
@@ -70,24 +97,24 @@ New files to be created and existing files to be modified across the entire appl
 
 **Wallpaper Upload (all server actions — no API routes):**
 
-- `src/app/(private)/upload/page.tsx` — Upload page with metadata form + file input
-- `src/components/Wallpaper/WallpaperUploadForm.tsx` — Client component for upload form (uses `use-file-picker`, shadcn Select, Textarea, Button). Calls `createWallpaper` server action.
+- `src/app/(private)/upload/page.tsx` ✅
+- `src/components/Wallpaper/WallpaperUploadForm.tsx` ✅
 
-**Wallpaper Browsing:**
+**Wallpaper Browsing:** ✅
 
-- `src/app/(public)/wallpapers/page.tsx` — Browse all wallpapers with search + filter UI (public listing). Uses server component direct DB access for initial data, client component for interactive filters.
-- `src/components/Wallpaper/WallpaperGrid.tsx` — Grid display component (responsive CSS grid)
-- `src/components/Wallpaper/WallpaperCard.tsx` — Individual wallpaper card with shadcn Card, Badge, Avatar
-- `src/components/Wallpaper/Pagination.tsx` — Pagination component with shadcn Button variants
+- `src/app/(public)/wallpapers/page.tsx` ✅
+- `src/components/Wallpaper/WallpaperGrid.tsx` ✅
+- `src/components/Wallpaper/WallpaperCard.tsx` ✅
+- `src/components/Wallpaper/Pagination.tsx` ✅
 
-**Wallpaper Detail:**
+**Wallpaper Detail:** ✅
 
-- `src/app/(public)/wallpapers/[id]/page.tsx` — Wallpaper detail view (server component with initial data)
-- `src/components/Wallpaper/WallpaperDetail.tsx` — Full detail component
-- `src/components/Wallpaper/LikeButton.tsx` — Like/unlike toggle using server action
-- `src/components/Wallpaper/DownloadButton.tsx` — Download with counter using server action
+- `src/app/(public)/wallpapers/[id]/page.tsx` ✅
+- `src/components/Wallpaper/WallpaperDetail.tsx` ✅
+- `src/components/Wallpaper/LikeButton.tsx` ✅
+- `src/components/Wallpaper/DownloadButton.tsx` ✅
 
-**Categories:**
+**Categories:** ❌
 
 - `src/app/(public)/categories/page.tsx` — Browse categories (server component, direct DB)
 - `src/app/(public)/categories/[slug]/page.tsx` — Wallpapers by category (server component + client interactive)
@@ -97,7 +124,7 @@ New files to be created and existing files to be modified across the entire appl
 
 - Tags handled inline via server actions in admin. No dedicated pages.
 
-**Collections:**
+**Collections:** ❌
 
 - `src/app/(private)/collections/page.tsx` — User's collections (server component + client interactions)
 - `src/app/(private)/collections/[id]/page.tsx` — Collection detail
@@ -105,14 +132,14 @@ New files to be created and existing files to be modified across the entire appl
 - `src/components/Collection/CollectionForm.tsx` — Create/edit collection form using server actions
 - `src/components/Collection/AddToCollectionModal.tsx` — Modal (shadcn Dialog) using server action
 
-**User Dashboard:**
+**User Dashboard:** ❌
 
 - `src/app/(private)/dashboard/page.tsx` — User dashboard overview (server component, direct DB)
 - `src/app/(private)/dashboard/wallpapers/page.tsx` — User's uploaded wallpapers
 - `src/app/(private)/dashboard/likes/page.tsx` — User's liked wallpapers
 - `src/components/Dashboard/DashboardNav.tsx` — Sidebar/nav for dashboard
 
-**Admin Panel:**
+**Admin Panel:** ❌
 
 - `src/app/(private)/admin/page.tsx` — Admin dashboard overview (server component)
 - `src/app/(private)/admin/users/page.tsx` — User management using Better Auth's built-in admin API (`auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()`) — no custom server actions needed for user CRUD
@@ -121,65 +148,65 @@ New files to be created and existing files to be modified across the entire appl
 - `src/components/Admin/UserTable.tsx` — User listing with ban/role actions (shadcn Table, DropdownMenu, Badge). Calls Better Auth admin API directly rather than custom server actions.
 - `src/components/Admin/CategoryManager.tsx` — Category CRUD with shadcn Dialog forms using server actions
 
-**Private Layout:**
+**Private Layout:** ✅
 
-- `src/app/(private)/layout.tsx` — Auth-guarded layout with sidebar nav, redirects unauthenticated users
+- `src/app/(private)/layout.tsx` — Auth-guarded layout with sidebar nav, redirects unauthenticated users ✅
 
 **Server Actions (one file per action, each with `"use server"` directive):**
 
-- `src/server/wallpaper/createWallpaper.ts`
-- `src/server/wallpaper/updateWallpaper.ts`
-- `src/server/wallpaper/deleteWallpaper.ts`
-- `src/server/wallpaper/likeWallpaper.ts`
-- `src/server/wallpaper/downloadWallpaper.ts`
-- `src/server/wallpaper/getWallpapers.ts`
-- `src/server/wallpaper/getWallpaperById.ts`
-- `src/server/wallpaper/getFeaturedWallpapers.ts`
-- `src/server/collection/createCollection.ts`
-- `src/server/collection/updateCollection.ts`
-- `src/server/collection/deleteCollection.ts`
-- `src/server/collection/addToCollection.ts`
-- `src/server/collection/removeFromCollection.ts`
-- `src/server/collection/getCollections.ts`
-- `src/server/collection/getCollectionById.ts`
+- `src/server/wallpaper/createWallpaper.ts` ✅
+- `src/server/wallpaper/updateWallpaper.ts` ❌
+- `src/server/wallpaper/deleteWallpaper.ts` ❌
+- `src/server/wallpaper/likeWallpaper.ts` ✅
+- `src/server/wallpaper/downloadWallpaper.ts` ✅
+- `src/server/wallpaper/getWallpapers.ts` ✅
+- `src/server/wallpaper/getWallpaperById.ts` ✅
+- `src/server/wallpaper/getFeaturedWallpapers.ts` ✅
+- `src/server/collection/createCollection.ts` ❌
+- `src/server/collection/updateCollection.ts` ❌
+- `src/server/collection/deleteCollection.ts` ❌
+- `src/server/collection/addToCollection.ts` ❌
+- `src/server/collection/removeFromCollection.ts` ❌
+- `src/server/collection/getCollections.ts` ❌
+- `src/server/collection/getCollectionById.ts` ❌
 - ⚠️ **Not needed — use Better Auth admin plugin API directly:**
   - User management operations (`listUsers`, `setRole`, `banUser`, `unbanUser`) are built into Better Auth's `admin()` plugin and available via `auth.api.*` with session headers.
   - No separate server action files required — call `auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()` directly from page/layout server components or client components with `headers: await headers()`.
-- `src/server/admin/getAllWallpapersAdmin.ts`
-- `src/server/admin/toggleFeatured.ts`
-- `src/server/admin/createCategory.ts`
-- `src/server/admin/updateCategory.ts`
-- `src/server/admin/deleteCategory.ts`
-- `src/server/user/getUserWallpapers.ts`
-- `src/server/user/getUserLikes.ts`
-- `src/server/user/getUserDownloads.ts`
+- `src/server/admin/getAllWallpapersAdmin.ts` ❌
+- `src/server/admin/toggleFeatured.ts` ❌
+- `src/server/admin/createCategory.ts` ❌
+- `src/server/admin/updateCategory.ts` ❌
+- `src/server/admin/deleteCategory.ts` ❌
+- `src/server/user/getUserWallpapers.ts` ❌
+- `src/server/user/getUserLikes.ts` ❌
+- `src/server/user/getUserDownloads.ts` ❌
 
-**Image Upload & Storage:**
+**Image Upload & Storage:** ✅ **Complete**
 
-- `src/lib/fileStorage.ts` — S3-compatible cloud storage client using `@aws-sdk/client-s3` (upload, delete, getSignedUrl)
-- `src/lib/imageProcessor.ts` — Sharp-based image processing (resize to multiple resolutions, generate WebP thumbnail, extract EXIF metadata: width, height, format, fileSize)
+- `src/lib/fileStorage.ts` — S3-compatible cloud storage client using `@aws-sdk/client-s3` (upload, delete, getSignedUrl) ✅
+- `src/lib/imageProcessor.ts` — Sharp-based image processing (resize to multiple resolutions, generate WebP thumbnail, extract EXIF metadata: width, height, format, fileSize) ✅
 
 **New shadcn components to add:** ✅ **Already installed**
 
-- ~~`src/components/shadcnui/dropdown-menu.tsx`~~
-- ~~`src/components/shadcnui/dialog.tsx`~~
-- ~~`src/components/shadcnui/badge.tsx`~~
-- ~~`src/components/shadcnui/select.tsx`~~
-- ~~`src/components/shadcnui/textarea.tsx`~~
+- ~~`src/components/shadcnui/dropdown-menu.tsx`~~ ✅
+- ~~`src/components/shadcnui/dialog.tsx`~~ ✅
+- ~~`src/components/shadcnui/badge.tsx`~~ ✅
+- ~~`src/components/shadcnui/select.tsx`~~ ✅
+- ~~`src/components/shadcnui/textarea.tsx`~~ ✅
 
 ### Existing Files to Modify
 
-- `src/lib/types.ts` — Add `PageParams<T>` generic type and `PaginatedResponse<T>`, `ApiResponse<T>`
-- `src/lib/zodSchema.ts` — Add wallpaper upload, collection, category schemas + types
-- ~~`src/lib/env/serverEnv.ts` — Add S3/cloud storage env vars~~ ✅ **Already done**
-- `src/components/Header/Header.tsx` — Add navigation links (Wallpapers, Categories, Dashboard, Admin for admins) using shadcn DropdownMenu for user menu
-- `src/components/Header/AuthHeader.tsx` — Refactor to provide session data + role to Header via a shared `useSession` call so Header can conditionally render admin/dashboard/upload links. Use shadcn DropdownMenu for user avatar + dropdown
+- `src/lib/types.ts` — ✅ Already has `PageParams<T>` generic type and `PaginatedResponse<T>`, `ApiResponse<T>`
+- `src/lib/zodSchema.ts` — ⚠️ Partial — has wallpaper upload schema, missing collection/category schemas
+- ~~`src/lib/env/serverEnv.ts`~~ ✅ **Already configured** with S3/cloud storage env vars
+- ~~`src/components/Header/Header.tsx`~~ ❌ **Not refactored** — needs session-aware nav links (Wallpapers, Categories, Upload, Dashboard, Admin for admins)
+- ~~`src/components/Header/AuthHeader.tsx`~~ ✅ **Already implemented** — simplified to show Sign in/up links, logout button
 
 ### Files to Delete/Move
 
-- `src/app/(private)/.gitkeep` — Remove
-- `src/hooks/.gitkeep` — Remove
-- `src/server/.gitkeep` — Remove
+- ~~`src/app/(private)/.gitkeep`~~ ✅ **Does not exist**
+- ~~`src/hooks/.gitkeep`~~ ✅ **Does not exist**
+- ~~`src/server/.gitkeep`~~ ✅ **Does not exist**
 
 ### New Environment Variables (`src/lib/env/serverEnv.ts`) ✅ **Already configured**
 
@@ -277,22 +304,22 @@ No new classes. This project uses functional React components and server actions
 
 **New React Components:**
 
-| Component              | File                                                 | Purpose                        | shadcn Components Used                                         |
-| ---------------------- | ---------------------------------------------------- | ------------------------------ | -------------------------------------------------------------- |
-| `WallpaperGrid`        | `src/components/Wallpaper/WallpaperGrid.tsx`         | Responsive grid layout         | —                                                              |
-| `WallpaperCard`        | `src/components/Wallpaper/WallpaperCard.tsx`         | Card with thumbnail + metadata | Card, Badge, Skeleton                                          |
-| `WallpaperDetail`      | `src/components/Wallpaper/WallpaperDetail.tsx`       | Full wallpaper view            | Card, Badge, Separator, Avatar                                 |
-| `WallpaperUploadForm`  | `src/components/Wallpaper/WallpaperUploadForm.tsx`   | Upload form                    | Button, Input, Select, Textarea, Field, FieldLabel, FieldError |
-| `LikeButton`           | `src/components/Wallpaper/LikeButton.tsx`            | Heart toggle                   | Button                                                         |
-| `DownloadButton`       | `src/components/Wallpaper/DownloadButton.tsx`        | Download action                | Button                                                         |
-| `Pagination`           | `src/components/Wallpaper/Pagination.tsx`            | Page nav                       | Button                                                         |
-| `CategoryCard`         | `src/components/Category/CategoryCard.tsx`           | Category card                  | Card, Badge                                                    |
-| `CollectionCard`       | `src/components/Collection/CollectionCard.tsx`       | Collection card                | Card                                                           |
-| `CollectionForm`       | `src/components/Collection/CollectionForm.tsx`       | Create/edit form               | Dialog, Button, Input, Textarea, Field                         |
-| `AddToCollectionModal` | `src/components/Collection/AddToCollectionModal.tsx` | Collection selection modal     | Dialog, Button                                                 |
-| `DashboardNav`         | `src/components/Dashboard/DashboardNav.tsx`          | Sidebar navigation             | —                                                              |
-| `UserTable`            | `src/components/Admin/UserTable.tsx`                 | User management table          | Table, DropdownMenu, Badge, Button                             |
-| `CategoryManager`      | `src/components/Admin/CategoryManager.tsx`           | Category CRUD                  | Dialog, Button, Input, Card, Badge                             |
+| Component              | File                                                 | Purpose                        | shadcn Components Used                                         | Status |
+| ---------------------- | ---------------------------------------------------- | ------------------------------ | -------------------------------------------------------------- | ------ |
+| `WallpaperGrid`        | `src/components/Wallpaper/WallpaperGrid.tsx`         | Responsive grid layout         | —                                                              | ✅ |
+| `WallpaperCard`        | `src/components/Wallpaper/WallpaperCard.tsx`         | Card with thumbnail + metadata | Card, Badge, Skeleton                                          | ✅ |
+| `WallpaperDetail`      | `src/components/Wallpaper/WallpaperDetail.tsx`       | Full wallpaper view            | Card, Badge, Separator, Avatar                                 | ✅ |
+| `WallpaperUploadForm`  | `src/components/Wallpaper/WallpaperUploadForm.tsx`   | Upload form                    | Button, Input, Select, Textarea, Field, FieldLabel, FieldError | ✅ |
+| `LikeButton`           | `src/components/Wallpaper/LikeButton.tsx`            | Heart toggle                   | Button                                                         | ✅ |
+| `DownloadButton`       | `src/components/Wallpaper/DownloadButton.tsx`        | Download action                | Button                                                         | ✅ |
+| `Pagination`           | `src/components/Wallpaper/Pagination.tsx`            | Page nav                       | Button                                                         | ✅ |
+| `CategoryCard`         | `src/components/Category/CategoryCard.tsx`           | Category card                  | Card, Badge                                                    | ❌ |
+| `CollectionCard`       | `src/components/Collection/CollectionCard.tsx`       | Collection card                | Card                                                           | ❌ |
+| `CollectionForm`       | `src/components/Collection/CollectionForm.tsx`       | Create/edit form               | Dialog, Button, Input, Textarea, Field                         | ❌ |
+| `AddToCollectionModal` | `src/components/Collection/AddToCollectionModal.tsx` | Collection selection modal     | Dialog, Button                                                 | ❌ |
+| `DashboardNav`         | `src/components/Dashboard/DashboardNav.tsx`          | Sidebar navigation             | —                                                              | ❌ |
+| `UserTable`            | `src/components/Admin/UserTable.tsx`                 | User management table          | Table, DropdownMenu, Badge, Button                             | ❌ |
+| `CategoryManager`      | `src/components/Admin/CategoryManager.tsx`           | Category CRUD                  | Dialog, Button, Input, Card, Badge                             | ❌ |
 
 [Dependencies]
 New npm packages required for cloud storage + image processing: ✅ **Already installed**
@@ -314,9 +341,9 @@ No changes to `next.config.ts` or `components.json`.
 [Testing]
 Manual testing strategy since no test framework is configured:
 
-1. **Run `bun run lint`** after each phase to ensure no TypeScript/ESLint errors
-2. **Run `bun run build`** to verify production build succeeds
-3. **Visual verification** of all new pages in browser:
+1. ~~**Run `bun run lint`**~~ ✅ **Complete** — 0 errors, 0 warnings (using `npm run lint`)
+2. ~~**Run `bun run build`**~~ ✅ **Complete** — Production build succeeds with 9 pages generated
+3. ~~**Visual verification**~~ ⏳ **Pending** — Remaining features to test:
    - Upload a wallpaper → verify Sharp generates thumbnail, S3 stores both
    - Browse wallpapers → verify pagination, search, category filter
    - Wallpaper detail → verify likes, downloads, metadata display
@@ -331,24 +358,20 @@ Build features in dependency order, where each phase builds on the previous.
 
 1. ~~**Phase 0: Dependency Setup**~~ ✅ **Complete** — Install new shadcn components (`dropdown-menu`, `dialog`, `badge`, `select`, `textarea`) and npm packages (`@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`). Update env vars.
 
-2. **Phase 1: Image Processing + S3 Storage** — Create `src/lib/imageProcessor.ts` (Sharp resize/thumbnail/metadata extraction) and `src/lib/fileStorage.ts` (S3 upload/delete/signed URL). Required by wallpaper upload.
+2. ~~**Phase 1: Image Processing + S3 Storage**~~ ✅ **Complete** — `src/lib/imageProcessor.ts` and `src/lib/fileStorage.ts` created with Sharp processing and S3 client.
 
-3. **Phase 2: Wallpaper Upload** — Create upload page + `WallpaperUploadForm` component, private layout, and `createWallpaper` server action (Sharp → S3 → DB). Enables adding content.
+3. ~~**Phase 2: Wallpaper Upload**~~ ✅ **Complete** — Upload page at `src/app/(private)/upload/page.tsx`, `WallpaperUploadForm` component, private layout, and `createWallpaper` server action implemented.
 
-4. ~~**Phase 3: Wallpaper Browsing & Detail**~~ ✅ **Complete** — Listing page (search/filter, sort), `WallpaperGrid`/`WallpaperCard`/`Pagination`/`WallpaperDetail`/`LikeButton`/`DownloadButton` components, detail view with metadata, `likeWallpaper`/`downloadWallpaper`/`getWallpapers`/`getWallpaperById`/`getFeaturedWallpapers` server actions. Lint verified — 0 errors, 0 warnings.
+4. ~~**Phase 3: Wallpaper Browsing & Detail**~~ ✅ **Complete** — Listing page, `WallpaperGrid`/`WallpaperCard`/`Pagination`/`WallpaperDetail`/`LikeButton`/`DownloadButton` components, detail view with metadata, `likeWallpaper`/`downloadWallpaper`/`getWallpapers`/`getWallpaperById`/`getFeaturedWallpapers` server actions.
 
-5. **Phase 4: Categories** — Create category browsing pages, `CategoryCard` component, category server actions in admin. Enables content organization.
+5. ~~**Phase 4: Categories**~~ ❌ **Not Started** — No category browsing pages exist.
 
-6. **Phase 5: Collections** — Create collection CRUD pages, `CollectionForm`, `AddToCollectionModal`, server actions.
+6. ~~**Phase 5: Collections**~~ ❌ **Not Started** — No collection CRUD pages exist.
 
-7. **Phase 6: User Dashboard** — Create dashboard pages showing user's wallpapers, likes, downloads with server actions.
+7. ~~**Phase 6: User Dashboard**~~ ❌ **Not Started** — No dashboard pages exist.
 
-8. **Phase 7: Navigation Update** — Refactor Header to include session-aware nav links using shadcn DropdownMenu for user avatar.
+8. ~~**Phase 7: Navigation Update**~~ ❌ **Not Started** — Header needs refactoring for session-aware nav links.
 
-9. **Phase 8: Admin Panel** — Create admin pages for user/wallpaper/category management using:
-   - **User management**: Better Auth admin plugin API (`auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()`) — no custom server actions needed
-   - **Wallpaper management**: Custom server actions (`getAllWallpapersAdmin.ts`, `toggleFeatured.ts`)
-   - **Category management**: Custom server actions (`createCategory.ts`, `updateCategory.ts`, `deleteCategory.ts`)
-   - UI: shadcn Table, DropdownMenu, Dialog, Badge, Button
+9. ~~**Phase 8: Admin Panel**~~ ❌ **Not Started** — No admin pages exist.
 
-10. **Phase 9: Polish & Cleanup** — Remove `.gitkeep` files, run lint, run build, fix any issues.
+10. ~~**Phase 9: Polish & Cleanup**~~ ❌ **Not Started** — Not completed.
