@@ -18,8 +18,8 @@
 | Hashing       | @node-rs/argon2               | ^2.0.2        |
 | Animation     | tw-animate-css                | ^1.4.0        |
 | Env           | @t3-oss/env-nextjs            | ^0.13.11      |
-| Image Storage | @aws-sdk/client-s3            | latest        |
-| Signed URLs   | @aws-sdk/s3-request-presigner | latest        |
+| Image Storage | @aws-sdk/client-s3            | ^3.1056.0     |
+| Signed URLs   | @aws-sdk/s3-request-presigner | ^3.1056.0     |
 | Image Proc    | sharp                         | ^0.34.5       |
 
 ## Development Setup
@@ -43,7 +43,7 @@ BETTER_AUTH_URL=http://localhost:3000
 BETTER_AUTH_ALLOWED_ORIGINS=http://localhost:3000
 BETTER_AUTH_TELEMETRY=0
 
-# Backblaze B2 (S3-compatible) — TODO: Add these
+# Backblaze B2 (S3-compatible)
 S3_ENDPOINT=https://s3.us-west-004.backblazeb2.com
 S3_REGION=us-west-004
 S3_ACCESS_KEY_ID=<your-backblaze-key-id>
@@ -110,8 +110,7 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 - Style variant: `base-nova`
 - Field components are custom implementations (field.tsx, label.tsx)
 - Accessibility: `aria-invalid`, `role="alert"` on field errors, `htmlFor`/`id` pairing
-- **Installed**: avatar, button, card, field, input, label, separator, skeleton
-- **To install**: dropdown-menu, dialog, badge, select, textarea
+- **Installed (all 13)**: avatar, badge, button, card, dialog, dropdown-menu, field, input, label, select, separator, skeleton, textarea
 
 ### Next.js 16
 
@@ -125,6 +124,8 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 
 ### Runtime Dependencies
 
+- `@aws-sdk/client-s3` - S3-compatible storage client
+- `@aws-sdk/s3-request-presigner` - Signed URL generation for downloads
 - `@base-ui/react` - UI primitives
 - `@hookform/resolvers` - Zod resolver for react-hook-form
 - `@node-rs/argon2` - Password hashing (Rust native)
@@ -142,11 +143,6 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 - `sharp` - Image processing (resize, thumbnail, metadata)
 - `use-file-picker` - Client-side file selection with validation
 - `zod` - Schema validation
-
-### Pending Install
-
-- `@aws-sdk/client-s3` — S3-compatible storage client
-- `@aws-sdk/s3-request-presigner` — Signed URL generation for downloads
 
 ### Dev Dependencies
 

@@ -3,7 +3,16 @@
 [Overview]
 Complete the DripWall full-stack wallpaper sharing platform by implementing all remaining features: wallpaper browsing/search, image upload with Sharp optimization + S3-compatible cloud storage, collections, likes/downloads, user dashboard, and admin panel.
 
-The project currently has authentication fully implemented (login, register, forgot/reset password) with Next.js 16 + Better Auth + Prisma 7 (SQLite) + Tailwind CSS 4. The database schema defines all necessary models (Wallpaper, Category, Tag, Collection, Like, Download, etc.) but no feature pages or API routes exist beyond auth. This implementation will build the complete wallpaper platform using S3-compatible cloud storage (Cloudflare R2 or AWS S3) for images optimized/transformed via Sharp, console-level dev email logging, shadcn/ui components throughout, and the established form/component patterns.
+The project currently has authentication fully implemented (login, register, forgot/reset password) with Next.js 16 + Better Auth + Prisma 7 (SQLite) + Tailwind CSS 4. The database schema defines all necessary models (Wallpaper, Category, Tag, Collection, Like, Download, etc.) but no feature pages or API routes exist beyond auth. This implementation will build the complete wallpaper platform using S3-compatible cloud storage (Backblaze B2 via S3 API) for images optimized/transformed via Sharp, console-level dev email logging, shadcn/ui components throughout, and the established form/component patterns.
+
+## Phase 0 Status: ✅ COMPLETE
+
+All Phase 0 dependency setup tasks have been completed:
+
+- ✅ All 5 shadcn components installed: dropdown-menu, dialog, badge, select, textarea
+- ✅ npm packages installed: @aws-sdk/client-s3 ^3.1056.0, @aws-sdk/s3-request-presigner ^3.1056.0
+- ✅ serverEnv.ts configured with S3 env vars (S3_ENDPOINT, S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET_NAME, S3_PUBLIC_URL)
+- ✅ clientEnv.ts configured with NEXT_PUBLIC_S3_PUBLIC_URL
 
 [Types]
 New Zod schemas and TypeScript types will be added to support wallpaper management, collections, categories, and user interactions.
@@ -150,19 +159,19 @@ New files to be created and existing files to be modified across the entire appl
 - `src/lib/fileStorage.ts` — S3-compatible cloud storage client using `@aws-sdk/client-s3` (upload, delete, getSignedUrl)
 - `src/lib/imageProcessor.ts` — Sharp-based image processing (resize to multiple resolutions, generate WebP thumbnail, extract EXIF metadata: width, height, format, fileSize)
 
-**New shadcn components to add:**
+**New shadcn components to add:** ✅ **Already installed**
 
-- `src/components/shadcnui/dropdown-menu.tsx` — For admin actions, user menus
-- `src/components/shadcnui/dialog.tsx` — For AddToCollectionModal, confirmations
-- `src/components/shadcnui/badge.tsx` — For tags, categories, roles
-- `src/components/shadcnui/select.tsx` — For category dropdown in upload form
-- `src/components/shadcnui/textarea.tsx` — For description field in upload form
+- ~~`src/components/shadcnui/dropdown-menu.tsx`~~
+- ~~`src/components/shadcnui/dialog.tsx`~~
+- ~~`src/components/shadcnui/badge.tsx`~~
+- ~~`src/components/shadcnui/select.tsx`~~
+- ~~`src/components/shadcnui/textarea.tsx`~~
 
 ### Existing Files to Modify
 
 - `src/lib/types.ts` — Add `PageParams<T>` generic type and `PaginatedResponse<T>`, `ApiResponse<T>`
 - `src/lib/zodSchema.ts` — Add wallpaper upload, collection, category schemas + types
-- `src/lib/env/serverEnv.ts` — Add S3/cloud storage env vars
+- ~~`src/lib/env/serverEnv.ts` — Add S3/cloud storage env vars~~ ✅ **Already done**
 - `src/components/Header/Header.tsx` — Add navigation links (Wallpapers, Categories, Dashboard, Admin for admins) using shadcn DropdownMenu for user menu
 - `src/components/Header/AuthHeader.tsx` — Refactor to provide session data + role to Header via a shared `useSession` call so Header can conditionally render admin/dashboard/upload links. Use shadcn DropdownMenu for user avatar + dropdown
 
@@ -172,15 +181,17 @@ New files to be created and existing files to be modified across the entire appl
 - `src/hooks/.gitkeep` — Remove
 - `src/server/.gitkeep` — Remove
 
-### New Environment Variables (`src/lib/env/serverEnv.ts`)
+### New Environment Variables (`src/lib/env/serverEnv.ts`) ✅ **Already configured**
 
-- `S3_ENDPOINT`: `z.string().url()` — Backblaze B2 S3-compatible endpoint (e.g., `https://s3.us-west-004.backblazeb2.com`)
-- `S3_REGION`: `z.string().default("us-west-004")` — Backblaze B2 region
-- `S3_ACCESS_KEY_ID`: `z.string().min(1)` — Backblaze B2 application key ID
-- `S3_SECRET_ACCESS_KEY`: `z.string().min(1)` — Backblaze B2 application key
-- `S3_BUCKET_NAME`: `z.string().min(1)` — Backblaze B2 bucket name
-- `S3_PUBLIC_URL`: `z.string().url().optional()` — Optional public URL base for direct image access (e.g., `https://f002.backblazeb2.com/file/<bucketName>`)
-- `NEXT_PUBLIC_S3_PUBLIC_URL`: Add to clientEnv.ts for client-side image URLs
+The following S3 env vars are already defined in `serverEnv.ts` and `clientEnv.ts`:
+
+- `S3_ENDPOINT`: `z.string().url()`
+- `S3_REGION`: `z.string().default("us-west-004")`
+- `S3_ACCESS_KEY_ID`: `z.string().min(1)`
+- `S3_SECRET_ACCESS_KEY`: `z.string().min(1)`
+- `S3_BUCKET_NAME`: `z.string().min(1)`
+- `S3_PUBLIC_URL`: `z.string().url().optional()`
+- `NEXT_PUBLIC_S3_PUBLIC_URL`: In clientEnv.ts
 
 File storage uses standard `@aws-sdk/client-s3` v3, which is fully compatible with Backblaze B2's S3 API. Images stored under `wallpapers/{userId}/{uuid}-{name}` and `wallpapers/{userId}/thumb-{uuid}-{name}` paths.
 
@@ -284,11 +295,11 @@ No new classes. This project uses functional React components and server actions
 | `CategoryManager`      | `src/components/Admin/CategoryManager.tsx`           | Category CRUD                  | Dialog, Button, Input, Card, Badge                             |
 
 [Dependencies]
-New npm packages required for cloud storage + image processing:
+New npm packages required for cloud storage + image processing: ✅ **Already installed**
 
-- `@aws-sdk/client-s3` — S3-compatible storage client (Cloudflare R2, AWS S3, MinIO)
-- `@aws-sdk/s3-request-presigner` — Generate signed URLs for secure downloads
-- `sharp` — Already in `package.json` for image optimization/transformation
+- `@aws-sdk/client-s3` ^3.1056.0 — S3-compatible storage client (Backblaze B2, AWS S3, MinIO) ✅
+- `@aws-sdk/s3-request-presigner` ^3.1056.0 — Generate signed URLs for secure downloads ✅
+- `sharp` ^0.34.5 — Already in `package.json` for image optimization/transformation ✅
 
 No additional packages needed beyond these. All existing dependencies remain unchanged.
 
@@ -296,13 +307,9 @@ No changes to `prisma/schema.prisma` — the schema is already complete with all
 
 No changes to `next.config.ts` or `components.json`.
 
-**New shadcn components to install:**
+**New shadcn components to install:** ✅ **Already installed**
 
-- `dropdown-menu` — For user menu, admin actions
-- `dialog` — For modals (AddToCollection, confirmations)
-- `badge` — For tags, category counts, roles
-- `select` — For category/tag dropdowns
-- `textarea` — For description fields
+- ~~`dropdown-menu`~~, ~~`dialog`~~, ~~`badge`~~, ~~`select`~~, ~~`textarea`~~ — All 5 components installed
 
 [Testing]
 Manual testing strategy since no test framework is configured:
@@ -322,7 +329,7 @@ Manual testing strategy since no test framework is configured:
 [Implementation Order]
 Build features in dependency order, where each phase builds on the previous.
 
-1. **Phase 0: Dependency Setup** — Install new shadcn components (`dropdown-menu`, `dialog`, `badge`, `select`, `textarea`) and npm packages (`@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`). Update env vars.
+1. ~~**Phase 0: Dependency Setup**~~ ✅ **Complete** — Install new shadcn components (`dropdown-menu`, `dialog`, `badge`, `select`, `textarea`) and npm packages (`@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`). Update env vars.
 
 2. **Phase 1: Image Processing + S3 Storage** — Create `src/lib/imageProcessor.ts` (Sharp resize/thumbnail/metadata extraction) and `src/lib/fileStorage.ts` (S3 upload/delete/signed URL). Required by wallpaper upload.
 

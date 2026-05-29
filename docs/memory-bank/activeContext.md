@@ -2,54 +2,68 @@
 
 ## Current Work Focus
 
-The project has a **complete implementation plan** covering all remaining features, which has been audited against Better Auth, Prisma 7, and shadcn best practices via their official MCP tools/skills. The implementation is ready to begin.
+Phase 0 (Dependency Setup) is now **complete**. The project is ready to begin Phase 1 (Image Processing + S3 Storage) implementation.
 
-Key findings from the audit:
+### Completed in Phase 0:
 
-- **Better Auth admin plugin** provides built-in APIs for user management (`listUsers`, `setRole`, `banUser`, `unbanUser`) — no custom server actions needed for these
-- **All 5 shadcn components** (dropdown-menu, dialog, badge, select, textarea) confirmed available in registry
-- **Prisma schema** already complete — no changes needed
-- **Session access pattern** (`auth.api.getSession({ headers: await headers() })`) confirmed correct for server actions
-- **Form patterns** align with established conventions (Zod + react-hook-form + Controller)
+- ✅ All 5 shadcn components installed: dropdown-menu, dialog, badge, select, textarea
+- ✅ npm packages installed: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
+- ✅ serverEnv.ts updated with Backblaze B2 env vars (S3_ENDPOINT, S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET_NAME, S3_PUBLIC_URL)
+- ✅ clientEnv.ts updated with NEXT_PUBLIC_S3_PUBLIC_URL
 
 ## Recent Changes
 
-- **Implementation plan created** (`implementation_plan.md`) — 10 phases covering all features:
-  - Phase 0: Dependency Setup (shadcn components, npm packages, env vars)
-  - Phase 1: Image Processing + S3 Storage (fileStorage.ts, imageProcessor.ts)
-  - Phase 2: Wallpaper Upload (upload page, form, createWallpaper server action)
-  - Phase 3: Wallpaper Browsing & Detail (listing, grid, card, pagination, detail, like/download)
-  - Phase 4: Categories (browsing pages, CategoryCard)
-  - Phase 5: Collections (CRUD pages, CollectionForm, AddToCollectionModal)
-  - Phase 6: User Dashboard (dashboard pages with uploads, likes, downloads)
-  - Phase 7: Navigation Update (Header refactor with shadcn DropdownMenu)
-  - Phase 8: Admin Panel (user/wallpaper/category management)
-  - Phase 9: Polish & Cleanup (.gitkeep removal, lint, build)
-- **Implementation plan audited** against:
-  - Better Auth MCP docs (Next.js integration, admin plugin, session management)
-  - Prisma 7 skills (driver adapter, client API, database setup)
-  - shadcn MCP registry (component availability verification)
-- **4 duplicate admin server actions removed** from plan — `getAllUsers`, `updateUserRole`, `banUser`, `unbanUser` replaced with Better Auth's built-in `auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()`
-- **5 shadcn components** to install: dropdown-menu, dialog, badge, select, textarea
-- **2 npm packages** to install: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
-- **6 new env vars** for Backblaze B2 S3-compatible storage
+- **Phase 0 complete**: All dependencies installed and configured
+- **Implementation plan audited** against Better Auth, Prisma 7, and shadcn best practices (previous session)
+- **4 duplicate admin server actions removed** from plan — admin user management uses Better Auth's built-in `auth.api.*` methods
+- **Implementation plan** (`implementation_plan.md`) covers 10 phases (Phase 0 complete, Phases 1-9 pending)
 
 ## Next Steps
 
-### Phase 0: Dependency Setup (immediate)
-
-1. Install shadcn components: dropdown-menu, dialog, badge, select, textarea
-2. Install npm packages: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
-3. Update serverEnv.ts with Backblaze B2 env vars
-4. Update clientEnv.ts with NEXT_PUBLIC_S3_PUBLIC_URL
-5. Run `bun run lint` to verify no errors
-
-### Phase 1: Image Processing + S3 Storage
+### Phase 1: Image Processing + S3 Storage (immediate)
 
 - Create `src/lib/imageProcessor.ts` (Sharp resize/thumbnail/metadata)
 - Create `src/lib/fileStorage.ts` (S3 upload/delete/signed URL)
 
-### Phase 2+: Continue through Phase 9
+### Phase 2: Wallpaper Upload
+
+- Create upload page, WallpaperUploadForm, createWallpaper server action
+- Create `(private)` layout auth guard
+
+### Phase 3: Wallpaper Browsing & Detail
+
+- Create listing/grid/card/pagination components
+- Create detail page with LikeButton and DownloadButton
+- Create server actions for wallpaper queries, likes, downloads
+
+### Phase 4: Categories
+
+- Browse pages, CategoryCard component
+
+### Phase 5: Collections
+
+- CRUD pages, CollectionForm, AddToCollectionModal
+- 7 collection server actions
+
+### Phase 6: User Dashboard
+
+- Dashboard pages (uploads, likes, downloads)
+- DashboardNav, user server actions
+
+### Phase 7: Navigation Update
+
+- Header refactor with shadcn DropdownMenu
+- Simplify AuthHeader
+
+### Phase 8: Admin Panel
+
+- Admin pages for user/wallpaper/category management
+- Uses Better Auth admin plugin API for user management
+- Custom server actions for wallpaper and category management
+
+### Phase 9: Polish & Cleanup
+
+- Remove .gitkeep files, lint, build
 
 ## Active Decisions & Considerations
 
@@ -59,12 +73,7 @@ All operations use `"use server"` functions in `src/server/{domain}/{action}.ts`
 
 ### Better Auth Admin API vs Custom Server Actions
 
-**Key decision from audit:** User management operations (`listUsers`, `setRole`, `banUser`, `unbanUser`) should use Better Auth's built-in admin plugin API (`auth.api.*`) rather than custom server actions. These are the APIs to use:
-
-- `auth.api.listUsers({ query: { limit, offset }, headers: await headers() })` — paginated user list
-- `auth.api.setRole({ body: { userId, role }, headers: await headers() })` — role changes
-- `auth.api.banUser({ body: { userId, banReason?, banExpiresIn? }, headers: await headers() })` — ban with session revocation
-- `auth.api.unbanUser({ body: { userId }, headers: await headers() })` — unban
+User management operations (`listUsers`, `setRole`, `banUser`, `unbanUser`) should use Better Auth's built-in admin plugin API (`auth.api.*`) rather than custom server actions.
 
 Custom server actions are still needed for:
 
@@ -91,7 +100,6 @@ Custom server actions are still needed for:
 - Implemented using Better Auth's built-in `forgetPassword`/`resetPassword` via the email/password plugin
 - Reset token generated and stored by Better Auth, with configurable expiration
 - Currently logs reset token to console (no email sending service configured yet)
-- Will need email sending service for production use
 
 ### Email Verification
 

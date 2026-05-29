@@ -24,6 +24,11 @@
 - [x] Separator
 - [x] Skeleton (loading placeholder)
 - [x] Avatar (with Image, Fallback, Badge, Group)
+- [x] Badge
+- [x] Dialog
+- [x] Dropdown Menu
+- [x] Select
+- [x] Textarea
 - [x] Header with auth-aware navigation
 - [x] Theme toggle (dark/light with animated icons)
 
@@ -47,7 +52,7 @@
 - [x] TypeScript strict mode configuration
 - [x] ESLint (Next.js core-web-vitals + TypeScript)
 - [x] Prettier (with Tailwind CSS plugin)
-- [x] Environment variable validation (T3 Env)
+- [x] Environment variable validation (T3 Env) — server + client
 - [x] CSS variables for light/dark theme
 - [x] Font configuration (Geist sans)
 - [x] Path aliases (`@/*`, `@generated/*`)
@@ -60,15 +65,14 @@
 - [x] Database migrations applied
 - [x] Seed script (admin user + demo user + categories + tags)
 
+### Dependencies (Phase 0)
+
+- [x] shadcn components installed: dropdown-menu, dialog, badge, select, textarea
+- [x] npm packages installed: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
+- [x] serverEnv.ts configured with Backblaze B2 env vars
+- [x] clientEnv.ts configured with NEXT_PUBLIC_S3_PUBLIC_URL
+
 ## What's Left to Build
-
-### Phase 0: Dependency Setup
-
-- [ ] Install shadcn components: dropdown-menu, dialog, badge, select, textarea
-- [ ] Install npm packages: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
-- [ ] Update serverEnv.ts with Backblaze B2 env vars
-- [ ] Update clientEnv.ts with NEXT_PUBLIC_S3_PUBLIC_URL
-- [ ] Run `bun run lint` to verify no errors
 
 ### Phase 1: Image Processing + S3 Storage
 
@@ -143,11 +147,15 @@
 
 ## Current Status
 
-- **Phase**: Implementation Planned (pre-build)
+- **Phase**: 0 (Dependency Setup) — ✅ Complete
 - **Auth**: ✅ Complete (core flow functional)
 - **Implementation Plan**: ✅ Complete + Audited against Better Auth/Prisma/shadcn best practices
-- **UI**: ⚠️ Core shadcn components built, 5 more needed
+- **UI**: ✅ All 13 shadcn components installed and available
 - **Database**: ✅ Schema defined, seeded
+- **S3 Storage Deps**: ✅ @aws-sdk/client-s3 + @aws-sdk/s3-request-presigner installed
+- **Env Vars**: ✅ Server + client env configured for S3
+- **Image Processor**: ❌ Not started (Phase 1)
+- **File Storage**: ❌ Not started (Phase 1)
 - **Wallpapers**: ❌ Not started (implementation plan ready)
 - **Collections**: ❌ Not started (implementation plan ready)
 - **Dashboard**: ❌ Not started (implementation plan ready)
