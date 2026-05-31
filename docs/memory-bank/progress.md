@@ -174,14 +174,18 @@
 - [x] Simplify `src/components/Auth/AuthHeader.tsx` — presentational sign-in/sign-up links only (no session logic)
 - [x] Lint verified — 0 errors, 0 warnings
 
-### Phase 8: Admin Panel
+### Phase 8: Admin Panel ✅ Complete
 
-- [ ] Create admin overview page
-- [ ] Create user management page (uses Better Auth admin plugin API)
-- [ ] Create category management page + CategoryManager component
-- [ ] Create wallpaper management page
-- [ ] Create UserTable component
-- [ ] Create admin server actions (getAllWallpapersAdmin, toggleFeatured, createCategory, updateCategory, deleteCategory)
+- [x] Create admin overview page — `src/app/(private)/admin/page.tsx` (stats cards: users, wallpapers, categories, downloads)
+- [x] Create user management page — `src/app/(private)/admin/users/page.tsx` (uses `auth.api.listUsers()` + `UserTable` client component with role/ban actions via `authClient.admin.*`)
+- [x] Create category management page — `src/app/(private)/admin/categories/page.tsx` + `CategoryManager.tsx` (create/edit/delete with inline form)
+- [x] Create wallpaper management page — `src/app/(private)/admin/wallpapers/page.tsx` + `AdminWallpapersContent.tsx` (toggle featured, delete, pagination)
+- [x] Create UserTable component — `src/components/Admin/UserTable.tsx` (role toggle, ban/unban, loading states)
+- [x] Create admin server actions: `getAdminStats`, `getAllWallpapersAdmin`, `toggleFeatured`, `deleteWallpaperAdmin`, `createCategory`, `updateCategory`, `deleteCategory` — all in `src/server/admin/`
+- [x] Create `AdminSidebar` component — `src/components/Admin/AdminSidebar.tsx`
+- [x] Create admin layout with role guard — `src/app/(private)/admin/layout.tsx` (checks `role === "admin"`, redirects to `/`)
+- [x] Lint verified — 0 errors, 0 warnings
+- [x] Build verified — 4 new admin routes generated (`/admin`, `/admin/users`, `/admin/wallpapers`, `/admin/categories`)
 
 ### Phase 9: Polish & Cleanup
 
@@ -218,7 +222,7 @@
 - **Collections**: ✅ Complete (Phase 5) — 7 server actions + 3 components + 2 pages
 - **Dashboard**: ✅ Complete (Phase 6) — 3 server actions + 1 component + 1 layout + 3 pages + 3 client content files
 - **Navigation Update**: ✅ Complete (Phase 7) — Header refactored with DropdownMenu, AuthHeader simplified
-- **Admin Panel**: ❌ Not started (Phase 8)
+- **Admin Panel**: ✅ Complete (Phase 8) — 7 server actions + 2 components + 1 layout + 4 pages + 1 client wallpaper content + 1 client category manager
 - **Testing**: ❌ None
 - **Production Deploy**: ❌ Not configured
 

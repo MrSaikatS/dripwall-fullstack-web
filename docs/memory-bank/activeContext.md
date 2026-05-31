@@ -2,7 +2,7 @@
 
 ## Current Work Focus
 
-Phase 7 (Navigation Update) is now **complete**. The project is ready to begin Phase 8 (Admin Panel).
+Phase 8 (Admin Panel) is now **complete**. The project is ready to begin Phase 9 (Polish & Cleanup).
 
 ### Completed in Phase 7:
 
@@ -28,18 +28,15 @@ This matches the pattern used by `src/server/collection/getCollections.ts` and a
 - **Phase 4 complete**: Categories ✅
 - **Phase 5 complete**: Collections ✅
 - **Phase 6 complete**: Dashboard ✅ — 3 server actions + 1 layout + 1 component + 3 pages + 3 client content files
+- **Phase 8 complete**: Admin Panel ✅ — 7 server actions + 2 components + 1 layout + 4 pages + 1 client wallpaper content + 1 client category manager
 
 ## Next Steps
 
-### Phase 8: Admin Panel (immediate)
+### Phase 9: Polish & Cleanup (immediate)
 
-- Admin pages for user/wallpaper/category management
-- Uses Better Auth admin plugin API for user management
-- Custom server actions for wallpaper and category management
-
-### Phase 9: Polish & Cleanup
-
-- Remove .gitkeep files, lint, build
+- Run `bun run build` (verified — ✅)
+- Fix any remaining issues
+- Final lint pass
 
 ## Active Decisions & Considerations
 
@@ -136,3 +133,7 @@ This project uses **Bun** as the package manager and runtime. All commands (`dev
 - Next.js typed routes with `typedRoutes: true` requires `import type { Route } from "next";` and using `as Route` assertion on Link hrefs
 - The Base UI Button component does not support `asChild` prop — wrap Button inside Link instead for navigation
 - React Compiler strictly prohibits `setState` calls directly in the body of a `useEffect` — move data fetching to event handlers or use ref-cancelled async patterns
+- Admin role guard uses `session.user.role !== "admin"` check in nested layout within `(private)/` route group
+- Better Auth admin plugin: `auth.api.listUsers()` for server-side paginated user list; `authClient.admin.setRole()`, `authClient.admin.banUser()`, `authClient.admin.unbanUser()` for client-side mutations
+- Admin wallpapers page uses `getAllWallpapersAdmin` server action (not `auth.api.*`) because wallpaper management is domain-specific
+- Category CRUD server actions use `categoryCreateSchema` from `zodSchema.ts` with `.partial()` for updates; slug is auto-generated from name with conflict detection
