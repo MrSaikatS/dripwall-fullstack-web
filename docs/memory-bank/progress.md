@@ -194,6 +194,18 @@
 - [x] Run `bun run build` — 18 pages generated, all dynamic
 - [x] Fix any issues
 
+### Post-Phase 9: SEO & Refactoring ✅ Complete
+
+- [x] Add template-based metadata to root layout (`"%s | DripWall"`)
+- [x] Add `generateMetadata` to dynamic pages (wallpaper detail, category detail, collection detail)
+- [x] Add static metadata to all remaining pages (login, register, forgot-password, reset-password, upload, etc.)
+- [x] Polish home page UI (centered hero, larger headings, backdrop-blur header, CTA buttons with `size="lg"`)
+- [x] Polish upload form (image preview with `next/image`, replace `SelectValue` with custom `data-slot` pattern)
+- [x] Simplify header dropdown (removed Upload/Collections links, added chevron icon, backdrop-blur)
+- [x] Resize theme toggle icons from 28px to 20px
+- [x] Extract `slugify` to `src/lib/utils.ts` from admin server actions
+- [x] Sanitize admin server action error messages to generic text
+
 ### Future Considerations
 
 - [ ] **OAuth providers** (Google, GitHub login via Better Auth)
@@ -224,6 +236,9 @@
 - **Navigation Update**: ✅ Complete (Phase 7) — Header refactored with DropdownMenu, AuthHeader simplified
 - **Admin Panel**: ✅ Complete (Phase 8) — 7 server actions + 2 components + 1 layout + 4 pages + 1 client wallpaper content + 1 client category manager
 - **Polish & Cleanup**: ✅ Complete (Phase 9) — Build verified (18 pages), lint verified (0 errors)
+- **SEO Metadata**: ✅ Complete — template/generateMetadata on all pages
+- **UI Polish**: ✅ Complete — home page centered hero, backdrop-blur header, upload image preview, dropdown simplified
+- **Code Cleanup**: ✅ Complete — slugify extracted, error messages sanitized
 - **Testing**: ❌ None
 - **Production Deploy**: ❌ Not configured
 
@@ -233,8 +248,9 @@
 2. **Password Reset**: Uses console-based token display (no email sending service configured)
 3. **SQLite**: Only suitable for development, not production
 4. **Rate Limiting**: In-memory, resets on server restart
-5. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]` (once available)
-6. **No admin category CRUD yet** — Categories were seeded by the seed script; admin create/edit/delete will be added in Phase 8 (Admin Panel).
+5. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]`
+6. **No E2E tests**: Manual verification only
+7. **No OAuth providers**: Email/password only
 
 ## Evolution of Project Decisions
 
@@ -278,3 +294,15 @@
 - Avoids an extra dependency
 - Same API as `uuid.v4()` — returns a random UUID string
 - Used in `createWallpaper.ts` for generating unique file identifiers
+
+### Why template-based metadata in root layout?
+
+- `title.template` in root layout eliminates repetition — each page only specifies its name, not the full "Page | DripWall"
+- Dynamic pages use `generateMetadata` to fetch entity names from DB for accurate page titles
+- SEO improvement without adding boilerplate to every page
+
+### Why sanitize error messages in server actions?
+
+- Prevents leaking implementation details (DB errors, file paths, internal logic) to end users
+- Original errors still logged to `console.error()` for debugging
+- Consistent user experience with generic fallback messages

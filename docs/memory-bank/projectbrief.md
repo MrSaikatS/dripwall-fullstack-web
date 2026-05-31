@@ -62,4 +62,7 @@ DripWall is a full-stack wallpaper sharing platform that allows users to discove
 - **Admin Panel**: ✅ Complete — Phase 8
 - **Polish & Cleanup**: ✅ Complete — Phase 9
 - **Home Page**: ✅ Enhanced with featured wallpapers, latest wallpapers grid, categories section, and bottom CTA
+- **SEO Metadata**: ✅ Template-based titles + generateMetadata on all pages
+- **UI Polish**: ✅ Centered hero, backdrop-blur header, upload image preview
+- **Code Quality**: ✅ slugify extracted, error messages sanitized
 - **Build**: ✅ Verified — 18 pages generated, lint 0 errors

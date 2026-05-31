@@ -58,3 +58,5 @@ DripWall was built to create a modern, full-stack wallpaper sharing platform wit
 - **Accessible**: Proper labels, ARIA attributes, focus management, semantic HTML
 - **Feedback-Rich**: Toast notifications for all actions (login, register, logout, upload, errors)
 - **Theme-Aware**: Dark/light mode with smooth icon transitions
+- **SEO-Friendly**: Template-based metadata with dynamic `generateMetadata` on entity pages
+- **Polished UI**: Centered hero layout, backdrop-blur header, image preview on upload

@@ -38,6 +38,8 @@ This matches the pattern used by `src/server/collection/getCollections.ts` and a
 - **Phase 5 complete**: Collections ✅
 - **Phase 6 complete**: Dashboard ✅ — 3 server actions + 1 layout + 1 component + 3 pages + 3 client content files
 - **Phase 8 complete**: Admin Panel ✅ — 7 server actions + 2 components + 1 layout + 4 pages + 1 client wallpaper content + 1 client category manager
+- **SEO & Polish (aa6e9e9)**: Added metadata to all pages, template-based title in root layout, `generateMetadata` on dynamic pages, home page UI polish (centered hero, larger headings, backdrop-blur header, theme toggle icons 20px), header dropdown simplified (Upload/Collections removed from menu), upload form image preview replaces file name text
+- **Refactor (dc502f9)**: Extracted `slugify` to `src/lib/utils.ts`, sanitized admin server action error messages to generic "An unexpected error occurred. Please try again."
 
 ## Next Steps
 
@@ -127,6 +129,24 @@ This project uses **Bun** as the package manager and runtime. All commands (`dev
 - Use event handlers (e.g., `onOpenChange` on Dialog) or ref-based patterns instead
 - For data loading on mount, ensure the effect body calls a function that only calls setState after an async operation completes (cancelled via ref)
 
+### Metadata Pattern
+
+- Root layout exports `metadata` with `title.template` and `title.default` for consistent tab titles (`"%s | DripWall"`, default `"DripWall"`)
+- Static pages export `metadata` with just page name (no "| DripWall" suffix — the template handles it)
+- Dynamic pages use `generateMetadata` async function fetching from DB (wallpaper title, collection name, category name)
+- Pages without meaningful dynamic content return empty object `{}` from `generateMetadata`
+
+### Error Message Pattern
+
+- Admin server actions sanitize errors to generic messages like `"An unexpected error occurred. Please try again."`
+- Original error logged to `console.error()` for debugging
+- Prevents leaking implementation details to users
+
+### Utility Extraction Pattern
+
+- Shared utility functions (like `slugify`) extracted to `src/lib/utils.ts`
+- Eliminates duplication across server action files
+
 ## Preferred Verification
 
 - Use `bun run lint` (not `bun run build`) for quick verification after changes — faster and sufficient for catching errors
@@ -151,3 +171,4 @@ This project uses **Bun** as the package manager and runtime. All commands (`dev
 - Better Auth admin plugin: `auth.api.listUsers()` for server-side paginated user list; `authClient.admin.setRole()`, `authClient.admin.banUser()`, `authClient.admin.unbanUser()` for client-side mutations
 - Admin wallpapers page uses `getAllWallpapersAdmin` server action (not `auth.api.*`) because wallpaper management is domain-specific
 - Category CRUD server actions use `categoryCreateSchema` from `zodSchema.ts` with `.partial()` for updates; slug is auto-generated from name with conflict detection
+- Git commit messages in PowerShell: heredoc syntax (`<<EOF`) doesn't work. Use `git commit -m "subject" -m "body"` or pass via temporary file with `Set-Content`

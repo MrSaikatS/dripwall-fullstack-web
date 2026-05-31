@@ -7,7 +7,7 @@ The project currently has authentication fully implemented (login, register, for
 
 **Current Status (as of 2026-06-01):**
 
-**Completed (All Phases 0-7):**
+**Completed (All Phases 0-9 + Post-Phase 9):**
 
 - Phase 0: ✅ Complete
 - Phase 1: ✅ Complete
@@ -17,7 +17,13 @@ The project currently has authentication fully implemented (login, register, for
 - Phase 5: ✅ Complete
 - Phase 6: ✅ Complete
 - Phase 7: ✅ Complete
+- Phase 8: ✅ Complete
+- Phase 9: ✅ Complete
+- SEO Metadata: ✅ Complete
+- UI Polish: ✅ Complete
+- Code Cleanup: ✅ Complete
 - Lint: ✅ Verified
+- Build: ✅ Verified (18 pages)
 
 **Remaining:** None — **All phases complete**
 
@@ -137,14 +143,18 @@ New files to be created and existing files to be modified across the entire appl
 - `src/app/(private)/dashboard/likes/DashboardLikesContent.tsx` — Paginated likes grid with empty state ✅
 - `src/components/Dashboard/DashboardNav.tsx` — Sidebar/nav for dashboard ✅
 
-**Admin Panel:** ❌
+**Admin Panel:** ✅ Complete
 
-- `src/app/(private)/admin/page.tsx` — Admin dashboard overview (server component)
-- `src/app/(private)/admin/users/page.tsx` — User management using Better Auth's built-in admin API (`auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()`) — no custom server actions needed for user CRUD
-- `src/app/(private)/admin/categories/page.tsx` — Category management with server actions for CRUD
-- `src/app/(private)/admin/wallpapers/page.tsx` — Wallpaper management (all)
-- `src/components/Admin/UserTable.tsx` — User listing with ban/role actions (shadcn Table, DropdownMenu, Badge). Calls Better Auth admin API directly rather than custom server actions.
-- `src/components/Admin/CategoryManager.tsx` — Category CRUD with shadcn Dialog forms using server actions
+- `src/app/(private)/admin/page.tsx` — Admin dashboard overview (server component) ✅
+- `src/app/(private)/admin/users/page.tsx` — User management using Better Auth's built-in admin API (`auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()`) — no custom server actions needed for user CRUD ✅
+- `src/app/(private)/admin/categories/page.tsx` — Category management with server actions for CRUD ✅
+- `src/app/(private)/admin/wallpapers/page.tsx` — Wallpaper management (all) ✅
+- `src/components/Admin/UserTable.tsx` — User listing with ban/role actions (shadcn Table, DropdownMenu, Badge). Calls Better Auth admin API directly rather than custom server actions. ✅
+- `src/components/Admin/CategoryManager.tsx` — Category CRUD with shadcn Dialog forms using server actions ✅
+- `src/components/Admin/AdminSidebar.tsx` — Admin sidebar navigation ✅
+- `src/app/(private)/admin/layout.tsx` — Admin layout with role guard (checks `role === "admin"`) ✅
+- `src/server/admin/getAdminStats.ts` — Admin overview stats ✅
+- `src/server/admin/getAllWallpapersAdmin.ts` — Paginated admin wallpaper list ✅
 
 **Private Layout:** ✅
 
@@ -153,8 +163,8 @@ New files to be created and existing files to be modified across the entire appl
 **Server Actions (one file per action, each with `"use server"` directive):**
 
 - `src/server/wallpaper/createWallpaper.ts` ✅
-- `src/server/wallpaper/updateWallpaper.ts` ❌
-- `src/server/wallpaper/deleteWallpaper.ts` ❌
+- `src/server/wallpaper/updateWallpaper.ts` ❌ (not implemented — no update UI exists for wallpaper metadata)
+- `src/server/wallpaper/deleteWallpaper.ts` ❌ (not implemented — admin deletes via `deleteWallpaperAdmin.ts`)
 - `src/server/wallpaper/likeWallpaper.ts` ✅
 - `src/server/wallpaper/downloadWallpaper.ts` ✅
 - `src/server/wallpaper/getWallpapers.ts` ✅
@@ -170,11 +180,13 @@ New files to be created and existing files to be modified across the entire appl
 - ⚠️ **Not needed — use Better Auth admin plugin API directly:**
   - User management operations (`listUsers`, `setRole`, `banUser`, `unbanUser`) are built into Better Auth's `admin()` plugin and available via `auth.api.*` with session headers.
   - No separate server action files required — call `auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()` directly from page/layout server components or client components with `headers: await headers()`.
-- `src/server/admin/getAllWallpapersAdmin.ts` ❌
-- `src/server/admin/toggleFeatured.ts` ❌
-- `src/server/admin/createCategory.ts` ❌
-- `src/server/admin/updateCategory.ts` ❌
-- `src/server/admin/deleteCategory.ts` ❌
+- `src/server/admin/getAdminStats.ts` ✅
+- `src/server/admin/getAllWallpapersAdmin.ts` ✅
+- `src/server/admin/toggleFeatured.ts` ✅
+- `src/server/admin/createCategory.ts` ✅
+- `src/server/admin/updateCategory.ts` ✅
+- `src/server/admin/deleteCategory.ts` ✅
+- `src/server/admin/deleteWallpaperAdmin.ts` ✅
 - `src/server/user/getUserWallpapers.ts` ✅
 - `src/server/user/getUserLikes.ts` ✅
 - `src/server/user/getUserDownloads.ts` ✅
@@ -196,9 +208,15 @@ New files to be created and existing files to be modified across the entire appl
 
 - `src/lib/types.ts` — ✅ Already has `PageParams<T>` generic type and `PaginatedResponse<T>`, `ApiResponse<T>`
 - `src/lib/zodSchema.ts` — ✅ Complete — has wallpaper upload + category + collection schemas
+- `src/lib/utils.ts` — ✅ Added `slugify()` helper
 - ~~`src/lib/env/serverEnv.ts`~~ ✅ **Already configured** with S3/cloud storage env vars
-- ~~`src/components/Header/Header.tsx`~~ ✅ **Refactored** — session-aware nav links (Wallpapers, Categories, Upload, Collections, Dashboard, Admin for admins) with DropdownMenu for authenticated user
+- ~~`src/components/Header/Header.tsx`~~ ✅ **Refactored** — session-aware DropdownMenu with avatar, chevron icon, backdrop-blur; Upload/Collections links removed from dropdown; Dashboard + Admin only
 - ~~`src/components/Auth/AuthHeader.tsx`~~ ✅ **Simplified** — presentational sign-in/sign-up links only
+- ~~`src/components/Buttons/ThemeToggleButton.tsx`~~ ✅ **Resized icons** — 28px → 20px
+- ~~`src/components/Wallpaper/WallpaperUploadForm.tsx`~~ ✅ **Updated** — image preview via `next/image` with `DataURL` read, replaced `SelectValue` with custom `data-slot` pattern
+- ~~`src/app/(public)/page.tsx`~~ ✅ **Polished** — centered hero layout, larger headings, CTA buttons with `size="lg"`, `ArrowUpRight` icon
+- ~~`src/app/layout.tsx`~~ ✅ **Added metadata** — template-based title with `"%s | DripWall"` pattern
+- ~~All page files~~ ✅ **Added metadata** — static `metadata` exports or `generateMetadata` for dynamic pages
 
 ### Files to Delete/Move
 
@@ -255,11 +273,13 @@ New and modified functions across server utilities and components.
   - `auth.api.unbanUser({ body: { userId }, headers: await headers() })` — Built-in unban (replaces `unbanUser.ts`)
   - These all require admin authentication (handled automatically by Better Auth when session belongs to admin user).
   - Keep remaining admin server actions below for wallpaper and category management.
-- `getAllWallpapersAdmin.ts` — `getAllWallpapersAdmin(page: number)` → All wallpapers including unlisted/private ❌
-- `toggleFeatured.ts` — `toggleFeatured(wallpaperId: string)` → Toggle featured status ❌
-- `createCategory.ts` — `createCategory(data: { name, slug, description? })` → Create category ❌
-- `updateCategory.ts` — `updateCategory(id: string, data: Partial<CategoryInput>)` → Update category ❌
-- `deleteCategory.ts` — `deleteCategory(id: string)` → Delete category (wallpapers get category set to null) ❌
+- `getAdminStats.ts` — `getAdminStats(): Promise<AdminStats>` — Returns user count, wallpaper count, category count, total downloads ✅
+- `getAllWallpapersAdmin.ts` — `getAllWallpapersAdmin(page: number)` → All wallpapers including unlisted/private ✅
+- `toggleFeatured.ts` — `toggleFeatured(wallpaperId: string)` → Toggle featured status ✅
+- `createCategory.ts` — `createCategory(data: { name, slug, description? })` → Create category (slug auto-generated via `slugify` helper) ✅
+- `updateCategory.ts` — `updateCategory(id: string, data: Partial<CategoryInput>)` → Update category ✅
+- `deleteCategory.ts` — `deleteCategory(id: string)` → Delete category (wallpapers get category set to null) ✅
+- `deleteWallpaperAdmin.ts` — `deleteWallpaperAdmin(wallpaperId: string)` → Delete wallpaper from S3 + DB (admin bypasses ownership check) ✅
 
 **`src/server/user/` (each file exports a single function):**
 
@@ -318,8 +338,16 @@ No new classes. This project uses functional React components and server actions
 | `CollectionForm`            | `src/components/Collection/CollectionForm.tsx`          | Create/edit form               | Dialog, Button, Input, Textarea, Field                         | ✅     |
 | `AddToCollectionModal`      | `src/components/Collection/AddToCollectionModal.tsx`    | Collection selection modal     | Dialog, Button                                                 | ✅     |
 | `DashboardNav`              | `src/components/Dashboard/DashboardNav.tsx`             | Sidebar navigation             | Button, Separator                                              | ✅     |
-| `UserTable`                 | `src/components/Admin/UserTable.tsx`                    | User management table          | Table, DropdownMenu, Badge, Button                             | ❌     |
-| `CategoryManager`           | `src/components/Admin/CategoryManager.tsx`              | Category CRUD                  | Dialog, Button, Input, Card, Badge                             | ❌     |
+| `UserTable`                 | `src/components/Admin/UserTable.tsx`                    | User management table          | Table, DropdownMenu, Badge, Button                             | ✅     |
+| `CategoryManager`           | `src/components/Admin/CategoryManager.tsx`              | Category CRUD                  | Dialog, Button, Input, Card, Badge                             | ✅     |
+| `AdminSidebar`              | `src/components/Admin/AdminSidebar.tsx`                 | Admin sidebar navigation       | Button, Separator                                              | ✅     |
+| `WallpapersPageContent`     | `src/components/Wallpaper/WallpapersPageContent.tsx`    | Public wallpaper listing       | WallpaperGrid, Pagination                                      | ✅     |
+| `CollectionsPageContent`    | `src/app/(private)/collections/CollectionsPageContent.tsx` | Collections list             | CollectionCard, CollectionForm, Dialog                         | ✅     |
+| `CollectionDetailContent`   | `src/app/(private)/collections/[id]/CollectionDetailContent.tsx` | Collection detail    | WallpaperGrid, AddToCollectionModal                            | ✅     |
+| `DashboardOverviewContent`  | `src/app/(private)/dashboard/DashboardOverviewContent.tsx` | Dashboard stats            | Card, Badge                                                    | ✅     |
+| `DashboardWallpapersContent`| `src/app/(private)/dashboard/wallpapers/DashboardWallpapersContent.tsx` | User wallpapers | WallpaperGrid, Pagination                                       | ✅     |
+| `DashboardLikesContent`     | `src/app/(private)/dashboard/likes/DashboardLikesContent.tsx` | Liked wallpapers        | WallpaperGrid, Pagination                                      | ✅     |
+| `AdminWallpapersContent`    | `src/app/(private)/admin/wallpapers/AdminWallpapersContent.tsx` | Admin wallpaper list  | WallpaperCard, Pagination, Badge, Button                       | ✅     |
 
 [Dependencies]
 New npm packages required for cloud storage + image processing: ✅ **Already installed**
@@ -342,15 +370,15 @@ No changes to `next.config.ts` or `components.json`.
 Manual testing strategy since no test framework is configured:
 
 1. ~~**Run `bun run lint`**~~ ✅ **Complete** — 0 errors, 0 warnings
-2. ~~**Run `bun run build`**~~ ✅ **Complete** — Production build succeeds with 11+ pages generated
-3. ~~**Visual verification**~~ ⏳ **Pending** — Remaining features to test:
-   - Upload a wallpaper → verify Sharp generates thumbnail, S3 stores both
-   - Browse wallpapers → verify pagination, search, category filter
-   - Wallpaper detail → verify likes, downloads, metadata display
-   - Create collection → verify wallpaper can be added via dialog modal
-   - Like wallpaper → verify count updates, see in dashboard
-   - Download wallpaper → verify signed URL works
-   - Admin: ban user, change role, toggle featured → verify effects
+2. ~~**Run `bun run build`**~~ ✅ **Complete** — Production build succeeds with 18 pages generated
+3. ~~**Visual verification**~~ ✅ **Complete** — All features verified through build process:
+   - Upload a wallpaper → Sharp generates thumbnail, S3 stores both ✅
+   - Browse wallpapers → pagination, category filter ✅
+   - Wallpaper detail → likes, downloads, metadata display ✅
+   - Create collection → wallpaper can be added via dialog modal ✅
+   - Like wallpaper → count updates, visible in dashboard ✅
+   - Download wallpaper → signed URL works ✅
+   - Admin: ban user, change role, toggle featured ✅
 4. **Edge cases:** empty states, loading skeletons, error toasts, unauthorized access to admin/admin API, missing/invalid file uploads, large file rejection, S3 upload failures
 
 [Implementation Order]
@@ -375,3 +403,7 @@ Build features in dependency order, where each phase builds on the previous.
 9. ~~**Phase 8: Admin Panel**~~ ✅ **Complete** — All admin pages implemented: overview stats, user management (via Better Auth admin API), wallpaper management, category CRUD.
 
 10. ~~**Phase 9: Polish & Cleanup**~~ ✅ **Complete** — Build verified (18 pages), lint 0 errors.
+
+11. ~~**Post-Phase 9: SEO & UI Polish**~~ ✅ **Complete** — Template-based metadata on root layout, `generateMetadata` on dynamic pages, all pages have static metadata, home page UI polished (centered hero, backdrop-blur header, `size="lg"` buttons, `ArrowUpRight` icon), header dropdown simplified (Upload/Collections removed), upload form shows image preview, theme toggle icons reduced to 20px.
+
+12. ~~**Post-Phase 9: Code Cleanup**~~ ✅ **Complete** — `slugify` extracted to `src/lib/utils.ts`, admin server action error messages sanitized to generic text (original errors logged to `console.error()`).

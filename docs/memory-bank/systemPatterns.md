@@ -146,6 +146,24 @@ These are called directly from page/layout server components or client component
 - `@custom-variant dark` for dark mode support
 - Shadcn `tailwind.css` import for component styles
 
+### Utility Functions
+
+- `cn()` in `src/lib/utils.ts` — class name merging (clsx + tailwind-merge)
+- `slugify()` in `src/lib/utils.ts` — text to URL-safe slug (extracted from admin server actions to avoid duplication)
+
+### Metadata Pattern
+
+- Root layout (`src/app/layout.tsx`) sets `title.template: "%s | DripWall"` and `default: "DripWall"` for consistent tab titles
+- Static pages export named `metadata` object with just the page name (template handles the suffix)
+- Dynamic pages (wallpapers/[id], categories/[slug], collections/[id]) export `async generateMetadata` that fetches entity name from DB
+- All metadata includes `description` for SEO
+
+### Error Handling in Server Actions
+
+- Admin server actions sanitize error messages to generic text ("An unexpected error occurred. Please try again.")
+- Original error logged to `console.error()` for debugging
+- Prevents leaking internal implementation details to end users
+
 ## Component Relationships
 
 ```
