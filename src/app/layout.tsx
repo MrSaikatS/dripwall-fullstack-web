@@ -18,7 +18,7 @@ const RootLayout = ({ children }: LayoutChildrenProps) => {
           enableSystem={false}>
           <Header />
 
-          <main className="mx-auto max-w-7xl">{children}</main>
+          <main className="mx-auto max-w-7xl pt-16">{children}</main>
         </ThemeProvider>
       </body>
     </html>

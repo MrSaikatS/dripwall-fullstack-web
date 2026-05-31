@@ -2,12 +2,21 @@
 
 ## Current Work Focus
 
-Phase 8 (Admin Panel) is now **complete**. The project is ready to begin Phase 9 (Polish & Cleanup).
+All 10 phases (Phase 0–9) are now **complete**. The project implementation is fully finished.
 
-### Completed in Phase 7:
+### Updated: Home Page
 
-- ✅ `src/components/Header/Header.tsx` — Refactored with shadcn DropdownMenu, inline session logic, avatar with user menu, nav links (Wallpapers, Categories, Upload, Collections, Admin), logout with loading state
-- ✅ `src/components/Auth/AuthHeader.tsx` — Simplified to presentational sign-in/sign-up links (no session logic)
+The home page was previously a bare hero section. Now it includes:
+- Hero with CTAs (Browse Wallpapers, Upload)
+- Featured wallpapers grid (if any exist)
+- Latest wallpapers grid (8 most recent) with "View All" link
+- Categories grid with "All Categories" link
+- Bottom CTA section for uploads
+
+### Phase 9 Completed:
+
+- ✅ `bun run build` — 18 pages generated, all dynamic routes working
+- ✅ `bun run lint` — 0 errors, 0 warnings
 
 ### Key Pattern: Session in Server Actions
 
@@ -32,11 +41,12 @@ This matches the pattern used by `src/server/collection/getCollections.ts` and a
 
 ## Next Steps
 
-### Phase 9: Polish & Cleanup (immediate)
+All 10 phases complete. Future considerations (if resumed):
 
-- Run `bun run build` (verified — ✅)
-- Fix any remaining issues
-- Final lint pass
+- OAuth providers (Google, GitHub)
+- PostgreSQL/MySQL migration
+- Unit/E2E tests
+- CI/CD pipeline
 
 ## Active Decisions & Considerations
 
@@ -116,6 +126,10 @@ This project uses **Bun** as the package manager and runtime. All commands (`dev
 - Do not call `setState` synchronously inside `useEffect` — the React Compiler (babel-plugin-react-compiler) raises errors on this pattern
 - Use event handlers (e.g., `onOpenChange` on Dialog) or ref-based patterns instead
 - For data loading on mount, ensure the effect body calls a function that only calls setState after an async operation completes (cancelled via ref)
+
+## Preferred Verification
+
+- Use `bun run lint` (not `bun run build`) for quick verification after changes — faster and sufficient for catching errors
 
 ## Learnings & Insights
 

@@ -113,17 +113,19 @@ const Header = () => {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">
-                      {data.user.name}
-                    </span>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">
+                        {data.user.name}
+                      </span>
 
-                    <span className="text-xs text-muted-foreground">
-                      {data.user.email}
-                    </span>
-                  </div>
-                </DropdownMenuLabel>
+                      <span className="text-xs text-muted-foreground">
+                        {data.user.email}
+                      </span>
+                    </div>
+                  </DropdownMenuLabel>
+                </DropdownMenuGroup>
 
                 <DropdownMenuSeparator />
 

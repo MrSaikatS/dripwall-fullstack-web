@@ -18,6 +18,6 @@ See `docs/form-patterns.md` for detailed documentation on form implementation pa
 
 # Bun Package Manager
 
-This project uses **Bun** as the package manager and runtime. All commands must use `bun` (not `npm` or `npx`). For example: `bun dev`, `bun run build`, `bun add <package>`, `bun install`.
+This project uses **Bun** as the package manager and runtime. All commands must use `bun` (not `npm` or `npx`). For example: `bun dev`, `bun run build`, `bun i <package>`, `bun install`.
 
 <!-- END:bun -->

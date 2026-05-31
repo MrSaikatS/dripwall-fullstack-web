@@ -153,27 +153,51 @@ RootLayout
 ├── ThemeProvider (next-themes)
 │   ├── ToastProvider (react-toastify)
 │   └── Header
-│       ├── AuthHeader
-│       │   ├── Skeleton (loading state)
-│       │   ├── LogoutButton (authenticated)
-│       │   └── Sign in / Sign up links (unauthenticated)
+│       ├── Header (client component with inline session, DropdownMenu)
+│       │   ├── DropdownMenu (authenticated: avatar + user menu)
+│       │   │   ├── Dashboard, Upload, Collections, Admin links
+│       │   │   └── LogoutButton
+│       │   └── AuthHeader (unauthenticated: sign-in/sign-up links)
 │       └── ThemeToggleButton
-└── <main> children
+└── <main className="pt-16"> children
     ├── (public) routes
-    │   ├── Home Page (public)
+    │   ├── Home Page (server component)
+    │   │   ├── Hero section with CTAs (Browse Wallpapers, Upload)
+    │   │   ├── Featured wallpapers grid → WallpaperGrid > WallpaperCard
+    │   │   ├── Latest wallpapers grid → WallpaperGrid > WallpaperCard
+    │   │   ├── Categories grid → CategoryGrid > CategoryCard
+    │   │   └── Bottom CTA section → Button
     │   ├── Login Page → LoginForm
     │   ├── Register Page → RegisterForm
     │   ├── Forgot Password Page → ForgotPasswordForm
     │   ├── Reset Password Page → ResetPasswordForm
-    │   ├── Wallpapers List → WallpaperGrid > WallpaperCard
+    │   ├── Wallpapers List → WallpapersPageContent > WallpaperGrid > WallpaperCard + Pagination
     │   ├── Wallpaper Detail → WallpaperDetail > LikeButton, DownloadButton
     │   └── Categories → CategoryCard
     └── (private) routes [auth guard]
-        ├── Upload → WallpaperUploadForm ← Phase 2 ✅
+        ├── Upload → WallpaperUploadForm
         ├── Collections → CollectionCard, CollectionForm, AddToCollectionModal
         ├── Dashboard → DashboardNav
         └── Admin → UserTable, CategoryManager
 ```
+
+### Home Page Data Fetching Pattern
+
+The home page (`src/app/(public)/page.tsx`) fetches multiple data sources concurrently in an async server component:
+
+```typescript
+const [featured, latest, categories] = await Promise.all([
+  getWallpapers({ isFeatured: true, pageSize: 4 }),
+  getWallpapers({ pageSize: 8, sortBy: "newest" }),
+  getCategories(),
+]);
+```
+
+Sections rendered: hero with CTAs, featured wallpapers grid (conditional), latest wallpapers grid with "View All" link, categories grid with "All Categories" link, and bottom CTA section.
+
+### Layout Spacing
+
+Root layout `<main>` uses `pt-16` to prevent content from being hidden behind the fixed header.
 
 ## Critical Implementation Paths
 
