@@ -5,22 +5,23 @@ Complete the DripWall full-stack wallpaper sharing platform by implementing all 
 
 The project currently has authentication fully implemented (login, register, forgot/reset password) with Next.js 16 + Better Auth + Prisma 7 (SQLite) + Tailwind CSS 4. The database schema defines all necessary models (Wallpaper, Category, Tag, Collection, Like, Download, etc.) but no feature pages or API routes exist beyond auth. This implementation will build the complete wallpaper platform using S3-compatible cloud storage (Backblaze B2 via S3 API) for images optimized/transformed via Sharp, console-level dev email logging, shadcn/ui components throughout, and the established form/component patterns.
 
-**Current Status (as of 2026-05-30):**
+**Current Status (as of 2026-05-31):**
 
 **Completed (Core Foundation):**
 - Phase 0: ✅ Complete
 - Phase 1: ✅ Complete  
 - Phase 2: ✅ Complete
 - Phase 3: ✅ Complete
+- Phase 4: ✅ Complete
 - Lint: ✅ 0 errors, 0 warnings
-- Build: ✅ Success (9 pages generated)
+- Build: ✅ Success (11 pages generated)
 
 **Partially Complete:**
-- Types & Schemas: ⚠️ Wallpaper upload schema complete, missing collection/category schemas
+- Types & Schemas: ⚠️ Wallpaper upload + category schemas complete, missing collection schemas
 - Header: ✅ AuthHeader complete, Header needs refactoring for session-aware nav
 
-**Not Started:**
-- Phase 4: Categories — No category browsing pages or CategoryCard component
+**Completed:**
+- Phase 4: Categories ✅ Complete
 - Phase 5: Collections — No collection CRUD pages or components
 - Phase 6: User Dashboard — No dashboard pages
 - Phase 7: Navigation Update — Header needs session-aware links
@@ -52,15 +53,14 @@ New Zod schemas and TypeScript types will be added to support wallpaper manageme
 - `description`: `z.string().max(300).optional()` ❌
 - `isPublic`: `z.boolean()` ❌
 
-**Category Create Schema** (`src/lib/zodSchema.ts`) ❌
+**Category Create Schema** (`src/lib/zodSchema.ts`) ✅
 
-- `name`: `z.string().trim().min(1).max(32)` ❌
-- `description`: `z.string().max(300).optional()` ❌
+- `name`: `z.string().trim().min(1).max(32)` ✅
+- `description`: `z.string().max(300).optional()` ✅
 
 **Missing schemas to add:**
 
 - Collection schema needed for `src/components/Collection/CollectionForm.tsx`
-- Category schema needed for admin category management
 
 **Update `LayoutChildrenProps`** in `src/lib/types.ts` ✅ — Already exports `PageParams` generic type
 
@@ -114,11 +114,16 @@ New files to be created and existing files to be modified across the entire appl
 - `src/components/Wallpaper/LikeButton.tsx` ✅
 - `src/components/Wallpaper/DownloadButton.tsx` ✅
 
-**Categories:** ❌
+**Categories:** ✅
 
-- `src/app/(public)/categories/page.tsx` — Browse categories (server component, direct DB)
-- `src/app/(public)/categories/[slug]/page.tsx` — Wallpapers by category (server component + client interactive)
-- `src/components/Category/CategoryCard.tsx` — Category card with image and count
+- `src/app/(public)/categories/page.tsx` — Browse categories (server component, direct DB) ✅
+- `src/app/(public)/categories/[slug]/page.tsx` — Wallpapers by category (server component + client interactive) ✅
+- `src/components/Category/CategoryCard.tsx` — Category card with image and count ✅
+- `src/components/Category/CategoryGrid.tsx` — Responsive grid with empty state ✅
+- `src/components/Category/CategoryWallpapersContent.tsx` — Wallpaper grid + pagination ✅
+- `src/server/category/getCategories.ts` — List categories with wallpaper counts ✅
+- `src/server/category/getCategoryBySlug.ts` — Category detail + paginated wallpapers ✅
+- `categoryCreateSchema` in `src/lib/zodSchema.ts` ✅
 
 **Tags:**
 
@@ -197,7 +202,7 @@ New files to be created and existing files to be modified across the entire appl
 ### Existing Files to Modify
 
 - `src/lib/types.ts` — ✅ Already has `PageParams<T>` generic type and `PaginatedResponse<T>`, `ApiResponse<T>`
-- `src/lib/zodSchema.ts` — ⚠️ Partial — has wallpaper upload schema, missing collection/category schemas
+- `src/lib/zodSchema.ts` — ⚠️ Partial — has wallpaper upload + category schemas, missing collection schemas
 - ~~`src/lib/env/serverEnv.ts`~~ ✅ **Already configured** with S3/cloud storage env vars
 - ~~`src/components/Header/Header.tsx`~~ ❌ **Not refactored** — needs session-aware nav links (Wallpapers, Categories, Upload, Dashboard, Admin for admins)
 - ~~`src/components/Header/AuthHeader.tsx`~~ ✅ **Already implemented** — simplified to show Sign in/up links, logout button
@@ -313,7 +318,9 @@ No new classes. This project uses functional React components and server actions
 | `LikeButton`           | `src/components/Wallpaper/LikeButton.tsx`            | Heart toggle                   | Button                                                         | ✅ |
 | `DownloadButton`       | `src/components/Wallpaper/DownloadButton.tsx`        | Download action                | Button                                                         | ✅ |
 | `Pagination`           | `src/components/Wallpaper/Pagination.tsx`            | Page nav                       | Button                                                         | ✅ |
-| `CategoryCard`         | `src/components/Category/CategoryCard.tsx`           | Category card                  | Card, Badge                                                    | ❌ |
+| `CategoryCard`         | `src/components/Category/CategoryCard.tsx`           | Category card                  | Card, Badge                                                    | ✅ |
+| `CategoryGrid`         | `src/components/Category/CategoryGrid.tsx`           | Category grid                  | —                                                              | ✅ |
+| `CategoryWallpapersContent` | `src/components/Category/CategoryWallpapersContent.tsx` | Category wallpaper listing | WallpaperCard, Pagination                                      | ✅ |
 | `CollectionCard`       | `src/components/Collection/CollectionCard.tsx`       | Collection card                | Card                                                           | ❌ |
 | `CollectionForm`       | `src/components/Collection/CollectionForm.tsx`       | Create/edit form               | Dialog, Button, Input, Textarea, Field                         | ❌ |
 | `AddToCollectionModal` | `src/components/Collection/AddToCollectionModal.tsx` | Collection selection modal     | Dialog, Button                                                 | ❌ |
@@ -364,7 +371,7 @@ Build features in dependency order, where each phase builds on the previous.
 
 4. ~~**Phase 3: Wallpaper Browsing & Detail**~~ ✅ **Complete** — Listing page, `WallpaperGrid`/`WallpaperCard`/`Pagination`/`WallpaperDetail`/`LikeButton`/`DownloadButton` components, detail view with metadata, `likeWallpaper`/`downloadWallpaper`/`getWallpapers`/`getWallpaperById`/`getFeaturedWallpapers` server actions.
 
-5. ~~**Phase 4: Categories**~~ ❌ **Not Started** — No category browsing pages exist.
+5. ~~**Phase 4: Categories**~~ ✅ **Complete** — Category browsing pages, CategoryCard, CategoryGrid, server actions.
 
 6. ~~**Phase 5: Collections**~~ ❌ **Not Started** — No collection CRUD pages exist.
 

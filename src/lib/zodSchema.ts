@@ -81,3 +81,17 @@ export const wallpaperUploadSchema = z.object({
 });
 
 export type WallpaperUploadFormType = z.infer<typeof wallpaperUploadSchema>;
+
+export const categoryCreateSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, { error: "Name is required" })
+    .max(32, { error: "Name must not exceed 32 characters" }),
+  description: z
+    .string()
+    .max(300, { error: "Description must not exceed 300 characters" })
+    .optional(),
+});
+
+export type CategoryCreateFormType = z.infer<typeof categoryCreateSchema>;

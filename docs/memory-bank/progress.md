@@ -112,11 +112,19 @@
 - [x] Create server actions: likeWallpaper, downloadWallpaper, getWallpapers, getWallpaperById, getFeaturedWallpapers
 - [x] Lint verified — 0 errors, 0 warnings
 
-### Phase 4: Categories
+### Phase 4: Categories ✅ Complete
 
-- [ ] Create `src/app/(public)/categories/page.tsx`
-- [ ] Create `src/app/(public)/categories/[slug]/page.tsx`
-- [ ] Create `src/components/Category/CategoryCard.tsx`
+- [x] Create `src/app/(public)/categories/page.tsx` — Browse all categories
+- [x] Create `src/app/(public)/categories/[slug]/page.tsx` — Wallpapers by category with pagination
+- [x] Create `src/components/Category/CategoryCard.tsx` — Card with image/fallback icon + count badge
+- [x] Create `src/components/Category/CategoryGrid.tsx` — Responsive grid with empty state
+- [x] Create `src/components/Category/CategoryWallpapersContent.tsx` — Wallpaper grid + pagination
+- [x] Create `src/server/category/getCategories.ts` — List categories with wallpaper counts
+- [x] Create `src/server/category/getCategoryBySlug.ts` — Category detail with paginated wallpapers
+- [x] Add `categoryCreateSchema` to `src/lib/zodSchema.ts`
+- [x] Configure `images.remotePatterns` in `next.config.ts`
+- [x] Lint verified — 0 errors, 0 warnings
+- [x] Build verified — 11 pages generated (including `/categories` and `/categories/[slug]`)
 
 ### Phase 5: Collections
 
@@ -161,7 +169,7 @@
 
 ## Current Status
 
-- **Phase**: 3 (Wallpaper Browsing & Detail) — ✅ Complete
+- **Phase**: 4 (Categories) — ✅ Complete
 - **Auth**: ✅ Complete (core flow functional)
 - **Implementation Plan**: ✅ Complete + Audited against Better Auth/Prisma/shadcn best practices
 - **UI**: ✅ All 13 shadcn components installed and available
@@ -170,10 +178,11 @@
 - **Env Vars**: ✅ Server + client env configured for S3
 - **Image Processor**: ✅ Complete (Phase 1)
 - **File Storage**: ✅ Complete (Phase 1)
-- **Shared Types**: ✅ Complete (PageParams, ApiResponse types + wallpaper upload schema)
+- **Shared Types**: ✅ Complete (PageParams, ApiResponse types + wallpaper upload schema + category create schema)
 - **Wallpaper Upload**: ✅ Complete (Phase 2) — server action, form, auth-guarded page
 - **Private Route Guard**: ✅ Complete (layout-level auth check)
 - **Wallpaper Browsing & Detail**: ✅ Complete (Phase 3) — listing, search, sort, pagination, detail view, likes, downloads
+- **Categories**: ✅ Complete (Phase 4) — browse all categories, wallpapers by category, pagination
 - **Collections**: ❌ Not started
 - **Dashboard**: ❌ Not started
 - **Admin Panel**: ❌ Not started
@@ -186,7 +195,8 @@
 2. **Password Reset**: Uses console-based token display (no email sending service configured)
 3. **SQLite**: Only suitable for development, not production
 4. **Rate Limiting**: In-memory, resets on server restart
-5. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]` once Phase 3 creates that route
+5. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]` (once available)
+6. **No admin category CRUD yet** — Categories were seeded by the seed script; admin create/edit/delete will be added in Phase 8 (Admin Panel).
 
 ## Evolution of Project Decisions
 

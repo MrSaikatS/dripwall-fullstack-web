@@ -2,25 +2,22 @@
 
 ## Current Work Focus
 
-Phase 3 (Wallpaper Browsing & Detail) is now **complete**. The project is ready to begin Phase 4 (Categories).
+Phase 4 (Categories) is now **complete**. The project is ready to begin Phase 5 (Collections).
 
-### Completed in Phase 3:
+### Completed in Phase 4:
 
-- ✅ `src/server/wallpaper/getWallpapers.ts` — Paginated wallpaper listing with search, sort, category/tag filter, featured filter, Prisma compound index usage
-- ✅ `src/server/wallpaper/getWallpaperById.ts` — Single wallpaper with full relations (user, category, tags, like count)
-- ✅ `src/server/wallpaper/getFeaturedWallpapers.ts` — Featured wallpapers query
-- ✅ `src/server/wallpaper/likeWallpaper.ts` — Like/unlike toggle with session check
-- ✅ `src/server/wallpaper/downloadWallpaper.ts` — Signed URL generation via S3, download count increment, optional logged-in tracking
-- ✅ `src/components/Wallpaper/WallpaperGrid.tsx` — Responsive CSS grid with empty state
-- ✅ `src/components/Wallpaper/WallpaperCard.tsx` — Card with thumbnail, aspect-ratio, avatar, badge, like count
-- ✅ `src/components/Wallpaper/WallpaperDetail.tsx` — Full detail with image, metadata grid (uploader, dimensions, file size, format, views, date, category), tags, like/download buttons
-- ✅ `src/components/Wallpaper/Pagination.tsx` — Pagination component with prev/next navigation
-- ✅ `src/components/Wallpaper/LikeButton.tsx` — Optimistic like toggle with error handling
-- ✅ `src/components/Wallpaper/DownloadButton.tsx` — Download trigger via signed URL with anchor element
-- ✅ `src/app/(public)/wallpapers/page.tsx` — Server component with search params → initial data + Suspense
-- ✅ `src/app/(public)/wallpapers/WallpapersPageContent.tsx` — Client component with search input, sort select, grid, pagination
-- ✅ `src/app/(public)/wallpapers/[id]/page.tsx` — Detail page with view count increment, like status check, notFound handling
-- ✅ Lint verified — zero errors, zero warnings
+- ✅ `src/server/category/getCategories.ts` — Lists all categories with wallpaper counts, ordered by name
+- ✅ `src/server/category/getCategoryBySlug.ts` — Category detail + paginated wallpapers (reuses `WallpaperListItem` type)
+- ✅ `src/components/Category/CategoryCard.tsx` — Card with S3 image (next/Image) or fallback icon, count badge
+- ✅ `src/components/Category/CategoryGrid.tsx` — Responsive grid with empty state
+- ✅ `src/components/Category/CategoryWallpapersContent.tsx` — Wallpaper grid + pagination for category detail, uses shared `WallpaperCard` and `Pagination`
+- ✅ `src/app/(public)/categories/page.tsx` — Server component, fetches categories, renders grid
+- ✅ `src/app/(public)/categories/[slug]/page.tsx` — Dynamic page with searchParams pagination, notFound handling
+- ✅ `categoryCreateSchema` added to `src/lib/zodSchema.ts`
+- ✅ `images.remotePatterns` configured in `next.config.ts` for S3 images
+- ✅ `next/Image` used instead of `<img>` in new components (established new pattern)
+- ✅ Lint verified — 0 errors, 0 warnings
+- ✅ Build verified — 11 pages generated (including `/categories` and `/categories/[slug]`)
 
 ## Recent Changes
 
@@ -31,19 +28,9 @@ Phase 3 (Wallpaper Browsing & Detail) is now **complete**. The project is ready 
 
 ## Next Steps
 
-### Phase 3: Wallpaper Browsing & Detail (immediate)
+### Phase 5: Collections (immediate)
 
-- Create listing/grid/card/pagination components
-- Create detail page with LikeButton and DownloadButton
-- Create server actions for wallpaper queries, likes, downloads
-
-### Phase 4: Categories
-
-- Browse pages, CategoryCard component
-
-### Phase 5: Collections
-
-- CRUD pages, CollectionForm, AddToCollectionModal
+- Collection CRUD pages, CollectionForm, AddToCollectionModal
 - 7 collection server actions
 
 ### Phase 6: User Dashboard
