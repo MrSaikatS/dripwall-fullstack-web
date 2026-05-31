@@ -6,9 +6,10 @@ import {
 } from "@/lib/zodSchema";
 import { createWallpaper } from "@/server/wallpaper/createWallpaper";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ImageIcon, Loader2Icon, UploadIcon, XIcon } from "lucide-react";
+import { Loader2Icon, UploadIcon, XIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useFilePicker } from "use-file-picker";
@@ -20,7 +21,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "../shadcnui/select";
 import { Textarea } from "../shadcnui/textarea";
 
@@ -35,6 +35,7 @@ type WallpaperUploadFormProps = {
 
 const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFile, setIsFile] = useState(false);
   const { replace } = useRouter();
 
   const { handleSubmit, control, reset } = useForm<WallpaperUploadFormType>({
@@ -48,17 +49,14 @@ const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
     mode: "all",
   });
 
-  const { openFilePicker, plainFiles, clear } = useFilePicker({
+  const { openFilePicker, plainFiles, filesContent, clear } = useFilePicker({
+    readAs: "DataURL",
     accept: [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".tiff"],
     multiple: false,
     maxFileSize: 50,
+    onFilesSuccessfullySelected: () => setIsFile(true),
+    onClear: () => setIsFile(false),
   });
-
-  const selectedFileName = plainFiles.length > 0 ? plainFiles[0]?.name : null;
-
-  const handleClearFile = useCallback(() => {
-    clear();
-  }, [clear]);
 
   const uploadFormHandler = async (formData: WallpaperUploadFormType) => {
     if (plainFiles.length === 0) {
@@ -118,23 +116,8 @@ const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Image</p>
 
-        {selectedFileName ?
-          <div className="flex items-center justify-between rounded-lg border p-3">
-            <div className="flex items-center gap-2">
-              <ImageIcon className="text-muted-foreground size-5" />
-
-              <span className="text-sm">{selectedFileName}</span>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleClearFile}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Remove selected file">
-              <XIcon className="size-4" />
-            </button>
-          </div>
-        : <div
+        {!isFile ?
+          <div
             onClick={() => openFilePicker()}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -152,6 +135,26 @@ const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
             </p>
 
             <p className="text-muted-foreground text-xs">Max file size: 50MB</p>
+          </div>
+        : <div className="relative aspect-video w-full">
+            {filesContent.map((file, idx) => (
+              <Image
+                key={idx}
+                src={file.content}
+                alt={file.name}
+                fill
+                unoptimized
+                className="rounded-lg object-cover"
+              />
+            ))}
+
+            <button
+              type="button"
+              onClick={() => clear()}
+              className="bg-background/80 hover:bg-background absolute top-2 right-2 rounded-full p-1.5 transition-colors"
+              aria-label="Remove selected file">
+              <XIcon className="size-4" />
+            </button>
           </div>
         }
       </div>
@@ -212,7 +215,9 @@ const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
               onValueChange={field.onChange}
               aria-invalid={fieldState.invalid}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a category" />
+                <span data-slot="select-value">
+                  {categories.find((cat) => cat.id === field.value)?.name || "Select a category"}
+                </span>
               </SelectTrigger>
 
               <SelectContent>

@@ -3,7 +3,7 @@ import prisma from "@/lib/database/dbClient";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Upload Wallpaper - DripWall",
+  title: "Upload",
   description: "Upload and share your wallpapers with the DripWall community",
 };
 

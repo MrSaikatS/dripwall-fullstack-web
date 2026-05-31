@@ -1,7 +1,13 @@
 import { Separator } from "@/components/shadcnui/separator";
 import { getWallpapers } from "@/server/wallpaper/getWallpapers";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { WallpapersPageContent } from "../../../components/Wallpaper/WallpapersPageContent";
+
+export const metadata: Metadata = {
+  title: "Wallpapers",
+  description: "Browse our collection of high-quality wallpapers.",
+};
 
 type WallpapersPageProps = {
   searchParams: Promise<{

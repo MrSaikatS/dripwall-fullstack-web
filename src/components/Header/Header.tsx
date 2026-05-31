@@ -1,8 +1,15 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import Link from "next/link";
+import {
+  ChevronDownIcon,
+  LayoutDashboardIcon,
+  Loader2Icon,
+  LogOutIcon,
+  ShieldIcon,
+} from "lucide-react";
 import type { Route } from "next";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "react-toastify";
@@ -19,14 +26,6 @@ import {
   DropdownMenuTrigger,
 } from "../shadcnui/dropdown-menu";
 import { Skeleton } from "../shadcnui/skeleton";
-import {
-  BookmarkIcon,
-  LayoutDashboardIcon,
-  Loader2Icon,
-  LogOutIcon,
-  ShieldIcon,
-  UploadIcon,
-} from "lucide-react";
 
 const Header = () => {
   const { data, isPending } = authClient.useSession();
@@ -60,7 +59,7 @@ const Header = () => {
 
   return (
     <header
-      className="fixed top-0 z-50 w-dvw border-b shadow"
+      className="border-border/40 bg-background/80 fixed top-0 z-50 w-dvw border-b backdrop-blur-sm"
       aria-label="app-header">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
         <div className="flex items-center gap-8">
@@ -104,15 +103,18 @@ const Header = () => {
             <Skeleton className="h-8 w-8 rounded-full" />
           : data ?
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-full p-0.5 ring-1 ring-border transition-all hover:ring-foreground/30">
+              <DropdownMenuTrigger className="ring-border hover:ring-foreground/30 flex cursor-pointer items-center gap-1 rounded-full p-0.5 pr-2 ring-1 transition-all">
                 <Avatar size="sm">
                   <AvatarFallback>
                     {data.user.name?.charAt(0)?.toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
+                <ChevronDownIcon className="text-muted-foreground h-4 w-4" />
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent
+                align="end"
+                className="w-56">
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>
                     <div className="flex flex-col">
@@ -120,7 +122,7 @@ const Header = () => {
                         {data.user.name}
                       </span>
 
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-muted-foreground text-xs">
                         {data.user.email}
                       </span>
                     </div>
@@ -130,26 +132,15 @@ const Header = () => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={() => push("/dashboard" as Route)}>
+                  <DropdownMenuItem onClick={() => push("/dashboard" as Route)}>
                     <LayoutDashboardIcon /> Dashboard
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem onClick={() => push("/upload" as Route)}>
-                    <UploadIcon /> Upload
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => push("/collections" as Route)}>
-                    <BookmarkIcon /> Collections
                   </DropdownMenuItem>
 
                   {isAdmin && (
                     <>
                       <DropdownMenuSeparator />
 
-                      <DropdownMenuItem
-                        onClick={() => push("/admin" as Route)}>
+                      <DropdownMenuItem onClick={() => push("/admin" as Route)}>
                         <ShieldIcon /> Admin
                       </DropdownMenuItem>
                     </>
@@ -164,15 +155,16 @@ const Header = () => {
                   disabled={isLoggingOut}>
                   {isLoggingOut ?
                     <Loader2Icon className="animate-spin" />
-                  : <LogOutIcon />
-                  }
+                  : <LogOutIcon />}
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           : <div className="flex items-center gap-2">
               <Link href={"/login" as Route}>
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm">
                   Sign in
                 </Button>
               </Link>

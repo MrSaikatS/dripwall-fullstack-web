@@ -10,7 +10,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Reset Password | DripWall",
+  title: "Reset Password",
   description: "Create a new password for your DripWall account.",
 };
 

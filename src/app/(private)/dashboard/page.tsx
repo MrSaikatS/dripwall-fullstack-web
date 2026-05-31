@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { DashboardOverviewContent } from "./DashboardOverviewContent";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Your DripWall dashboard — overview of your wallpapers and activity.",
+};
 
 const DashboardPage = () => {
   return (

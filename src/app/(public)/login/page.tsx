@@ -10,7 +10,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Login | DripWall",
+  title: "Login",
   description:
     "Sign in to your DripWall account to access your wallpapers and collections.",
 };

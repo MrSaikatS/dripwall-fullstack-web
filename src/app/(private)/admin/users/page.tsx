@@ -1,6 +1,12 @@
 import { UserTable, type UserTableUser } from "@/components/Admin/UserTable";
 import { auth } from "@/lib/auth";
+import type { Metadata } from "next";
 import { headers } from "next/headers";
+
+export const metadata: Metadata = {
+  title: "Admin — Users",
+  description: "Manage user roles and bans.",
+};
 
 const AdminUsersPage = async () => {
   const session = await auth.api.getSession({

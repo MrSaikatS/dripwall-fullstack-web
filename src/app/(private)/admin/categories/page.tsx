@@ -1,5 +1,11 @@
 import { getCategories } from "@/server/category/getCategories";
+import type { Metadata } from "next";
 import { CategoryManager } from "./CategoryManager";
+
+export const metadata: Metadata = {
+  title: "Admin — Categories",
+  description: "Create, edit, and delete categories.",
+};
 
 const AdminCategoriesPage = async () => {
   const categories = await getCategories();

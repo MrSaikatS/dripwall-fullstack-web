@@ -1,5 +1,11 @@
 import { getAllWallpapersAdmin } from "@/server/admin/getAllWallpapersAdmin";
+import type { Metadata } from "next";
 import { AdminWallpapersContent } from "./AdminWallpapersContent";
+
+export const metadata: Metadata = {
+  title: "Admin — Wallpapers",
+  description: "Browse and manage all wallpapers.",
+};
 
 type Props = {
   searchParams: Promise<{ page?: string }>;

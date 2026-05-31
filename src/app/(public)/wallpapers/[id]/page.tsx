@@ -3,8 +3,25 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
 import type { PageParams } from "@/lib/types";
 import { getWallpaperById } from "@/server/wallpaper/getWallpaperById";
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+
+export async function generateMetadata({
+  params,
+}: WallpaperDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const wallpaper = await getWallpaperById(id);
+
+  if (!wallpaper) return {};
+
+  return {
+    title: wallpaper.title,
+    description:
+      wallpaper.description ??
+      `A ${wallpaper.category?.name ?? "wallpaper"} by ${wallpaper.user.name}`,
+  };
+}
 
 type WallpaperDetailPageProps = PageParams<{ id: string }>;
 

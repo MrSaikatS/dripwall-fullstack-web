@@ -9,7 +9,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Forgot Password | DripWall",
+  title: "Forgot Password",
   description: "Reset your DripWall account password.",
 };
 

@@ -1,11 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcnui/card";
 import { getAdminStats } from "@/server/admin/getAdminStats";
+import type { Metadata } from "next";
 import {
   DownloadIcon,
   Grid3X3Icon,
   LayersIcon,
   UsersIcon,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Admin",
+  description: "DripWall admin panel.",
+};
 
 const statCards = [
   { label: "Total Users", key: "totalUsers", icon: UsersIcon },

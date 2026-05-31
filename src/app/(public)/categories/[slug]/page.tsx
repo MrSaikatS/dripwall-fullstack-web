@@ -2,7 +2,22 @@ import { CategoryWallpapersContent } from "@/components/Category/CategoryWallpap
 import { Separator } from "@/components/shadcnui/separator";
 import type { PageParams } from "@/lib/types";
 import { getCategoryBySlug } from "@/server/category/getCategoryBySlug";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+export async function generateMetadata({
+  params,
+}: CategoryDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const { category } = await getCategoryBySlug(slug);
+
+  if (!category) return {};
+
+  return {
+    title: `${category.name} Wallpapers`,
+    description: category.description ?? `Browse ${category.name} wallpapers.`,
+  };
+}
 
 type CategoryDetailPageProps = PageParams<{ slug: string }> & {
   searchParams: Promise<{ page?: string }>;

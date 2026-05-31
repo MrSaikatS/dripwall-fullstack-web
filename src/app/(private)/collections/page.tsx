@@ -1,5 +1,11 @@
 import { Separator } from "@/components/shadcnui/separator";
+import type { Metadata } from "next";
 import { CollectionsPageContent } from "./CollectionsPageContent";
+
+export const metadata: Metadata = {
+  title: "Collections",
+  description: "Organize your favorite wallpapers into collections.",
+};
 
 const CollectionsPage = () => {
   return (
