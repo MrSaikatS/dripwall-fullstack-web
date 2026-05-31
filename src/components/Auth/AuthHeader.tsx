@@ -1,31 +1,17 @@
-"use client";
-
-import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
-import { Skeleton } from "../shadcnui/skeleton";
-import LogoutButton from "./LogoutButton";
+import type { Route } from "next";
 
 const AuthHeader = () => {
-  const { data, isPending, isRefetching } = authClient.useSession();
-
-  if (isPending || isRefetching) {
-    return <Skeleton className="h-8 w-36" />;
-  }
-
-  if (data) {
-    return <LogoutButton />;
-  }
-
   return (
     <>
       <Link
-        href="/login"
+        href={"/login" as Route}
         className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
         Sign in
       </Link>
 
       <Link
-        href="/register"
+        href={"/register" as Route}
         className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
         Sign up
       </Link>

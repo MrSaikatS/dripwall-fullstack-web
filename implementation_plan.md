@@ -7,7 +7,7 @@ The project currently has authentication fully implemented (login, register, for
 
 **Current Status (as of 2026-06-01):**
 
-**Completed (All Phases 0-6):**
+**Completed (All Phases 0-7):**
 
 - Phase 0: ✅ Complete
 - Phase 1: ✅ Complete
@@ -16,11 +16,11 @@ The project currently has authentication fully implemented (login, register, for
 - Phase 4: ✅ Complete
 - Phase 5: ✅ Complete
 - Phase 6: ✅ Complete
+- Phase 7: ✅ Complete
 - Lint: ✅ Verified
 
 **Remaining:**
 
-- Phase 7: Navigation Update — Header needs refactoring for session-aware nav
 - Phase 8: Admin Panel — No admin pages
 - Phase 9: Polish & Cleanup — Pending
 
@@ -200,8 +200,8 @@ New files to be created and existing files to be modified across the entire appl
 - `src/lib/types.ts` — ✅ Already has `PageParams<T>` generic type and `PaginatedResponse<T>`, `ApiResponse<T>`
 - `src/lib/zodSchema.ts` — ✅ Complete — has wallpaper upload + category + collection schemas
 - ~~`src/lib/env/serverEnv.ts`~~ ✅ **Already configured** with S3/cloud storage env vars
-- ~~`src/components/Header/Header.tsx`~~ ❌ **Not refactored** — needs session-aware nav links (Wallpapers, Categories, Upload, Dashboard, Admin for admins)
-- ~~`src/components/Header/AuthHeader.tsx`~~ ✅ **Already implemented** — simplified to show Sign in/up links, logout button
+- ~~`src/components/Header/Header.tsx`~~ ✅ **Refactored** — session-aware nav links (Wallpapers, Categories, Upload, Collections, Dashboard, Admin for admins) with DropdownMenu for authenticated user
+- ~~`src/components/Auth/AuthHeader.tsx`~~ ✅ **Simplified** — presentational sign-in/sign-up links only
 
 ### Files to Delete/Move
 
@@ -373,7 +373,7 @@ Build features in dependency order, where each phase builds on the previous.
 
 7. ~~**Phase 6: User Dashboard**~~ ✅ **Complete** — 3 user server actions + DashboardNav + layout + 3 pages + 3 client content files.
 
-8. ~~**Phase 7: Navigation Update**~~ ❌ **Not Started** — Header needs refactoring for session-aware nav links.
+8. ~~**Phase 7: Navigation Update**~~ ✅ **Complete** — Header refactored with DropdownMenu, AuthHeader simplified, session logic moved to Header.
 
 9. ~~**Phase 8: Admin Panel**~~ ❌ **Not Started** — No admin pages exist.
 

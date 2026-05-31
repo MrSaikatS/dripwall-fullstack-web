@@ -2,21 +2,12 @@
 
 ## Current Work Focus
 
-Phase 6 (User Dashboard) is now **complete**. The project is ready to begin Phase 7 (Navigation Update).
+Phase 7 (Navigation Update) is now **complete**. The project is ready to begin Phase 8 (Admin Panel).
 
-### Completed in Phase 6:
+### Completed in Phase 7:
 
-- ✅ `src/server/user/getUserWallpapers.ts` — Paginated user uploads with session-aware auth
-- ✅ `src/server/user/getUserLikes.ts` — Paginated user liked wallpapers with session-aware auth
-- ✅ `src/server/user/getUserDownloads.ts` — Paginated user download history with session-aware auth
-- ✅ `src/components/Dashboard/DashboardNav.tsx` — Sidebar nav with active state highlighting
-- ✅ `src/app/(private)/dashboard/layout.tsx` — Responsive sidebar layout (desktop sidebar, mobile top nav)
-- ✅ `src/app/(private)/dashboard/page.tsx` — Dashboard overview page
-- ✅ `src/app/(private)/dashboard/DashboardOverviewContent.tsx` — Stats cards showing wallpaper count, likes, downloads, collections
-- ✅ `src/app/(private)/dashboard/wallpapers/page.tsx` — User's uploaded wallpapers page
-- ✅ `src/app/(private)/dashboard/wallpapers/DashboardWallpapersContent.tsx` — Paginated grid with empty state
-- ✅ `src/app/(private)/dashboard/likes/page.tsx` — Liked wallpapers page
-- ✅ `src/app/(private)/dashboard/likes/DashboardLikesContent.tsx` — Paginated grid with empty state
+- ✅ `src/components/Header/Header.tsx` — Refactored with shadcn DropdownMenu, inline session logic, avatar with user menu, nav links (Wallpapers, Categories, Upload, Collections, Admin), logout with loading state
+- ✅ `src/components/Auth/AuthHeader.tsx` — Simplified to presentational sign-in/sign-up links (no session logic)
 
 ### Key Pattern: Session in Server Actions
 
@@ -40,12 +31,7 @@ This matches the pattern used by `src/server/collection/getCollections.ts` and a
 
 ## Next Steps
 
-### Phase 7: Navigation Update (immediate)
-
-- Header refactor with shadcn DropdownMenu
-- Simplify AuthHeader
-
-### Phase 8: Admin Panel
+### Phase 8: Admin Panel (immediate)
 
 - Admin pages for user/wallpaper/category management
 - Uses Better Auth admin plugin API for user management
@@ -96,6 +82,10 @@ Custom server actions are still needed for:
 - Better Auth supports email verification via `sendVerificationEmail`
 - Requires email transport configuration
 - Currently disabled to simplify development
+
+### Bun (Package Manager & Runtime)
+
+This project uses **Bun** as the package manager and runtime. All commands (`dev`, `build`, `lint`, `migrate`, `seed`, `studio`, `add <package>`, `install`) must be run with `bun`, never `npm` or `npx`.
 
 ## Important Patterns & Preferences
 

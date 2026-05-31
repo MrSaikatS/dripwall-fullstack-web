@@ -13,3 +13,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 See `docs/form-patterns.md` for detailed documentation on form implementation patterns used in this codebase.
 
 <!-- END:form-patterns -->
+
+<!-- BEGIN:bun -->
+
+# Bun Package Manager
+
+This project uses **Bun** as the package manager and runtime. All commands must use `bun` (not `npm` or `npx`). For example: `bun dev`, `bun run build`, `bun add <package>`, `bun install`.
+
+<!-- END:bun -->

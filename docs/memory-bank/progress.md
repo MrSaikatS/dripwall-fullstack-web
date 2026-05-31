@@ -168,10 +168,11 @@
 - [x] Create `src/app/(private)/dashboard/likes/page.tsx` — Liked wallpapers page
 - [x] Create `src/app/(private)/dashboard/likes/DashboardLikesContent.tsx` — Paginated likes grid with empty state
 
-### Phase 7: Navigation Update
+### Phase 7: Navigation Update ✅ Complete
 
-- [ ] Refactor `src/components/Header/Header.tsx` with shadcn DropdownMenu
-- [ ] Simplify `src/components/Header/AuthHeader.tsx`
+- [x] Refactor `src/components/Header/Header.tsx` with shadcn DropdownMenu — inline session, avatar + DropdownMenu for authenticated users, nav links (Wallpapers, Categories, Upload, Collections, Admin), logout with spinner
+- [x] Simplify `src/components/Auth/AuthHeader.tsx` — presentational sign-in/sign-up links only (no session logic)
+- [x] Lint verified — 0 errors, 0 warnings
 
 ### Phase 8: Admin Panel
 
@@ -200,7 +201,7 @@
 
 ## Current Status
 
-- **Phase**: 6 (User Dashboard) — ✅ Complete
+- **Phase**: 7 (Navigation Update) — ✅ Complete
 - **Auth**: ✅ Complete (core flow functional)
 - **Implementation Plan**: ✅ Complete + Audited against Better Auth/Prisma/shadcn best practices
 - **UI**: ✅ All 13 shadcn components installed and available
@@ -216,7 +217,8 @@
 - **Categories**: ✅ Complete (Phase 4)
 - **Collections**: ✅ Complete (Phase 5) — 7 server actions + 3 components + 2 pages
 - **Dashboard**: ✅ Complete (Phase 6) — 3 server actions + 1 component + 1 layout + 3 pages + 3 client content files
-- **Admin Panel**: ❌ Not started
+- **Navigation Update**: ✅ Complete (Phase 7) — Header refactored with DropdownMenu, AuthHeader simplified
+- **Admin Panel**: ❌ Not started (Phase 8)
 - **Testing**: ❌ None
 - **Production Deploy**: ❌ Not configured
 
