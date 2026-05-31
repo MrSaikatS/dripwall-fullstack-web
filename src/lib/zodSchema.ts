@@ -95,3 +95,18 @@ export const categoryCreateSchema = z.object({
 });
 
 export type CategoryCreateFormType = z.infer<typeof categoryCreateSchema>;
+
+export const collectionCreateSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, { error: "Name is required" })
+    .max(64, { error: "Name must not exceed 64 characters" }),
+  description: z
+    .string()
+    .max(300, { error: "Description must not exceed 300 characters" })
+    .optional(),
+  isPublic: z.boolean(),
+});
+
+export type CollectionCreateFormType = z.infer<typeof collectionCreateSchema>;

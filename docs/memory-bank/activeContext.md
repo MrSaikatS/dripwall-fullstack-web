@@ -2,38 +2,35 @@
 
 ## Current Work Focus
 
-Phase 4 (Categories) is now **complete**. The project is ready to begin Phase 5 (Collections).
+Phase 5 (Collections) is now **complete**. The project is ready to begin Phase 6 (User Dashboard).
 
-### Completed in Phase 4:
+### Completed in Phase 5:
 
-- ✅ `src/server/category/getCategories.ts` — Lists all categories with wallpaper counts, ordered by name
-- ✅ `src/server/category/getCategoryBySlug.ts` — Category detail + paginated wallpapers (reuses `WallpaperListItem` type)
-- ✅ `src/components/Category/CategoryCard.tsx` — Card with S3 image (next/Image) or fallback icon, count badge
-- ✅ `src/components/Category/CategoryGrid.tsx` — Responsive grid with empty state
-- ✅ `src/components/Category/CategoryWallpapersContent.tsx` — Wallpaper grid + pagination for category detail, uses shared `WallpaperCard` and `Pagination`
-- ✅ `src/app/(public)/categories/page.tsx` — Server component, fetches categories, renders grid
-- ✅ `src/app/(public)/categories/[slug]/page.tsx` — Dynamic page with searchParams pagination, notFound handling
-- ✅ `categoryCreateSchema` added to `src/lib/zodSchema.ts`
-- ✅ `images.remotePatterns` configured in `next.config.ts` for S3 images
-- ✅ `next/Image` used instead of `<img>` in new components (established new pattern)
+- ✅ `collectionCreateSchema` added to `src/lib/zodSchema.ts` with CollectionCreateFormType
+- ✅ `src/server/collection/createCollection.ts` — Create collection with name, description, visibility
+- ✅ `src/server/collection/getCollections.ts` — List user's collections with item count
+- ✅ `src/server/collection/getCollectionById.ts` — Collection detail with wallpaper items, ownership check
+- ✅ `src/server/collection/updateCollection.ts` — Update collection metadata, ownership verification
+- ✅ `src/server/collection/deleteCollection.ts` — Delete collection, ownership verification
+- ✅ `src/server/collection/addToCollection.ts` — Add wallpaper to collection (duplicate check)
+- ✅ `src/server/collection/removeFromCollection.ts` — Remove wallpaper from collection
+- ✅ `src/components/Collection/CollectionCard.tsx` — Card with icon, name, description, wallpaper count, public/private badge
+- ✅ `src/components/Collection/CollectionForm.tsx` — Create form with name, description, visibility (react-hook-form + zodResolver + Controller)
+- ✅ `src/components/Collection/AddToCollectionModal.tsx` — Dialog modal showing user's collections + inline create form
+- ✅ `src/app/(private)/collections/page.tsx` — Server component with auth guard
+- ✅ `src/app/(private)/collections/CollectionsPageContent.tsx` — Client component with loading skeletons, empty state, create dialog, collection grid
+- ✅ `src/app/(private)/collections/[id]/page.tsx` — Server component with auth guard
+- ✅ `src/app/(private)/collections/[id]/CollectionDetailContent.tsx` — Detail view with wallpaper grid, remove button (owner only), delete collection, empty state
 - ✅ Lint verified — 0 errors, 0 warnings
-- ✅ Build verified — 11 pages generated (including `/categories` and `/categories/[slug]`)
 
 ## Recent Changes
 
-- **Phase 0 complete**: All dependencies installed and configured
-- **Implementation plan audited** against Better Auth, Prisma 7, and shadcn best practices (previous session)
-- **4 duplicate admin server actions removed** from plan — admin user management uses Better Auth's built-in `auth.api.*` methods
-- **Implementation plan** (`implementation_plan.md`) covers 10 phases (Phase 0 complete, Phases 1-9 pending)
+- **Phase 4 complete**: Categories ✅
+- **Phase 5 complete**: Collections ✅ — 7 server actions + 3 components + 2 pages + 1 modal + 1 form + 1 schema
 
 ## Next Steps
 
-### Phase 5: Collections (immediate)
-
-- Collection CRUD pages, CollectionForm, AddToCollectionModal
-- 7 collection server actions
-
-### Phase 6: User Dashboard
+### Phase 6: User Dashboard (immediate)
 
 - Dashboard pages (uploads, likes, downloads)
 - DashboardNav, user server actions
@@ -104,6 +101,7 @@ Custom server actions are still needed for:
 - Experimental ternaries enabled
 - Tailwind CSS classes sorted via prettier-plugin-tailwindcss
 - Use `@base-ui/react` primitives (not native HTML elements for interactive components)
+- Use `import type { Route } from "next"` for typed route support in Link hrefs
 
 ### Form Pattern
 
@@ -121,6 +119,12 @@ Custom server actions are still needed for:
 - `console.error()` for debugging
 - Graceful fallback messages for network errors
 
+### React Compiler Constraints
+
+- Do not call `setState` synchronously inside `useEffect` — the React Compiler (babel-plugin-react-compiler) raises errors on this pattern
+- Use event handlers (e.g., `onOpenChange` on Dialog) or ref-based patterns instead
+- For data loading on mount, ensure the effect body calls a function that only calls setState after an async operation completes (cancelled via ref)
+
 ## Learnings & Insights
 
 - Better Auth's `nextCookies()` plugin handles cookie management automatically
@@ -134,3 +138,6 @@ Custom server actions are still needed for:
 - S3-compatible storage (Backblaze B2) works with standard `@aws-sdk/client-s3` v3 — no custom SDK needed
 - Server actions can handle file uploads via `file.arrayBuffer()` pattern
 - Session access pattern: `auth.api.getSession({ headers: await headers() })` works in both server components and server actions
+- Next.js typed routes with `typedRoutes: true` requires `import type { Route } from "next";` and using `as Route` assertion on Link hrefs
+- The Base UI Button component does not support `asChild` prop — wrap Button inside Link instead for navigation
+- React Compiler strictly prohibits `setState` calls directly in the body of a `useEffect` — move data fetching to event handlers or use ref-cancelled async patterns

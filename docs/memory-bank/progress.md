@@ -39,6 +39,7 @@
 - [x] Forgot password form
 - [x] Reset password form (with confirm password validation)
 - [x] Wallpaper upload form (with file picker, category select, title, description)
+- [x] Collection form (name, description, visibility)
 
 ### Pages
 
@@ -48,6 +49,10 @@
 - [x] Forgot Password page (implemented)
 - [x] Reset Password page
 - [x] Upload page (auth-guarded, with category list from DB)
+- [x] Categories listing page
+- [x] Category detail page (wallpapers by category with pagination)
+- [x] Collections listing page (auth-guarded)
+- [x] Collection detail page (auth-guarded, with wallpaper grid)
 
 ### Infrastructure
 
@@ -79,6 +84,7 @@
 - [x] `PageParams<T>` generic type for route params
 - [x] `PaginatedResponse<T>` and `ApiResponse<T>` response types
 - [x] `WallpaperUploadFormType` with title, description, categoryId, tags
+- [x] `CollectionCreateFormType` with name, description, isPublic
 
 ## What's Left to Build
 
@@ -101,7 +107,7 @@
 ### Phase 3: Wallpaper Browsing & Detail ✅ Complete
 
 - [x] Create `src/app/(public)/wallpapers/page.tsx`
-- [x] Create `src/app/(public)/wallpapers/WallpapersPageContent.tsx`
+- [x] Create `src/components/Wallpaper/WallpapersPageContent.tsx`
 - [x] Create `src/components/Wallpaper/WallpaperGrid.tsx`
 - [x] Create `src/components/Wallpaper/WallpaperCard.tsx`
 - [x] Create `src/components/Wallpaper/Pagination.tsx`
@@ -126,10 +132,24 @@
 - [x] Lint verified — 0 errors, 0 warnings
 - [x] Build verified — 11 pages generated (including `/categories` and `/categories/[slug]`)
 
-### Phase 5: Collections
+### Phase 5: Collections ✅ Complete
 
-- [ ] Create collection pages and components
-- [ ] Create collection server actions (7 files)
+- [x] Add `collectionCreateSchema` to `src/lib/zodSchema.ts`
+- [x] Create `src/server/collection/getCollections.ts` — List user collections
+- [x] Create `src/server/collection/getCollectionById.ts` — Collection detail with wallpapers
+- [x] Create `src/server/collection/createCollection.ts` — Create collection
+- [x] Create `src/server/collection/updateCollection.ts` — Update collection
+- [x] Create `src/server/collection/deleteCollection.ts` — Delete collection
+- [x] Create `src/server/collection/addToCollection.ts` — Add wallpaper to collection
+- [x] Create `src/server/collection/removeFromCollection.ts` — Remove wallpaper from collection
+- [x] Create `src/components/Collection/CollectionCard.tsx` — Collection card component
+- [x] Create `src/components/Collection/CollectionForm.tsx` — Create/edit form
+- [x] Create `src/components/Collection/AddToCollectionModal.tsx` — Dialog modal for saving wallpapers
+- [x] Create `src/app/(private)/collections/page.tsx` — Collections listing page
+- [x] Create `src/app/(private)/collections/CollectionsPageContent.tsx` — Client interactive content
+- [x] Create `src/app/(private)/collections/[id]/page.tsx` — Collection detail page
+- [x] Create `src/app/(private)/collections/[id]/CollectionDetailContent.tsx` — Detail client content
+- [x] Lint verified — 0 errors, 0 warnings
 
 ### Phase 6: User Dashboard
 
@@ -169,7 +189,7 @@
 
 ## Current Status
 
-- **Phase**: 4 (Categories) — ✅ Complete
+- **Phase**: 5 (Collections) — ✅ Complete
 - **Auth**: ✅ Complete (core flow functional)
 - **Implementation Plan**: ✅ Complete + Audited against Better Auth/Prisma/shadcn best practices
 - **UI**: ✅ All 13 shadcn components installed and available
@@ -178,12 +198,12 @@
 - **Env Vars**: ✅ Server + client env configured for S3
 - **Image Processor**: ✅ Complete (Phase 1)
 - **File Storage**: ✅ Complete (Phase 1)
-- **Shared Types**: ✅ Complete (PageParams, ApiResponse types + wallpaper upload schema + category create schema)
-- **Wallpaper Upload**: ✅ Complete (Phase 2) — server action, form, auth-guarded page
+- **Shared Types**: ✅ Complete (PageParams, ApiResponse types + wallpaper upload schema + category create schema + collection create schema)
+- **Wallpaper Upload**: ✅ Complete (Phase 2)
 - **Private Route Guard**: ✅ Complete (layout-level auth check)
-- **Wallpaper Browsing & Detail**: ✅ Complete (Phase 3) — listing, search, sort, pagination, detail view, likes, downloads
-- **Categories**: ✅ Complete (Phase 4) — browse all categories, wallpapers by category, pagination
-- **Collections**: ❌ Not started
+- **Wallpaper Browsing & Detail**: ✅ Complete (Phase 3)
+- **Categories**: ✅ Complete (Phase 4)
+- **Collections**: ✅ Complete (Phase 5) — 7 server actions + 3 components + 2 pages
 - **Dashboard**: ❌ Not started
 - **Admin Panel**: ❌ Not started
 - **Testing**: ❌ None
