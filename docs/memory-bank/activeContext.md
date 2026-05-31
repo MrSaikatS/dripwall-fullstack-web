@@ -2,40 +2,45 @@
 
 ## Current Work Focus
 
-Phase 5 (Collections) is now **complete**. The project is ready to begin Phase 6 (User Dashboard).
+Phase 6 (User Dashboard) is now **complete**. The project is ready to begin Phase 7 (Navigation Update).
 
-### Completed in Phase 5:
+### Completed in Phase 6:
 
-- ✅ `collectionCreateSchema` added to `src/lib/zodSchema.ts` with CollectionCreateFormType
-- ✅ `src/server/collection/createCollection.ts` — Create collection with name, description, visibility
-- ✅ `src/server/collection/getCollections.ts` — List user's collections with item count
-- ✅ `src/server/collection/getCollectionById.ts` — Collection detail with wallpaper items, ownership check
-- ✅ `src/server/collection/updateCollection.ts` — Update collection metadata, ownership verification
-- ✅ `src/server/collection/deleteCollection.ts` — Delete collection, ownership verification
-- ✅ `src/server/collection/addToCollection.ts` — Add wallpaper to collection (duplicate check)
-- ✅ `src/server/collection/removeFromCollection.ts` — Remove wallpaper from collection
-- ✅ `src/components/Collection/CollectionCard.tsx` — Card with icon, name, description, wallpaper count, public/private badge
-- ✅ `src/components/Collection/CollectionForm.tsx` — Create form with name, description, visibility (react-hook-form + zodResolver + Controller)
-- ✅ `src/components/Collection/AddToCollectionModal.tsx` — Dialog modal showing user's collections + inline create form
-- ✅ `src/app/(private)/collections/page.tsx` — Server component with auth guard
-- ✅ `src/app/(private)/collections/CollectionsPageContent.tsx` — Client component with loading skeletons, empty state, create dialog, collection grid
-- ✅ `src/app/(private)/collections/[id]/page.tsx` — Server component with auth guard
-- ✅ `src/app/(private)/collections/[id]/CollectionDetailContent.tsx` — Detail view with wallpaper grid, remove button (owner only), delete collection, empty state
-- ✅ Lint verified — 0 errors, 0 warnings
+- ✅ `src/server/user/getUserWallpapers.ts` — Paginated user uploads with session-aware auth
+- ✅ `src/server/user/getUserLikes.ts` — Paginated user liked wallpapers with session-aware auth
+- ✅ `src/server/user/getUserDownloads.ts` — Paginated user download history with session-aware auth
+- ✅ `src/components/Dashboard/DashboardNav.tsx` — Sidebar nav with active state highlighting
+- ✅ `src/app/(private)/dashboard/layout.tsx` — Responsive sidebar layout (desktop sidebar, mobile top nav)
+- ✅ `src/app/(private)/dashboard/page.tsx` — Dashboard overview page
+- ✅ `src/app/(private)/dashboard/DashboardOverviewContent.tsx` — Stats cards showing wallpaper count, likes, downloads, collections
+- ✅ `src/app/(private)/dashboard/wallpapers/page.tsx` — User's uploaded wallpapers page
+- ✅ `src/app/(private)/dashboard/wallpapers/DashboardWallpapersContent.tsx` — Paginated grid with empty state
+- ✅ `src/app/(private)/dashboard/likes/page.tsx` — Liked wallpapers page
+- ✅ `src/app/(private)/dashboard/likes/DashboardLikesContent.tsx` — Paginated grid with empty state
+
+### Key Pattern: Session in Server Actions
+
+All user server actions (`getUserWallpapers`, `getUserLikes`, `getUserDownloads`) follow the established pattern of reading the session from headers internally rather than accepting a `userId` parameter:
+
+```typescript
+"use server";
+const session = await auth.api.getSession({ headers: await headers() });
+if (!session?.user?.id) {
+  return { data: [], total: 0, page: 1, pageSize, totalPages: 0 };
+}
+```
+
+This matches the pattern used by `src/server/collection/getCollections.ts` and avoids passing the session from the client.
 
 ## Recent Changes
 
 - **Phase 4 complete**: Categories ✅
-- **Phase 5 complete**: Collections ✅ — 7 server actions + 3 components + 2 pages + 1 modal + 1 form + 1 schema
+- **Phase 5 complete**: Collections ✅
+- **Phase 6 complete**: Dashboard ✅ — 3 server actions + 1 layout + 1 component + 3 pages + 3 client content files
 
 ## Next Steps
 
-### Phase 6: User Dashboard (immediate)
-
-- Dashboard pages (uploads, likes, downloads)
-- DashboardNav, user server actions
-
-### Phase 7: Navigation Update
+### Phase 7: Navigation Update (immediate)
 
 - Header refactor with shadcn DropdownMenu
 - Simplify AuthHeader

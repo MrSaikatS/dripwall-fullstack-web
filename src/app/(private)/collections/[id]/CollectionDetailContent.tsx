@@ -106,7 +106,7 @@ export const CollectionDetailContent = ({
           {Array.from({ length: 6 }).map((_, i) => (
             <Skeleton
               key={i}
-              className="aspect-[4/3] w-full rounded-xl"
+              className="aspect-4/3 w-full rounded-xl"
             />
           ))}
         </div>
@@ -203,7 +203,7 @@ export const CollectionDetailContent = ({
                 key={item.wallpaperId}
                 className="group relative overflow-hidden">
                 <Link href={`/wallpapers/${wallpaper.id}`}>
-                  <div className="bg-muted aspect-[4/3] overflow-hidden">
+                  <div className="bg-muted aspect-4/3 overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={thumbnailUrl}

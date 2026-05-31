@@ -5,26 +5,22 @@ Complete the DripWall full-stack wallpaper sharing platform by implementing all 
 
 The project currently has authentication fully implemented (login, register, forgot/reset password) with Next.js 16 + Better Auth + Prisma 7 (SQLite) + Tailwind CSS 4. The database schema defines all necessary models (Wallpaper, Category, Tag, Collection, Like, Download, etc.) but no feature pages or API routes exist beyond auth. This implementation will build the complete wallpaper platform using S3-compatible cloud storage (Backblaze B2 via S3 API) for images optimized/transformed via Sharp, console-level dev email logging, shadcn/ui components throughout, and the established form/component patterns.
 
-**Current Status (as of 2026-05-31):**
+**Current Status (as of 2026-06-01):**
 
-**Completed (Core Foundation):**
+**Completed (All Phases 0-6):**
+
 - Phase 0: ✅ Complete
-- Phase 1: ✅ Complete  
+- Phase 1: ✅ Complete
 - Phase 2: ✅ Complete
 - Phase 3: ✅ Complete
 - Phase 4: ✅ Complete
-- Lint: ✅ 0 errors, 0 warnings
-- Build: ✅ Success (11 pages generated)
+- Phase 5: ✅ Complete
+- Phase 6: ✅ Complete
+- Lint: ✅ Verified
 
-**Partially Complete:**
-- Types & Schemas: ⚠️ Wallpaper upload + category schemas complete, missing collection schemas
-- Header: ✅ AuthHeader complete, Header needs refactoring for session-aware nav
+**Remaining:**
 
-**Completed:**
-- Phase 4: Categories ✅ Complete
-- Phase 5: Collections — No collection CRUD pages or components
-- Phase 6: User Dashboard — No dashboard pages
-- Phase 7: Navigation Update — Header needs session-aware links
+- Phase 7: Navigation Update — Header needs refactoring for session-aware nav
 - Phase 8: Admin Panel — No admin pages
 - Phase 9: Polish & Cleanup — Pending
 
@@ -47,20 +43,16 @@ New Zod schemas and TypeScript types will be added to support wallpaper manageme
 - `categoryId`: `z.string().uuid()` ✅
 - `tags`: `z.array(z.string().uuid())` (tag IDs) ✅
 
-**Collection Schema** (`src/lib/zodSchema.ts`) ❌
+**Collection Schema** (`src/lib/zodSchema.ts`) ✅
 
-- `name`: `z.string().trim().min(1).max(64)` ❌
-- `description`: `z.string().max(300).optional()` ❌
-- `isPublic`: `z.boolean()` ❌
+- `name`: `z.string().trim().min(1).max(64)` ✅
+- `description`: `z.string().max(300).optional()` ✅
+- `isPublic`: `z.boolean()` ✅
 
 **Category Create Schema** (`src/lib/zodSchema.ts`) ✅
 
 - `name`: `z.string().trim().min(1).max(32)` ✅
 - `description`: `z.string().max(300).optional()` ✅
-
-**Missing schemas to add:**
-
-- Collection schema needed for `src/components/Collection/CollectionForm.tsx`
 
 **Update `LayoutChildrenProps`** in `src/lib/types.ts` ✅ — Already exports `PageParams` generic type
 
@@ -129,20 +121,24 @@ New files to be created and existing files to be modified across the entire appl
 
 - Tags handled inline via server actions in admin. No dedicated pages.
 
-**Collections:** ❌
+**Collections:** ✅ Complete
 
-- `src/app/(private)/collections/page.tsx` — User's collections (server component + client interactions)
-- `src/app/(private)/collections/[id]/page.tsx` — Collection detail
-- `src/components/Collection/CollectionCard.tsx` — Collection card
-- `src/components/Collection/CollectionForm.tsx` — Create/edit collection form using server actions
-- `src/components/Collection/AddToCollectionModal.tsx` — Modal (shadcn Dialog) using server action
+- `src/app/(private)/collections/page.tsx` — User's collections (server component + client interactions) ✅
+- `src/app/(private)/collections/[id]/page.tsx` — Collection detail ✅
+- `src/components/Collection/CollectionCard.tsx` — Collection card ✅
+- `src/components/Collection/CollectionForm.tsx` — Create/edit collection form using server actions ✅
+- `src/components/Collection/AddToCollectionModal.tsx` — Modal (shadcn Dialog) using server action ✅
 
-**User Dashboard:** ❌
+**User Dashboard:** ✅ Complete
 
-- `src/app/(private)/dashboard/page.tsx` — User dashboard overview (server component, direct DB)
-- `src/app/(private)/dashboard/wallpapers/page.tsx` — User's uploaded wallpapers
-- `src/app/(private)/dashboard/likes/page.tsx` — User's liked wallpapers
-- `src/components/Dashboard/DashboardNav.tsx` — Sidebar/nav for dashboard
+- `src/app/(private)/dashboard/layout.tsx` — Dashboard layout with sidebar ✅
+- `src/app/(private)/dashboard/page.tsx` — User dashboard overview (client, ref-cancelled useEffect) ✅
+- `src/app/(private)/dashboard/DashboardOverviewContent.tsx` — Stats cards (wallpapers, likes, downloads, collections) ✅
+- `src/app/(private)/dashboard/wallpapers/page.tsx` — User's uploaded wallpapers ✅
+- `src/app/(private)/dashboard/wallpapers/DashboardWallpapersContent.tsx` — Paginated wallpaper grid with empty state ✅
+- `src/app/(private)/dashboard/likes/page.tsx` — User's liked wallpapers ✅
+- `src/app/(private)/dashboard/likes/DashboardLikesContent.tsx` — Paginated likes grid with empty state ✅
+- `src/components/Dashboard/DashboardNav.tsx` — Sidebar/nav for dashboard ✅
 
 **Admin Panel:** ❌
 
@@ -167,13 +163,13 @@ New files to be created and existing files to be modified across the entire appl
 - `src/server/wallpaper/getWallpapers.ts` ✅
 - `src/server/wallpaper/getWallpaperById.ts` ✅
 - `src/server/wallpaper/getFeaturedWallpapers.ts` ✅
-- `src/server/collection/createCollection.ts` ❌
-- `src/server/collection/updateCollection.ts` ❌
-- `src/server/collection/deleteCollection.ts` ❌
-- `src/server/collection/addToCollection.ts` ❌
-- `src/server/collection/removeFromCollection.ts` ❌
-- `src/server/collection/getCollections.ts` ❌
-- `src/server/collection/getCollectionById.ts` ❌
+- `src/server/collection/createCollection.ts` ✅
+- `src/server/collection/updateCollection.ts` ✅
+- `src/server/collection/deleteCollection.ts` ✅
+- `src/server/collection/addToCollection.ts` ✅
+- `src/server/collection/removeFromCollection.ts` ✅
+- `src/server/collection/getCollections.ts` ✅
+- `src/server/collection/getCollectionById.ts` ✅
 - ⚠️ **Not needed — use Better Auth admin plugin API directly:**
   - User management operations (`listUsers`, `setRole`, `banUser`, `unbanUser`) are built into Better Auth's `admin()` plugin and available via `auth.api.*` with session headers.
   - No separate server action files required — call `auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()` directly from page/layout server components or client components with `headers: await headers()`.
@@ -182,9 +178,9 @@ New files to be created and existing files to be modified across the entire appl
 - `src/server/admin/createCategory.ts` ❌
 - `src/server/admin/updateCategory.ts` ❌
 - `src/server/admin/deleteCategory.ts` ❌
-- `src/server/user/getUserWallpapers.ts` ❌
-- `src/server/user/getUserLikes.ts` ❌
-- `src/server/user/getUserDownloads.ts` ❌
+- `src/server/user/getUserWallpapers.ts` ✅
+- `src/server/user/getUserLikes.ts` ✅
+- `src/server/user/getUserDownloads.ts` ✅
 
 **Image Upload & Storage:** ✅ **Complete**
 
@@ -202,7 +198,7 @@ New files to be created and existing files to be modified across the entire appl
 ### Existing Files to Modify
 
 - `src/lib/types.ts` — ✅ Already has `PageParams<T>` generic type and `PaginatedResponse<T>`, `ApiResponse<T>`
-- `src/lib/zodSchema.ts` — ⚠️ Partial — has wallpaper upload + category schemas, missing collection schemas
+- `src/lib/zodSchema.ts` — ✅ Complete — has wallpaper upload + category + collection schemas
 - ~~`src/lib/env/serverEnv.ts`~~ ✅ **Already configured** with S3/cloud storage env vars
 - ~~`src/components/Header/Header.tsx`~~ ❌ **Not refactored** — needs session-aware nav links (Wallpapers, Categories, Upload, Dashboard, Admin for admins)
 - ~~`src/components/Header/AuthHeader.tsx`~~ ✅ **Already implemented** — simplified to show Sign in/up links, logout button
@@ -245,13 +241,13 @@ New and modified functions across server utilities and components.
 
 **`src/server/collection/` (each file exports a single function):**
 
-- `createCollection.ts` — `createCollection(data: CollectionInput, userId: string)` → Create collection
-- `updateCollection.ts` — `updateCollection(id: string, userId: string, data: Partial<CollectionInput>)` → Update
-- `deleteCollection.ts` — `deleteCollection(id: string, userId: string)` → Delete (verify ownership)
-- `addToCollection.ts` — `addToCollection(collectionId: string, wallpaperId: string)` → Add wallpaper (check duplicate)
-- `removeFromCollection.ts` — `removeFromCollection(collectionId: string, wallpaperId: string)` → Remove wallpaper
-- `getCollections.ts` — `getUserCollections(userId: string)` → Get user's collections with item count
-- `getCollectionById.ts` — `getCollectionById(id: string)` → Collection with items and wallpaper data
+- `createCollection.ts` — `createCollection(data: CollectionInput, userId: string)` → Create collection ✅
+- `updateCollection.ts` — `updateCollection(id: string, userId: string, data: Partial<CollectionInput>)` → Update ✅
+- `deleteCollection.ts` — `deleteCollection(id: string, userId: string)` → Delete (verify ownership) ✅
+- `addToCollection.ts` — `addToCollection(collectionId: string, wallpaperId: string)` → Add wallpaper (check duplicate) ✅
+- `removeFromCollection.ts` — `removeFromCollection(collectionId: string, wallpaperId: string)` → Remove wallpaper ✅
+- `getCollections.ts` — `getUserCollections(userId: string)` → Get user's collections with item count ✅
+- `getCollectionById.ts` — `getCollectionById(id: string)` → Collection with items and wallpaper data ✅
 
 **`src/server/admin/` (each file exports a single function):**
 
@@ -262,17 +258,17 @@ New and modified functions across server utilities and components.
   - `auth.api.unbanUser({ body: { userId }, headers: await headers() })` — Built-in unban (replaces `unbanUser.ts`)
   - These all require admin authentication (handled automatically by Better Auth when session belongs to admin user).
   - Keep remaining admin server actions below for wallpaper and category management.
-- `getAllWallpapersAdmin.ts` — `getAllWallpapersAdmin(page: number)` → All wallpapers including unlisted/private
-- `toggleFeatured.ts` — `toggleFeatured(wallpaperId: string)` → Toggle featured status
-- `createCategory.ts` — `createCategory(data: { name, slug, description? })` → Create category
-- `updateCategory.ts` — `updateCategory(id: string, data: Partial<CategoryInput>)` → Update category
-- `deleteCategory.ts` — `deleteCategory(id: string)` → Delete category (wallpapers get category set to null)
+- `getAllWallpapersAdmin.ts` — `getAllWallpapersAdmin(page: number)` → All wallpapers including unlisted/private ❌
+- `toggleFeatured.ts` — `toggleFeatured(wallpaperId: string)` → Toggle featured status ❌
+- `createCategory.ts` — `createCategory(data: { name, slug, description? })` → Create category ❌
+- `updateCategory.ts` — `updateCategory(id: string, data: Partial<CategoryInput>)` → Update category ❌
+- `deleteCategory.ts` — `deleteCategory(id: string)` → Delete category (wallpapers get category set to null) ❌
 
 **`src/server/user/` (each file exports a single function):**
 
-- `getUserWallpapers.ts` — `getUserWallpapers(userId: string, page: number)` → Paginated user uploads
-- `getUserLikes.ts` — `getUserLikes(userId: string, page: number)` → Paginated user likes with wallpaper data
-- `getUserDownloads.ts` — `getUserDownloads(userId: string, page: number)` → Paginated download history
+- `getUserWallpapers.ts` — `getUserWallpapers(page: number)` → Paginated user uploads (session-aware, reads userId from headers) ✅
+- `getUserLikes.ts` — `getUserLikes(page: number)` → Paginated user likes with wallpaper data (session-aware) ✅
+- `getUserDownloads.ts` — `getUserDownloads(page: number)` → Paginated download history (session-aware) ✅
 
 **`src/lib/fileStorage.ts`**
 
@@ -309,24 +305,24 @@ No new classes. This project uses functional React components and server actions
 
 **New React Components:**
 
-| Component              | File                                                 | Purpose                        | shadcn Components Used                                         | Status |
-| ---------------------- | ---------------------------------------------------- | ------------------------------ | -------------------------------------------------------------- | ------ |
-| `WallpaperGrid`        | `src/components/Wallpaper/WallpaperGrid.tsx`         | Responsive grid layout         | —                                                              | ✅ |
-| `WallpaperCard`        | `src/components/Wallpaper/WallpaperCard.tsx`         | Card with thumbnail + metadata | Card, Badge, Skeleton                                          | ✅ |
-| `WallpaperDetail`      | `src/components/Wallpaper/WallpaperDetail.tsx`       | Full wallpaper view            | Card, Badge, Separator, Avatar                                 | ✅ |
-| `WallpaperUploadForm`  | `src/components/Wallpaper/WallpaperUploadForm.tsx`   | Upload form                    | Button, Input, Select, Textarea, Field, FieldLabel, FieldError | ✅ |
-| `LikeButton`           | `src/components/Wallpaper/LikeButton.tsx`            | Heart toggle                   | Button                                                         | ✅ |
-| `DownloadButton`       | `src/components/Wallpaper/DownloadButton.tsx`        | Download action                | Button                                                         | ✅ |
-| `Pagination`           | `src/components/Wallpaper/Pagination.tsx`            | Page nav                       | Button                                                         | ✅ |
-| `CategoryCard`         | `src/components/Category/CategoryCard.tsx`           | Category card                  | Card, Badge                                                    | ✅ |
-| `CategoryGrid`         | `src/components/Category/CategoryGrid.tsx`           | Category grid                  | —                                                              | ✅ |
-| `CategoryWallpapersContent` | `src/components/Category/CategoryWallpapersContent.tsx` | Category wallpaper listing | WallpaperCard, Pagination                                      | ✅ |
-| `CollectionCard`       | `src/components/Collection/CollectionCard.tsx`       | Collection card                | Card                                                           | ❌ |
-| `CollectionForm`       | `src/components/Collection/CollectionForm.tsx`       | Create/edit form               | Dialog, Button, Input, Textarea, Field                         | ❌ |
-| `AddToCollectionModal` | `src/components/Collection/AddToCollectionModal.tsx` | Collection selection modal     | Dialog, Button                                                 | ❌ |
-| `DashboardNav`         | `src/components/Dashboard/DashboardNav.tsx`          | Sidebar navigation             | —                                                              | ❌ |
-| `UserTable`            | `src/components/Admin/UserTable.tsx`                 | User management table          | Table, DropdownMenu, Badge, Button                             | ❌ |
-| `CategoryManager`      | `src/components/Admin/CategoryManager.tsx`           | Category CRUD                  | Dialog, Button, Input, Card, Badge                             | ❌ |
+| Component                   | File                                                    | Purpose                        | shadcn Components Used                                         | Status |
+| --------------------------- | ------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------- | ------ |
+| `WallpaperGrid`             | `src/components/Wallpaper/WallpaperGrid.tsx`            | Responsive grid layout         | —                                                              | ✅     |
+| `WallpaperCard`             | `src/components/Wallpaper/WallpaperCard.tsx`            | Card with thumbnail + metadata | Card, Badge, Skeleton                                          | ✅     |
+| `WallpaperDetail`           | `src/components/Wallpaper/WallpaperDetail.tsx`          | Full wallpaper view            | Card, Badge, Separator, Avatar                                 | ✅     |
+| `WallpaperUploadForm`       | `src/components/Wallpaper/WallpaperUploadForm.tsx`      | Upload form                    | Button, Input, Select, Textarea, Field, FieldLabel, FieldError | ✅     |
+| `LikeButton`                | `src/components/Wallpaper/LikeButton.tsx`               | Heart toggle                   | Button                                                         | ✅     |
+| `DownloadButton`            | `src/components/Wallpaper/DownloadButton.tsx`           | Download action                | Button                                                         | ✅     |
+| `Pagination`                | `src/components/Wallpaper/Pagination.tsx`               | Page nav                       | Button                                                         | ✅     |
+| `CategoryCard`              | `src/components/Category/CategoryCard.tsx`              | Category card                  | Card, Badge                                                    | ✅     |
+| `CategoryGrid`              | `src/components/Category/CategoryGrid.tsx`              | Category grid                  | —                                                              | ✅     |
+| `CategoryWallpapersContent` | `src/components/Category/CategoryWallpapersContent.tsx` | Category wallpaper listing     | WallpaperCard, Pagination                                      | ✅     |
+| `CollectionCard`            | `src/components/Collection/CollectionCard.tsx`          | Collection card                | Card                                                           | ✅     |
+| `CollectionForm`            | `src/components/Collection/CollectionForm.tsx`          | Create/edit form               | Dialog, Button, Input, Textarea, Field                         | ✅     |
+| `AddToCollectionModal`      | `src/components/Collection/AddToCollectionModal.tsx`    | Collection selection modal     | Dialog, Button                                                 | ✅     |
+| `DashboardNav`              | `src/components/Dashboard/DashboardNav.tsx`             | Sidebar navigation             | Button, Separator                                              | ✅     |
+| `UserTable`                 | `src/components/Admin/UserTable.tsx`                    | User management table          | Table, DropdownMenu, Badge, Button                             | ❌     |
+| `CategoryManager`           | `src/components/Admin/CategoryManager.tsx`              | Category CRUD                  | Dialog, Button, Input, Card, Badge                             | ❌     |
 
 [Dependencies]
 New npm packages required for cloud storage + image processing: ✅ **Already installed**
@@ -348,8 +344,8 @@ No changes to `next.config.ts` or `components.json`.
 [Testing]
 Manual testing strategy since no test framework is configured:
 
-1. ~~**Run `bun run lint`**~~ ✅ **Complete** — 0 errors, 0 warnings (using `npm run lint`)
-2. ~~**Run `bun run build`**~~ ✅ **Complete** — Production build succeeds with 9 pages generated
+1. ~~**Run `bun run lint`**~~ ✅ **Complete** — 0 errors, 0 warnings
+2. ~~**Run `bun run build`**~~ ✅ **Complete** — Production build succeeds with 11+ pages generated
 3. ~~**Visual verification**~~ ⏳ **Pending** — Remaining features to test:
    - Upload a wallpaper → verify Sharp generates thumbnail, S3 stores both
    - Browse wallpapers → verify pagination, search, category filter
@@ -373,12 +369,12 @@ Build features in dependency order, where each phase builds on the previous.
 
 5. ~~**Phase 4: Categories**~~ ✅ **Complete** — Category browsing pages, CategoryCard, CategoryGrid, server actions.
 
-6. ~~**Phase 5: Collections**~~ ❌ **Not Started** — No collection CRUD pages exist.
+6. ~~**Phase 5: Collections**~~ ✅ **Complete** — All 7 collection server actions + 3 components + 2 pages.
 
-7. ~~**Phase 6: User Dashboard**~~ ❌ **Not Started** — No dashboard pages exist.
+7. ~~**Phase 6: User Dashboard**~~ ✅ **Complete** — 3 user server actions + DashboardNav + layout + 3 pages + 3 client content files.
 
 8. ~~**Phase 7: Navigation Update**~~ ❌ **Not Started** — Header needs refactoring for session-aware nav links.
 
 9. ~~**Phase 8: Admin Panel**~~ ❌ **Not Started** — No admin pages exist.
 
-10. ~~**Phase 9: Polish & Cleanup**~~ ❌ **Not Started** — Not completed.
+10. ~~**Phase 9: Polish & Cleanup**~~ ❌ **Not Started** — Build verification pending.

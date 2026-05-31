@@ -53,6 +53,9 @@
 - [x] Category detail page (wallpapers by category with pagination)
 - [x] Collections listing page (auth-guarded)
 - [x] Collection detail page (auth-guarded, with wallpaper grid)
+- [x] Dashboard overview page (auth-guarded, with stats cards)
+- [x] Dashboard wallpapers page (auth-guarded, paginated grid)
+- [x] Dashboard likes page (auth-guarded, paginated grid)
 
 ### Infrastructure
 
@@ -151,11 +154,19 @@
 - [x] Create `src/app/(private)/collections/[id]/CollectionDetailContent.tsx` — Detail client content
 - [x] Lint verified — 0 errors, 0 warnings
 
-### Phase 6: User Dashboard
+### Phase 6: User Dashboard ✅ Complete
 
-- [ ] Create dashboard pages (3 pages)
-- [ ] Create `src/components/Dashboard/DashboardNav.tsx`
-- [ ] Create user server actions (3 files)
+- [x] Create `src/server/user/getUserWallpapers.ts` — Paginated user uploads (session-aware)
+- [x] Create `src/server/user/getUserLikes.ts` — Paginated user likes (session-aware)
+- [x] Create `src/server/user/getUserDownloads.ts` — Paginated user downloads (session-aware)
+- [x] Create `src/components/Dashboard/DashboardNav.tsx` — Sidebar nav with active state
+- [x] Create `src/app/(private)/dashboard/layout.tsx` — Sidebar + content layout (responsive)
+- [x] Create `src/app/(private)/dashboard/page.tsx` — Overview page with DashboardOverviewContent
+- [x] Create `src/app/(private)/dashboard/DashboardOverviewContent.tsx` — Stats cards (wallpapers, likes, downloads, collections)
+- [x] Create `src/app/(private)/dashboard/wallpapers/page.tsx` — Wallpapers listing page
+- [x] Create `src/app/(private)/dashboard/wallpapers/DashboardWallpapersContent.tsx` — Paginated wallpaper grid with empty state
+- [x] Create `src/app/(private)/dashboard/likes/page.tsx` — Liked wallpapers page
+- [x] Create `src/app/(private)/dashboard/likes/DashboardLikesContent.tsx` — Paginated likes grid with empty state
 
 ### Phase 7: Navigation Update
 
@@ -189,7 +200,7 @@
 
 ## Current Status
 
-- **Phase**: 5 (Collections) — ✅ Complete
+- **Phase**: 6 (User Dashboard) — ✅ Complete
 - **Auth**: ✅ Complete (core flow functional)
 - **Implementation Plan**: ✅ Complete + Audited against Better Auth/Prisma/shadcn best practices
 - **UI**: ✅ All 13 shadcn components installed and available
@@ -204,7 +215,7 @@
 - **Wallpaper Browsing & Detail**: ✅ Complete (Phase 3)
 - **Categories**: ✅ Complete (Phase 4)
 - **Collections**: ✅ Complete (Phase 5) — 7 server actions + 3 components + 2 pages
-- **Dashboard**: ❌ Not started
+- **Dashboard**: ✅ Complete (Phase 6) — 3 server actions + 1 component + 1 layout + 3 pages + 3 client content files
 - **Admin Panel**: ❌ Not started
 - **Testing**: ❌ None
 - **Production Deploy**: ❌ Not configured
