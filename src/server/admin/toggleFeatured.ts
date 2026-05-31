@@ -47,8 +47,7 @@ export const toggleFeatured = async (
     console.error("Toggle featured error:", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to toggle featured",
+      error: "An unexpected error occurred. Please try again.",
     };
   }
 };

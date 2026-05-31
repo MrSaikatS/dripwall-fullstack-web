@@ -59,8 +59,7 @@ export const deleteWallpaperAdmin = async (
     console.error("Delete wallpaper admin error:", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to delete wallpaper",
+      error: "An unexpected error occurred. Please try again.",
     };
   }
 };

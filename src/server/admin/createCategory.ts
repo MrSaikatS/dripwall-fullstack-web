@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { slugify } from "@/lib/utils";
 import { categoryCreateSchema } from "@/lib/zodSchema";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -11,12 +12,6 @@ export type CreateCategoryResult = {
   data?: { id: string; name: string; slug: string };
   error?: string;
 };
-
-const slugify = (text: string): string =>
-  text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 export const createCategory = async (
   data: { name: string; description?: string },
@@ -65,8 +60,7 @@ export const createCategory = async (
     console.error("Create category error:", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to create category",
+      error: "An unexpected error occurred. Please try again.",
     };
   }
 };

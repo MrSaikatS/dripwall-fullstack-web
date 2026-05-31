@@ -49,8 +49,7 @@ export const deleteCategory = async (
     console.error("Delete category error:", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to delete category",
+      error: "An unexpected error occurred. Please try again.",
     };
   }
 };
