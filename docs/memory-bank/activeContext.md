@@ -2,11 +2,12 @@
 
 ## Current Work Focus
 
-All 10 phases (Phase 0–9) are now **complete**. Two additional commits have been made after Phase 9, and uncommitted changes exist.
+All 10 phases (Phase 0–9) are **complete**. Three post-Phase-9 commits have been made (sidebar migration, image proxy, returnTo redirect, security fixes), and there are **no uncommitted changes**.
 
-### Committed Changes (Post-Phase 9)
+### Latest Commits (Post-Phase 9)
 
 #### `7d60f87` — Refactor admin/dashboard layouts to shadcn Sidebar
+
 - Installed 3 new shadcn components: `sidebar.tsx` (726 lines), `sheet.tsx`, `tooltip.tsx`
 - Created `use-mobile.ts` hook for responsive breakpoint detection
 - Created `AppSidebar.tsx` (dashboard) with nav items: Overview, My Wallpapers, Liked Wallpapers
@@ -16,26 +17,26 @@ All 10 phases (Phase 0–9) are now **complete**. Two additional commits have be
 - Deleted `implementation_plan.md`
 
 #### `d30b09b` — Fix layout overflow + add S3 image proxy
-- **S3 Image Proxy** (`src/app/api/images/[...key]/route.ts`): New Next.js API route that proxies images from Backblaze B2 with:
-  - Auth check: queries DB to find wallpaper by image key, checks `isPublic` flag; private wallpapers require session + ownership
-  - Streaming response: handles `Readable`, `Blob`, and native `ReadableStream` body types
-  - Cache headers: `public, max-age=31536000, immutable` for public, `private, max-age=3600` for private
-  - Error handling: differentiates `NoSuchKey`/`NotFound` (404) from generic errors (500)
-  - `runtime = "nodejs"` (required for S3 SDK)
-- **`resolveImageUrl.ts`**: New utility with `resolveImageUrl(url)` to convert stored keys to proxy URLs, and `extractS3Key(url)` to reverse the conversion
-- **Layout fix**: Removed `100dvw` breakout hack causing horizontal overflow; moved `max-w-7xl mx-auto` from root `<main>` to `(public)/layout.tsx`
-- **Home page**: Simplified to hero-only section (removed featured/latest wallpapers grids, categories grid, bottom CTA)
-- **File storage**: `uploadFile()` returns `S3_PUBLIC_URL/{key}` if public URL configured, otherwise `/api/images/{key}`
-- **All server actions**: Updated to call `resolveImageUrl()` on wallpaper/thumbnail URLs before returning data
 
-### Uncommitted Changes
+- **S3 Image Proxy** (`src/app/api/images/[...key]/route.ts`): New Next.js API route that proxies images from Backblaze B2
+- **`resolveImageUrl.ts`**: New utility for converting stored keys to proxy URLs
+- **Layout fix**: Removed `100dvw` breakout hack causing horizontal overflow
+- **Home page**: Simplified to hero-only section
+- **File storage**: `uploadFile()` returns proxy-compatible paths
 
-- **Login page** (`login/page.tsx`): Added `searchParams` support — accepts `?returnTo=/upload` parameter
-- **LoginForm** (`LoginForm.tsx`): Accepts `returnTo` prop, redirects to `returnTo` after successful login instead of always `/`
-- **Home page** (`page.tsx`): Added session check via `auth.api.getSession()`; Upload CTA redirects to `/login?returnTo=/upload` if unauthenticated
-- **Image proxy** (`route.ts`): Added auth check for private wallpapers, streaming response, enhanced error handling
-- **Header** (`Header.tsx`): Changed "Profile" dropdown menu item to "My Wallpapers" linking to `/dashboard/wallpapers`
-- **resolveImageUrl.ts**: Added `encodeURIComponent` on each path segment of S3 key in proxy URL; fixed `extractS3Key` to normalize trailing slashes in `S3_PUBLIC_URL`
+#### `8f7e4dd` — Add returnTo redirect and harden S3 image proxy
+
+- **Login page/LoginForm**: Added `?returnTo=` param support for redirect-after-login flow
+- **Home page**: Session-aware CTA — unauthenticated Upload clicks redirect to `/login?returnTo=/upload`
+- **S3 image proxy**: Added auth guard for private wallpapers (requires session + ownership), streaming response, proper cache headers (public immutable vs private short-lived), 404/500 error differentiation
+- **resolveImageUrl.ts**: Fixed URI encoding for S3 key segments, normalized `S3_PUBLIC_URL` trailing slashes
+- **Header**: Changed "Profile" to "My Wallpapers" linking to `/dashboard/wallpapers`
+- **Memory bank**: Updated docs to reflect sidebar, image proxy, and returnTo changes
+
+#### `de32e4b` — Fix: prevent open redirect and false-positive S3 key matching
+
+- **LoginForm.tsx**: Added validation for `returnTo` URL using `URL.canParse()` to prevent open redirect vulnerability — only relative paths starting with `/` are allowed
+- **Image proxy route.ts**: Fixed S3 key matching to use `pathname.endsWith(key)` instead of `pathname.includes(key)` to prevent false-positive matches on partial key prefixes
 
 ### Key Pattern: Session in Server Actions
 
@@ -53,23 +54,20 @@ This matches the pattern used by `src/server/collection/getCollections.ts` and a
 
 ## Recent Changes
 
-- **shadcn Sidebar integration**: Admin and dashboard layouts fully migrated from custom sidebar to shadcn Sidebar component with collapsible desktop sidebar (`variant="inset"`, `collapsible="icon"`) and fixed mobile bottom navigation
+- **shadcn Sidebar integration**: Admin and dashboard layouts fully migrated from custom sidebar to shadcn Sidebar component with collapsible desktop sidebar and fixed mobile bottom navigation
 - **S3 Image Proxy**: Added `/api/images/[...key]` route for secure image delivery with auth-based access control (public vs private wallpapers)
-- **Image URL resolution**: Added `resolveImageUrl.ts` utility; all server actions now resolve stored keys to proxy URLs
-- **Layout restructure (width fix)**: Fixed horizontal overflow by removing the `100dvw` breakout hack. Root layout's `max-w-7xl mx-auto` moved from `<main>` into a new `(public)/layout.tsx`, so dashboard/admin layouts naturally span full width
+- **Image URL resolution**: Added `resolveImageUrl.ts` utility; all server actions resolve stored keys to proxy URLs
+- **Layout restructure (width fix)**: Fixed horizontal overflow — root layout `max-w-7xl mx-auto` moved to `(public)/layout.tsx`
 - **Home page simplified**: Removed featured/latest/categories grids, now hero-only with session-aware CTAs
-- **Login returnTo flow**: Added `?returnTo=` parameter support — unauthenticated users clicking "Upload" are redirected to login and returned after success
+- **Login returnTo flow**: Added `?returnTo=` param support — unauthenticated users clicking "Upload" redirected to login and returned after success
+- **Security fix**: Open redirect prevention — `returnTo` validated as relative path via `URL.canParse()` before redirect
+- **Security fix**: False-positive S3 key matching — `includes()` replaced with `endsWith()` in image proxy
 - **Header dropdown**: Changed "Profile" link to "My Wallpapers" (`/dashboard/wallpapers`)
-- **Phase 4 complete**: Categories ✅
-- **Phase 5 complete**: Collections ✅
-- **Phase 6 complete**: Dashboard ✅
-- **Phase 8 complete**: Admin Panel ✅
-- **SEO & Polish**: Added metadata to all pages, home page UI polish, backdrop-blur header, upload image preview
-- **Refactor**: Extracted `slugify` to `src/lib/utils.ts`, sanitized admin server action error messages
+- **All phases complete**: Phase 0–9 all complete ✅
 
 ## Next Steps
 
-All 10 phases complete + sidebar migration + image proxy. Future considerations (if resumed):
+All phases complete + sidebar migration + image proxy + returnTo flow + security fixes. Future considerations (if resumed):
 
 - OAuth providers (Google, GitHub)
 - PostgreSQL/MySQL migration
@@ -77,18 +75,20 @@ All 10 phases complete + sidebar migration + image proxy. Future considerations 
 - CI/CD pipeline
 - Image proxy: add support for `Cache-Control` stale-while-revalidate pattern
 - Consider adding `sharp` to image proxy for on-the-fly resizing
+- Rate limiting to Redis (persistent rate limits across server restarts)
 
 ## Active Decisions & Considerations
 
 ### Server Actions Architecture (No API Routes)
 
-All operations use `"use server"` functions in `src/server/{domain}/{action}.ts` files. This leverages Next.js 16's server action capabilities, including file upload handling via `arrayBuffer()`. The only API route is `/api/auth/[...all]` (Better Auth) and `/api/images/[...key]` (S3 image proxy).
+All operations use `"use server"` functions in `src/server/{domain}/{action}.ts` files. This leverages Next.js 16's server action capabilities, including file upload handling via `arrayBuffer()`. The only API routes are `/api/auth/[...all]` (Better Auth) and `/api/images/[...key]` (S3 image proxy).
 
 ### Better Auth Admin API vs Custom Server Actions
 
-User management operations (`listUsers`, `setRole`, `banUser`, `unbanUser`) should use Better Auth's built-in admin plugin API (`auth.api.*`) rather than custom server actions.
+User management operations (`listUsers`, `setRole`, `banUser`, `unbanUser`) use Better Auth's built-in admin plugin API (`auth.api.*`) rather than custom server actions.
 
 Custom server actions are still needed for:
+
 - Wallpaper management (CRUD, likes, downloads)
 - Collection management (CRUD, add/remove items)
 - Category management (CRUD — admin only)
@@ -186,6 +186,17 @@ This project uses **Bun** as the package manager and runtime. All commands (`dev
 - `resolveImageUrl()` skips conversion for full HTTP URLs or already-proxied paths
 - `extractS3Key()` reverses the conversion for operations that need the raw S3 key
 
+### Open Redirect Prevention Pattern
+
+- `returnTo` URLs validated using `URL.canParse()` to ensure they are relative paths starting with `/`
+- Prevents malicious redirects after login
+- Falls back to `/` if invalid
+
+### S3 Key Matching Pattern
+
+- Image proxy uses `pathname.endsWith(key)` instead of `pathname.includes(key)` to prevent false-positive matches
+- Ensures only exact key suffixes match, not partial prefixes
+
 ## Preferred Verification
 
 - Use `bun run lint` (not `bun run build`) for quick verification after changes — faster and sufficient for catching errors
@@ -216,3 +227,5 @@ This project uses **Bun** as the package manager and runtime. All commands (`dev
 - Image proxy cache headers should differentiate public (immutable) vs private (short-lived) content
 - The shadcn Sidebar `render` prop on `SidebarMenuButton` is used for wrapping with Link components (`render={<Link href={...} />}`)
 - Mobile nav for admin/dashboard uses a separate `MobileNav.tsx` component with fixed bottom positioning, hidden on `md:` breakpoint
+- Open redirect prevention: use `URL.canParse(returnTo, origin)` and verify the parsed URL is relative (starts with `/`) before redirecting
+- S3 key matching in proxy: use `endsWith()` instead of `includes()` to prevent false-positive matches on partial key prefixes

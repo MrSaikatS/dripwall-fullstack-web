@@ -5,7 +5,8 @@ export const serverEnv = createEnv({
   server: {
     DATABASE_URL: z
       .string()
-      .startsWith("file:./")
+      .url()
+      .startsWith("postgres")
       .min(1, { error: "DATABASE_URL is required" }),
     CHECKPOINT_DISABLE: z.enum(["1", "0"]).optional(),
     BETTER_AUTH_SECRET: z

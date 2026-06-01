@@ -97,6 +97,7 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 - Password reset is implemented via Better Auth's built-in `forgetPassword`/`resetPassword` APIs
 - Reset token is logged to console (no email transport configured yet)
 - **Admin plugin**: provides `listUsers`, `setRole`, `banUser`, `unbanUser` via `auth.api.*` — no custom server actions needed for user management
+- **Open redirect prevention**: `returnTo` param validated via `URL.canParse()` — only relative paths starting with `/` are allowed, preventing malicious redirects after login
 
 ### Image Storage & Delivery (Backblaze B2 via S3 + Next.js Proxy)
 
@@ -107,6 +108,7 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
   - Private wallpapers: require active session + ownership, short-lived private cache
 - `runtime = "nodejs"` required for the image proxy route (S3 SDK needs Node.js APIs)
 - Handles three response body types: `Readable` (stream), `Blob`, and native `ReadableStream`
+- **S3 key matching**: Uses `pathname.endsWith(key)` not `pathname.includes(key)` to prevent false-positive matches on partial key prefixes
 - Sharp processes images before upload (resize, thumbnail generation)
 - File naming convention: `wallpapers/{userId}/{uuid}-{original-name}`
 
@@ -192,7 +194,7 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 
 1. Store S3 keys in database (e.g., `wallpapers/{userId}/{uuid}-{name}.webp`)
 2. Before returning data to client, call `resolveImageUrl()` on each URL field
-3. `resolveImageUrl()` converts S3 keys to `/api/images/{encoded-key}` proxy URLs
+3. `resolveImageUrl()` converts S3 keys to `/api/images/{encoded-key}` proxy URLs (each path segment URI-encoded via `encodeURIComponent`)
 4. Full HTTP URLs (from `S3_PUBLIC_URL`) pass through unchanged
 5. `extractS3Key()` reverses the conversion for operations needing the raw S3 key
 

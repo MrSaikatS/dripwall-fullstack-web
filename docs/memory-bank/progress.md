@@ -14,6 +14,7 @@
 - [x] Admin plugin (role field, user banning, impersonation)
 - [x] Remember me functionality
 - [x] **Login returnTo flow** — `/login?returnTo=/upload` redirects after successful auth
+- [x] **Open redirect prevention** — `returnTo` validated as relative path via `URL.canParse()`
 
 ### UI Components
 
@@ -43,7 +44,7 @@
 
 ### Forms (Zod + react-hook-form + Controller pattern)
 
-- [x] Login form (with returnTo redirect support)
+- [x] Login form (with returnTo redirect support, open redirect validation)
 - [x] Register form (with confirm password validation)
 - [x] Forgot password form
 - [x] Reset password form (with confirm password validation)
@@ -53,7 +54,7 @@
 ### Pages
 
 - [x] Home page (hero-only, session-aware CTA: Upload redirects to login if unauthenticated)
-- [x] Login page (supports `?returnTo=` query param)
+- [x] Login page (supports `?returnTo=` query param, open redirect safe)
 - [x] Register page
 - [x] Forgot Password page (implemented)
 - [x] Reset Password page
@@ -69,7 +70,7 @@
 ### API Routes
 
 - [x] `/api/auth/[...all]` — Better Auth handler
-- [x] `/api/images/[...key]` — S3 image proxy with auth-based access control
+- [x] `/api/images/[...key]` — S3 image proxy with auth-based access control (public/private wallpapers, streaming, cache headers, error differentiation)
 
 ### Infrastructure
 
@@ -239,13 +240,25 @@
 - [x] **Update server actions**: All image URLs resolved through `resolveImageUrl()` before returning to client
 - [x] **Update `fileStorage.ts`**: `uploadFile()` returns proxy-compatible paths
 
-### Uncommitted — Login returnTo + Home page session check
+### Post-Phase 9: returnTo + Home Session ✅ Complete
 
 - [x] **Login page/LoginForm**: Added `searchParams` support for `?returnTo=` redirect param
 - [x] **Home page**: Session-aware CTA — redirects unauthenticated users to login with returnTo
-- [x] **Image proxy**: Added auth check for private wallpapers, streaming response, enhanced error handling
+- [x] **Image proxy**: Added auth guard for private wallpapers (session + ownership check), streaming response, cache headers (public immutable vs private short-lived), 404/500 error differentiation
 - [x] **Header**: Changed "Profile" to "My Wallpapers" linking to `/dashboard/wallpapers`
 - [x] **resolveImageUrl.ts**: URI encoding for S3 keys, fixed S3 public URL extraction
+
+### Security Fixes ✅ Complete
+
+- [x] **Open redirect prevention**: `returnTo` validated using `URL.canParse()` — only relative paths starting with `/` are allowed
+- [x] **S3 key matching fix**: Image proxy uses `endsWith()` instead of `includes()` to prevent false-positive matches on partial key prefixes
+
+### All Changes Committed ✅
+
+- [x] All previously uncommitted changes now committed in `8f7e4dd`
+- [x] Security fixes committed in `de32e4b`
+- [x] Merged to main via PR #16 (`f9a56e6`)
+- [x] No uncommitted changes remaining
 
 ### Future Considerations
 
@@ -261,14 +274,14 @@
 ## Current Status
 
 - **Phase**: 9 (Polish & Cleanup) — ✅ Complete
-- **Auth**: ✅ Complete (core flow functional + returnTo redirect)
+- **Auth**: ✅ Complete (core flow functional + returnTo redirect + open redirect prevention)
 - **Implementation Plan**: ✅ Complete
 - **UI**: ✅ All 16 shadcn components installed (13 core + sidebar, sheet, tooltip)
 - **Database**: ✅ Schema defined, seeded
 - **S3 Storage Deps**: ✅ @aws-sdk/client-s3 + @aws-sdk/s3-request-presigner installed
 - **Env Vars**: ✅ Server + client env configured for S3
 - **Image Processor**: ✅ Complete (Phase 1)
-- **Image Proxy**: ✅ Complete — auth-guarded S3 proxy route with streaming
+- **Image Proxy**: ✅ Complete — auth-guarded S3 proxy route with streaming, cache headers, error handling, secure key matching
 - **File Storage**: ✅ Complete (Phase 1, updated for proxy URLs)
 - **Shared Types & Utils**: ✅ Complete (including resolveImageUrl)
 - **Wallpaper Upload**: ✅ Complete (Phase 2)
@@ -283,8 +296,11 @@
 - **SEO Metadata**: ✅ Complete
 - **Layout Refactor**: ✅ Complete — shadcn Sidebar for admin/dashboard, public max-w-7xl, no breakout hack
 - **S3 Image Proxy**: ✅ Complete
-- **Login returnTo**: ✅ Complete (uncommitted)
-- **Home session CTAs**: ✅ Complete (uncommitted)
+- **Login returnTo**: ✅ Complete
+- **Home session CTAs**: ✅ Complete
+- **Open redirect prevention**: ✅ Complete
+- **All changes committed**: ✅ Complete — no uncommitted changes
+- **Git Branch**: `maintenance` (merged to main via PR #16)
 - **Testing**: ❌ None
 - **Production Deploy**: ❌ Not configured
 
@@ -297,7 +313,6 @@
 5. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]`
 6. **No E2E tests**: Manual verification only
 7. **No OAuth providers**: Email/password only
-8. **Uncommitted changes**: Login returnTo, home session check, image proxy auth enhancements, header label change, URL encoding fix — not yet committed
 
 ## Evolution of Project Decisions
 

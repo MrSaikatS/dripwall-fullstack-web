@@ -238,6 +238,7 @@ Root layout `<main>` uses `pt-16` to prevent content from being hidden behind th
 5. `authClient.useSession()` checks session via `GET /api/auth/get-session`
 6. Admin plugin enables `user.role` field and impersonation
 7. Login accepts `?returnTo=` param — redirects there after success
+8. `returnTo` is validated via `URL.canParse()` to ensure it's a relative path starting with `/` — prevents open redirect vulnerabilities
 
 ### Session Validation
 
@@ -272,11 +273,11 @@ Root layout `<main>` uses `pt-16` to prevent content from being hidden behind th
 
 1. User requests `/api/images/wallpapers/{userId}/{uuid}-{name}.webp`
 2. Route handler joins params into S3 key
-3. Looks up wallpaper in DB where `imageUrl` or `thumbnailUrl` ends with the key
+3. Looks up wallpaper in DB where `imageUrl` or `thumbnailUrl` ends with the key (uses `endsWith` not `includes` to prevent false-positive partial key matches)
 4. If wallpaper not found -> 404
 5. If wallpaper is not public -> check session ownership -> 403 if unauthorized
 6. Fetch object from S3 via `GetObjectCommand`
-7. Stream response with appropriate Content-Type and Cache-Control headers
+7. Stream response with appropriate Content-Type and Cache-Control headers (public/immutable for public, private/short-lived for private)
 8. Catch S3 NoSuchKey/NotFound -> 404; other errors -> 500
 
 ### Server Action Pattern
@@ -293,9 +294,10 @@ Root layout `<main>` uses `pt-16` to prevent content from being hidden behind th
 
 1. Client validates with Zod schema (all mode)
 2. Submit handler calls server action or auth API
-3. On success: toast + reset form + router.replace("/") (or returnTo for login)
-4. On error: toast error message
-5. Button disabled during `isSubmitting`
+3. On success: toast + reset form + router.replace(returnTo || "/")
+4. For login with `returnTo`: validated as relative path via `URL.canParse()` before redirect — prevents open redirect attacks
+5. On error: toast error message
+6. Button disabled during `isSubmitting`
 
 ### Admin User Management (via Better Auth API)
 
