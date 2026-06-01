@@ -13,6 +13,9 @@ import { Button } from "../shadcnui/button";
 import { Field, FieldError, FieldLabel } from "../shadcnui/field";
 import { Input } from "../shadcnui/input";
 
+const isSafeRedirect = (dest: string): boolean =>
+  dest.startsWith("/") && !dest.startsWith("//") && !dest.includes("://") && !dest.includes("@");
+
 const LoginForm = ({ returnTo }: { returnTo?: string }) => {
   const { replace } = useRouter();
 
@@ -51,7 +54,7 @@ const LoginForm = ({ returnTo }: { returnTo?: string }) => {
 
         reset();
 
-        replace((returnTo || "/") as Route);
+        replace((returnTo && isSafeRedirect(returnTo) ? returnTo : "/") as Route);
       }
     } catch (err) {
       console.error(err);

@@ -19,8 +19,8 @@ export const GET = async (
     const wallpaper = await prisma.wallpaper.findFirst({
       where: {
         OR: [
-          { imageUrl: { endsWith: s3Key } },
-          { thumbnailUrl: { endsWith: s3Key } },
+          { imageUrl: s3Key },
+          { thumbnailUrl: s3Key },
         ],
       },
       select: { isPublic: true, userId: true },
