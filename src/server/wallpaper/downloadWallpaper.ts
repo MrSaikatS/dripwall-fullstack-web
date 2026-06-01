@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
 import { getSignedUrl } from "@/lib/fileStorage";
+import { extractS3Key } from "@/lib/resolveImageUrl";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
@@ -36,13 +37,7 @@ export const downloadWallpaper = async (
       return { success: false, error: "Wallpaper not found" };
     }
 
-    // Extract S3 key from imageUrl (public URL prefix + key)
-    // The key is after the S3_PUBLIC_URL prefix
-    const s3PublicUrl = process.env.NEXT_PUBLIC_S3_PUBLIC_URL;
-    const imageKey =
-      s3PublicUrl && wallpaper.imageUrl.startsWith(s3PublicUrl) ?
-        wallpaper.imageUrl.slice(s3PublicUrl.length + 1)
-      : wallpaper.imageUrl;
+    const imageKey = extractS3Key(wallpaper.imageUrl);
 
     // Generate signed URL for secure download
     const signedUrl = await getSignedUrl(imageKey, 3600);

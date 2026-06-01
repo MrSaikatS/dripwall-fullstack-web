@@ -5,6 +5,7 @@ import { loginFormSchema, LoginFormType } from "@/lib/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon, LockIcon } from "lucide-react";
 import Link from "next/link";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -12,7 +13,10 @@ import { Button } from "../shadcnui/button";
 import { Field, FieldError, FieldLabel } from "../shadcnui/field";
 import { Input } from "../shadcnui/input";
 
-const LoginForm = () => {
+const isSafeRedirect = (dest: string): boolean =>
+  dest.startsWith("/") && !dest.startsWith("//") && !dest.includes("://") && !dest.includes("@");
+
+const LoginForm = ({ returnTo }: { returnTo?: string }) => {
   const { replace } = useRouter();
 
   const {
@@ -50,7 +54,7 @@ const LoginForm = () => {
 
         reset();
 
-        replace("/");
+        replace((returnTo && isSafeRedirect(returnTo) ? returnTo : "/") as Route);
       }
     } catch (err) {
       console.error(err);

@@ -7,6 +7,7 @@ import {
   Loader2Icon,
   LogOutIcon,
   ShieldIcon,
+  UserIcon,
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
@@ -136,6 +137,10 @@ const Header = () => {
                     <LayoutDashboardIcon /> Dashboard
                   </DropdownMenuItem>
 
+                  <DropdownMenuItem onClick={() => push("/dashboard/wallpapers" as Route)}>
+                    <UserIcon /> My Wallpapers
+                  </DropdownMenuItem>
+
                   {isAdmin && (
                     <>
                       <DropdownMenuSeparator />
@@ -156,7 +161,7 @@ const Header = () => {
                   {isLoggingOut ?
                     <Loader2Icon className="animate-spin" />
                   : <LogOutIcon />}
-                  Logout
+                  Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

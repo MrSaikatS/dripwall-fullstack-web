@@ -15,7 +15,13 @@ export const metadata: Metadata = {
     "Sign in to your DripWall account to access your wallpapers and collections.",
 };
 
-const LoginPage = () => {
+const LoginPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ returnTo?: string }>;
+}) => {
+  const { returnTo } = await searchParams;
+
   return (
     <section className="flex min-h-dvh items-center justify-center px-4">
       <Card
@@ -29,7 +35,7 @@ const LoginPage = () => {
         </CardHeader>
 
         <CardContent>
-          <LoginForm />
+          <LoginForm returnTo={returnTo} />
         </CardContent>
 
         <div className="text-muted-foreground border-t px-4 py-4 text-center text-sm">

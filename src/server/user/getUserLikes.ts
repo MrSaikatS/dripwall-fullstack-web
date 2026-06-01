@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import type { PaginatedResponse } from "@/lib/types";
 import { headers } from "next/headers";
 
@@ -96,7 +97,14 @@ export const getUserLikes = async (
   ]);
 
   return {
-    data,
+    data: data.map((like) => ({
+      ...like,
+      wallpaper: {
+        ...like.wallpaper,
+        imageUrl: resolveImageUrl(like.wallpaper.imageUrl) ?? like.wallpaper.imageUrl,
+        thumbnailUrl: resolveImageUrl(like.wallpaper.thumbnailUrl),
+      },
+    })),
     total,
     page,
     pageSize,

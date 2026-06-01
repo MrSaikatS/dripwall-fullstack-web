@@ -14,7 +14,7 @@ let s3ClientInstance: S3Client | null = null;
  * Returns a singleton S3Client instance configured for Backblaze B2.
  * Uses the S3-compatible endpoint and credentials from environment variables.
  */
-const getS3Client = (): S3Client => {
+export const getS3Client = (): S3Client => {
   if (!s3ClientInstance) {
     s3ClientInstance = new S3Client({
       endpoint: serverEnv.S3_ENDPOINT,
@@ -76,12 +76,12 @@ export const uploadFile = async (
     const command = new PutObjectCommand(params);
     await client.send(command);
 
-    // Return public URL if configured, otherwise return the S3 key
+    // Return public URL if configured, otherwise proxy through Next.js
     if (serverEnv.S3_PUBLIC_URL) {
       return `${serverEnv.S3_PUBLIC_URL}/${key}`;
     }
 
-    return key;
+    return `/api/images/${key}`;
   } catch (error) {
     console.error("S3 upload failed:", error);
     throw new Error(
