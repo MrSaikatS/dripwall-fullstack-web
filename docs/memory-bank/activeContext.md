@@ -70,7 +70,7 @@ This matches the pattern used by `src/server/collection/getCollections.ts` and a
 All phases complete + sidebar migration + image proxy + returnTo flow + security fixes. Future considerations (if resumed):
 
 - OAuth providers (Google, GitHub)
-- PostgreSQL/MySQL migration
+- ~~PostgreSQL/MySQL migration~~ — completed (Neon)
 - Unit/E2E tests
 - CI/CD pipeline
 - Image proxy: add support for `Cache-Control` stale-while-revalidate pattern

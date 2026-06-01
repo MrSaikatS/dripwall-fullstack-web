@@ -215,6 +215,22 @@ const main = async () => {
       },
     ];
 
+    // Delete existing demo data for idempotent re-runs
+    await prisma.wallpaper.deleteMany({
+      where: { userId: adminUser.id },
+    });
+    await prisma.collectionItem.deleteMany({
+      where: { collectionId: "demo-collection" },
+    });
+    await prisma.like.deleteMany({
+      where: { userId: demoUser.id },
+    });
+    await prisma.download.deleteMany({
+      where: { userId: demoUser.id },
+    });
+
+    console.log("Cleaned existing demo data");
+
     const createdWallpapers = [];
     for (const wp of sampleWallpapers) {
       const wallpaper = await prisma.wallpaper.create({
@@ -254,14 +270,15 @@ const main = async () => {
         description: "My favorite wallpapers",
         isPublic: true,
         userId: demoUser.id,
-        items: {
-          create: [
-            { wallpaperId: createdWallpapers[0].id },
-            { wallpaperId: createdWallpapers[4].id },
-            { wallpaperId: createdWallpapers[5].id },
-          ],
-        },
       },
+    });
+
+    await prisma.collectionItem.createMany({
+      data: [
+        { collectionId: collection.id, wallpaperId: createdWallpapers[0].id },
+        { collectionId: collection.id, wallpaperId: createdWallpapers[4].id },
+        { collectionId: collection.id, wallpaperId: createdWallpapers[5].id },
+      ],
     });
 
     console.log(`Seeded collection: ${collection.name}`);

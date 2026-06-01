@@ -85,15 +85,16 @@
 ### Database
 
 - [x] Prisma schema with all models
-- [x] SQLite database configured (dev.db)
-- [x] Prisma 7 with LibSQL driver adapter
-- [x] Database migrations applied
-- [x] Seed script (admin user + demo user + categories + tags)
+- [x] Neon PostgreSQL serverless database configured
+- [x] Prisma 7 with PrismaNeon adapter
+- [x] PostgreSQL migrations applied
+- [x] Seed script (admin/demo users, categories, tags via Postgres)
 
 ### Dependencies (Phase 0)
 
 - [x] shadcn components installed: dropdown-menu, dialog, badge, select, textarea, **sidebar, sheet, tooltip**
 - [x] npm packages installed: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
+- [x] Neon adapter installed: `@neondatabase/serverless`, `@prisma/adapter-neon`
 - [x] serverEnv.ts configured with Backblaze B2 env vars
 - [x] clientEnv.ts configured with NEXT_PUBLIC_S3_PUBLIC_URL
 
@@ -263,7 +264,6 @@
 ### Future Considerations
 
 - [ ] **OAuth providers** (Google, GitHub login via Better Auth)
-- [ ] **PostgreSQL/MySQL migration** (replace SQLite for production)
 - [ ] **Image CDN** (optimized image delivery)
 - [ ] **Rate limiting to Redis** (persistent rate limits across server restarts)
 - [ ] **Unit/E2E tests**
@@ -308,11 +308,10 @@
 
 1. **Email Verification**: Disabled (TODO in auth.ts line 28)
 2. **Password Reset**: Uses console-based token display (no email sending service configured)
-3. **SQLite**: Only suitable for development, not production
-4. **Rate Limiting**: In-memory, resets on server restart
-5. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]`
-6. **No E2E tests**: Manual verification only
-7. **No OAuth providers**: Email/password only
+3. **Rate Limiting**: In-memory, resets on server restart
+4. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]`
+5. **No E2E tests**: Manual verification only
+6. **No OAuth providers**: Email/password only
 
 ## Evolution of Project Decisions
 
@@ -329,6 +328,14 @@
 - LibSQL provides SQLite-compatible driver with fewer dependencies
 - SQLite is ideal for development (zero configuration, file-based)
 - Easy to swap to PostgreSQL/MySQL later by changing the adapter
+
+### Why Migrate to Neon PostgreSQL?
+
+- Neon provides serverless PostgreSQL with automatic scalability
+- Compatible with Prisma via `@prisma/adapter-neon` driver adapter
+- Built-in connection pooling and autoscaling for production workloads
+- Production-grade reliability without managing database infrastructure
+- Easy migration path from SQLite using standard Prisma migrations
 
 ### Why shadcn Nova (Base UI) over Radix UI?
 
