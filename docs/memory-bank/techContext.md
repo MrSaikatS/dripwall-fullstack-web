@@ -98,10 +98,15 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 - Reset token is logged to console (no email transport configured yet)
 - **Admin plugin**: provides `listUsers`, `setRole`, `banUser`, `unbanUser` via `auth.api.*` — no custom server actions needed for user management
 
-### Image Storage (Backblaze B2 via S3)
+### Image Storage & Delivery (Backblaze B2 via S3 + Next.js Proxy)
 
 - Uses standard S3 API via `@aws-sdk/client-s3` v3 — fully compatible with Backblaze B2
 - Bucket must be configured for private access (signed URLs for downloads)
+- **Images served through `/api/images/[...key]` proxy** with auth-based access control:
+  - Public wallpapers: accessible to anyone, long-term immutable cache
+  - Private wallpapers: require active session + ownership, short-lived private cache
+- `runtime = "nodejs"` required for the image proxy route (S3 SDK needs Node.js APIs)
+- Handles three response body types: `Readable` (stream), `Blob`, and native `ReadableStream`
 - Sharp processes images before upload (resize, thumbnail generation)
 - File naming convention: `wallpapers/{userId}/{uuid}-{original-name}`
 
@@ -111,7 +116,8 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 - Style variant: `base-nova`
 - Field components are custom implementations (field.tsx, label.tsx)
 - Accessibility: `aria-invalid`, `role="alert"` on field errors, `htmlFor`/`id` pairing
-- **Installed (all 13)**: avatar, badge, button, card, dialog, dropdown-menu, field, input, label, select, separator, skeleton, textarea
+- **Installed (16 total)**: avatar, badge, button, card, dialog, dropdown-menu, field, input, label, select, separator, sidebar, sheet, skeleton, textarea, tooltip
+- Sidebar component uses `@base-ui/react` primitives (`useRender`, `mergeProps`) and `class-variance-authority`
 
 ### Next.js 16
 
@@ -120,6 +126,7 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 - TypeScript path aliases resolved via `tsconfig.json` paths
 - ESLint config uses flat config format (eslint.config.mjs)
 - Server actions use `"use server"` directive (not API routes)
+- API routes used only for Better Auth handler and S3 image proxy
 
 ## Dependencies
 
@@ -167,7 +174,7 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 4. Use `useForm` + `zodResolver` + `Controller`
 5. Use shadcn Field/Input/Button components
 6. Handle submission with toast notifications
-7. Navigate on success with `router.replace()`
+7. Navigate on success with `router.replace()` (use `returnTo` for login redirect)
 
 ### File Upload Pattern (Server Action)
 
@@ -178,8 +185,16 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 5. Server: Validate buffer via `validateImageBuffer()` (header bytes, size)
 6. Server: Process via `processImage()` (Sharp resize + thumbnail)
 7. Server: Upload to S3 via `uploadFile()` from `fileStorage.ts`
-8. Server: Create DB record with URLs + metadata
+8. Server: Create DB record with S3 keys + metadata
 9. Client: On success, toast -> reset -> redirect
+
+### Image URL Resolution Pattern
+
+1. Store S3 keys in database (e.g., `wallpapers/{userId}/{uuid}-{name}.webp`)
+2. Before returning data to client, call `resolveImageUrl()` on each URL field
+3. `resolveImageUrl()` converts S3 keys to `/api/images/{encoded-key}` proxy URLs
+4. Full HTTP URLs (from `S3_PUBLIC_URL`) pass through unchanged
+5. `extractS3Key()` reverses the conversion for operations needing the raw S3 key
 
 ### Database Access Pattern
 
@@ -201,7 +216,18 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://f002.backblazeb2.com/file/dripwall
 3. Export a single async function
 4. Get session: `import { headers } from "next/headers"` then `auth.api.getSession({ headers: await headers() })`
 5. Perform domain logic (DB queries, S3 operations)
-6. Return typed response
+6. Resolve image URLs through `resolveImageUrl()` before returning
+7. Return typed response
+
+### Dashboard/Admin Sidebar Layout Pattern
+
+1. Layout wraps children in `<SidebarProvider>`
+2. Sidebar component (`AppSidebar`/`AdminSidebar`) as first child:
+   - `variant="inset"` for rounded corners
+   - `collapsible="icon"` for collapse/expand toggle
+   - `className="top-16! h-[calc(100vh-4rem)]!"` for header offset
+3. Content area: header with `<SidebarTrigger>` + `<Separator>`, then children in padded container
+4. `<MobileNav>` component at bottom for mobile navigation (fixed, hidden on `md:`)
 
 ### Better Auth Admin API Pattern (No Custom Server Actions)
 

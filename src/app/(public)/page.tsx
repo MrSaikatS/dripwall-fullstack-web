@@ -1,6 +1,8 @@
+import { auth } from "@/lib/auth";
 import { Button } from "@/components/shadcnui/button";
 import { ArrowUpRight } from "lucide-react";
 import { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -9,6 +11,8 @@ export const metadata: Metadata = {
 };
 
 const HomePage = async () => {
+  const session = await auth.api.getSession({ headers: await headers() });
+
   return (
     <section className="grid h-[85dvh] place-items-center">
       <div className="mx-auto max-w-2xl text-center">
@@ -28,7 +32,7 @@ const HomePage = async () => {
               <ArrowUpRight className="ml-1.5 size-4" />
             </Button>
           </Link>
-          <Link href="/upload">
+          <Link href={session ? "/upload" : "/login?returnTo=/upload"}>
             <Button
               variant="ghost"
               size="lg">

@@ -137,8 +137,8 @@ const Header = () => {
                     <LayoutDashboardIcon /> Dashboard
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={() => push("/dashboard/profile" as Route)}>
-                    <UserIcon /> Profile
+                  <DropdownMenuItem onClick={() => push("/dashboard/wallpapers" as Route)}>
+                    <UserIcon /> My Wallpapers
                   </DropdownMenuItem>
 
                   {isAdmin && (

@@ -2,21 +2,40 @@
 
 ## Current Work Focus
 
-All 10 phases (Phase 0–9) are now **complete**. The project implementation is fully finished.
+All 10 phases (Phase 0–9) are now **complete**. Two additional commits have been made after Phase 9, and uncommitted changes exist.
 
-### Updated: Home Page
+### Committed Changes (Post-Phase 9)
 
-The home page was previously a bare hero section. Now it includes:
-- Hero with CTAs (Browse Wallpapers, Upload)
-- Featured wallpapers grid (if any exist)
-- Latest wallpapers grid (8 most recent) with "View All" link
-- Categories grid with "All Categories" link
-- Bottom CTA section for uploads
+#### `7d60f87` — Refactor admin/dashboard layouts to shadcn Sidebar
+- Installed 3 new shadcn components: `sidebar.tsx` (726 lines), `sheet.tsx`, `tooltip.tsx`
+- Created `use-mobile.ts` hook for responsive breakpoint detection
+- Created `AppSidebar.tsx` (dashboard) with nav items: Overview, My Wallpapers, Liked Wallpapers
+- Refactored `AdminSidebar.tsx` to use shadcn Sidebar with inset variant + collapsible icon mode
+- Created `MobileNav.tsx` for both admin and dashboard (fixed bottom nav on mobile)
+- Updated admin/dashboard layouts to use `SidebarProvider` + sidebar + `SidebarTrigger` + mobile nav
+- Deleted `implementation_plan.md`
 
-### Phase 9 Completed:
+#### `d30b09b` — Fix layout overflow + add S3 image proxy
+- **S3 Image Proxy** (`src/app/api/images/[...key]/route.ts`): New Next.js API route that proxies images from Backblaze B2 with:
+  - Auth check: queries DB to find wallpaper by image key, checks `isPublic` flag; private wallpapers require session + ownership
+  - Streaming response: handles `Readable`, `Blob`, and native `ReadableStream` body types
+  - Cache headers: `public, max-age=31536000, immutable` for public, `private, max-age=3600` for private
+  - Error handling: differentiates `NoSuchKey`/`NotFound` (404) from generic errors (500)
+  - `runtime = "nodejs"` (required for S3 SDK)
+- **`resolveImageUrl.ts`**: New utility with `resolveImageUrl(url)` to convert stored keys to proxy URLs, and `extractS3Key(url)` to reverse the conversion
+- **Layout fix**: Removed `100dvw` breakout hack causing horizontal overflow; moved `max-w-7xl mx-auto` from root `<main>` to `(public)/layout.tsx`
+- **Home page**: Simplified to hero-only section (removed featured/latest wallpapers grids, categories grid, bottom CTA)
+- **File storage**: `uploadFile()` returns `S3_PUBLIC_URL/{key}` if public URL configured, otherwise `/api/images/{key}`
+- **All server actions**: Updated to call `resolveImageUrl()` on wallpaper/thumbnail URLs before returning data
 
-- ✅ `bun run build` — 18 pages generated, all dynamic routes working
-- ✅ `bun run lint` — 0 errors, 0 warnings
+### Uncommitted Changes
+
+- **Login page** (`login/page.tsx`): Added `searchParams` support — accepts `?returnTo=/upload` parameter
+- **LoginForm** (`LoginForm.tsx`): Accepts `returnTo` prop, redirects to `returnTo` after successful login instead of always `/`
+- **Home page** (`page.tsx`): Added session check via `auth.api.getSession()`; Upload CTA redirects to `/login?returnTo=/upload` if unauthenticated
+- **Image proxy** (`route.ts`): Added auth check for private wallpapers, streaming response, enhanced error handling
+- **Header** (`Header.tsx`): Changed "Profile" dropdown menu item to "My Wallpapers" linking to `/dashboard/wallpapers`
+- **resolveImageUrl.ts**: Added `encodeURIComponent` on each path segment of S3 key in proxy URL; fixed `extractS3Key` to normalize trailing slashes in `S3_PUBLIC_URL`
 
 ### Key Pattern: Session in Server Actions
 
@@ -34,44 +53,56 @@ This matches the pattern used by `src/server/collection/getCollections.ts` and a
 
 ## Recent Changes
 
-- **Layout restructure (width fix)**: Fixed horizontal overflow on `/dashboard` and `/admin` by removing the `100dvw` breakout hack. Root layout's `max-w-7xl mx-auto` was moved from `<main>` into a new `(public)/layout.tsx`, so dashboard/admin layouts naturally span full width. `collections/` and `upload/` pages got explicit `mx-auto max-w-7xl` to preserve their constrained layout.
+- **shadcn Sidebar integration**: Admin and dashboard layouts fully migrated from custom sidebar to shadcn Sidebar component with collapsible desktop sidebar (`variant="inset"`, `collapsible="icon"`) and fixed mobile bottom navigation
+- **S3 Image Proxy**: Added `/api/images/[...key]` route for secure image delivery with auth-based access control (public vs private wallpapers)
+- **Image URL resolution**: Added `resolveImageUrl.ts` utility; all server actions now resolve stored keys to proxy URLs
+- **Layout restructure (width fix)**: Fixed horizontal overflow by removing the `100dvw` breakout hack. Root layout's `max-w-7xl mx-auto` moved from `<main>` into a new `(public)/layout.tsx`, so dashboard/admin layouts naturally span full width
+- **Home page simplified**: Removed featured/latest/categories grids, now hero-only with session-aware CTAs
+- **Login returnTo flow**: Added `?returnTo=` parameter support — unauthenticated users clicking "Upload" are redirected to login and returned after success
+- **Header dropdown**: Changed "Profile" link to "My Wallpapers" (`/dashboard/wallpapers`)
 - **Phase 4 complete**: Categories ✅
 - **Phase 5 complete**: Collections ✅
-- **Phase 6 complete**: Dashboard ✅ — 3 server actions + 1 layout + 1 component + 3 pages + 3 client content files
-- **Phase 8 complete**: Admin Panel ✅ — 7 server actions + 2 components + 1 layout + 4 pages + 1 client wallpaper content + 1 client category manager
-- **SEO & Polish (aa6e9e9)**: Added metadata to all pages, template-based title in root layout, `generateMetadata` on dynamic pages, home page UI polish (centered hero, larger headings, backdrop-blur header, theme toggle icons 20px), header dropdown simplified (Upload/Collections removed from menu), upload form image preview replaces file name text
-- **Refactor (dc502f9)**: Extracted `slugify` to `src/lib/utils.ts`, sanitized admin server action error messages to generic "An unexpected error occurred. Please try again."
+- **Phase 6 complete**: Dashboard ✅
+- **Phase 8 complete**: Admin Panel ✅
+- **SEO & Polish**: Added metadata to all pages, home page UI polish, backdrop-blur header, upload image preview
+- **Refactor**: Extracted `slugify` to `src/lib/utils.ts`, sanitized admin server action error messages
 
 ## Next Steps
 
-All 10 phases complete. Future considerations (if resumed):
+All 10 phases complete + sidebar migration + image proxy. Future considerations (if resumed):
 
 - OAuth providers (Google, GitHub)
 - PostgreSQL/MySQL migration
 - Unit/E2E tests
 - CI/CD pipeline
+- Image proxy: add support for `Cache-Control` stale-while-revalidate pattern
+- Consider adding `sharp` to image proxy for on-the-fly resizing
 
 ## Active Decisions & Considerations
 
 ### Server Actions Architecture (No API Routes)
 
-All operations use `"use server"` functions in `src/server/{domain}/{action}.ts` files. This leverages Next.js 16's server action capabilities, including file upload handling via `arrayBuffer()`. No `src/app/api/*` files beyond the existing Better Auth route handler.
+All operations use `"use server"` functions in `src/server/{domain}/{action}.ts` files. This leverages Next.js 16's server action capabilities, including file upload handling via `arrayBuffer()`. The only API route is `/api/auth/[...all]` (Better Auth) and `/api/images/[...key]` (S3 image proxy).
 
 ### Better Auth Admin API vs Custom Server Actions
 
 User management operations (`listUsers`, `setRole`, `banUser`, `unbanUser`) should use Better Auth's built-in admin plugin API (`auth.api.*`) rather than custom server actions.
 
 Custom server actions are still needed for:
-
 - Wallpaper management (CRUD, likes, downloads)
 - Collection management (CRUD, add/remove items)
 - Category management (CRUD — admin only)
 - Dashboard data (user wallpapers, likes, downloads)
 
-### Image Storage: Backblaze B2 via S3 API
+### Image Storage & Delivery: Backblaze B2 via S3 API + Next.js Proxy
 
 - Using `@aws-sdk/client-s3` v3 with Backblaze B2's S3-compatible API
 - Sharp for image processing (resize, WebP thumbnail, metadata extraction)
+- **Images served through `/api/images/[...key]` proxy**:
+  - Queries DB to check wallpaper ownership and `isPublic` status
+  - Private wallpapers require valid session + matching userId
+  - Public wallpapers get long-term immutable cache headers
+  - Streams response directly from S3
 - Signed URLs for secure downloads via `@aws-sdk/s3-request-presigner`
 - File naming: `wallpapers/{userId}/{uuid}-{original-name}`
 
@@ -148,6 +179,13 @@ This project uses **Bun** as the package manager and runtime. All commands (`dev
 - Shared utility functions (like `slugify`) extracted to `src/lib/utils.ts`
 - Eliminates duplication across server action files
 
+### Image URL Resolution Pattern
+
+- Store S3 keys in database (not full URLs)
+- Before returning data to client, pass URLs through `resolveImageUrl()` which converts keys to proxy URLs (`/api/images/{key}`)
+- `resolveImageUrl()` skips conversion for full HTTP URLs or already-proxied paths
+- `extractS3Key()` reverses the conversion for operations that need the raw S3 key
+
 ## Preferred Verification
 
 - Use `bun run lint` (not `bun run build`) for quick verification after changes — faster and sufficient for catching errors
@@ -173,3 +211,8 @@ This project uses **Bun** as the package manager and runtime. All commands (`dev
 - Admin wallpapers page uses `getAllWallpapersAdmin` server action (not `auth.api.*`) because wallpaper management is domain-specific
 - Category CRUD server actions use `categoryCreateSchema` from `zodSchema.ts` with `.partial()` for updates; slug is auto-generated from name with conflict detection
 - Git commit messages in PowerShell: heredoc syntax (`<<EOF`) doesn't work. Use `git commit -m "subject" -m "body"` or pass via temporary file with `Set-Content`
+- shadcn Sidebar component uses `@base-ui/react` primitives (`useRender`, `mergeProps`) and class-variance-authority for button variants
+- S3 image proxy requires `runtime = "nodejs"` and handles three body types: `Readable`, `Blob`, and native `ReadableStream`
+- Image proxy cache headers should differentiate public (immutable) vs private (short-lived) content
+- The shadcn Sidebar `render` prop on `SidebarMenuButton` is used for wrapping with Link components (`render={<Link href={...} />}`)
+- Mobile nav for admin/dashboard uses a separate `MobileNav.tsx` component with fixed bottom positioning, hidden on `md:` breakpoint

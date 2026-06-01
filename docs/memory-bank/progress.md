@@ -13,6 +13,7 @@
 - [x] Rate limiting per-endpoint (login: 10/5min, register: 5/10min, reset: 3/15min)
 - [x] Admin plugin (role field, user banning, impersonation)
 - [x] Remember me functionality
+- [x] **Login returnTo flow** — `/login?returnTo=/upload` redirects after successful auth
 
 ### UI Components
 
@@ -29,12 +30,20 @@
 - [x] Dropdown Menu
 - [x] Select
 - [x] Textarea
+- [x] **Sidebar** (shadcn — 726 lines, with variants, collapsible, mobile support)
+- [x] **Sheet** (Base UI Dialog-based, side variants)
+- [x] **Tooltip** (Base UI Tooltip-based)
 - [x] Header with auth-aware navigation
 - [x] Theme toggle (dark/light with animated icons)
+- [x] **Dashboard AppSidebar** (collapsible, with Overview/My Wallpapers/Liked Wallpapers nav)
+- [x] **AdminSidebar** (collapsible, with Overview/Users/Wallpapers/Categories nav + Dashboard link)
+- [x] **Dashboard MobileNav** (fixed bottom nav, hidden on desktop)
+- [x] **Admin MobileNav** (fixed bottom nav, hidden on desktop)
+- [x] `use-mobile` hook for responsive breakpoint detection
 
 ### Forms (Zod + react-hook-form + Controller pattern)
 
-- [x] Login form
+- [x] Login form (with returnTo redirect support)
 - [x] Register form (with confirm password validation)
 - [x] Forgot password form
 - [x] Reset password form (with confirm password validation)
@@ -43,8 +52,8 @@
 
 ### Pages
 
-- [x] Home page (landing hero)
-- [x] Login page
+- [x] Home page (hero-only, session-aware CTA: Upload redirects to login if unauthenticated)
+- [x] Login page (supports `?returnTo=` query param)
 - [x] Register page
 - [x] Forgot Password page (implemented)
 - [x] Reset Password page
@@ -56,6 +65,11 @@
 - [x] Dashboard overview page (auth-guarded, with stats cards)
 - [x] Dashboard wallpapers page (auth-guarded, paginated grid)
 - [x] Dashboard likes page (auth-guarded, paginated grid)
+
+### API Routes
+
+- [x] `/api/auth/[...all]` — Better Auth handler
+- [x] `/api/images/[...key]` — S3 image proxy with auth-based access control
 
 ### Infrastructure
 
@@ -77,17 +91,19 @@
 
 ### Dependencies (Phase 0)
 
-- [x] shadcn components installed: dropdown-menu, dialog, badge, select, textarea
+- [x] shadcn components installed: dropdown-menu, dialog, badge, select, textarea, **sidebar, sheet, tooltip**
 - [x] npm packages installed: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
 - [x] serverEnv.ts configured with Backblaze B2 env vars
 - [x] clientEnv.ts configured with NEXT_PUBLIC_S3_PUBLIC_URL
 
-### Shared Types
+### Shared Types & Utilities
 
 - [x] `PageParams<T>` generic type for route params
 - [x] `PaginatedResponse<T>` and `ApiResponse<T>` response types
 - [x] `WallpaperUploadFormType` with title, description, categoryId, tags
 - [x] `CollectionCreateFormType` with name, description, isPublic
+- [x] `cn()` / `slugify()` in `utils.ts`
+- [x] `resolveImageUrl()` / `extractS3Key()` in `resolveImageUrl.ts`
 
 ## What's Left to Build
 
@@ -139,7 +155,7 @@
 
 - [x] Add `collectionCreateSchema` to `src/lib/zodSchema.ts`
 - [x] Create `src/server/collection/getCollections.ts` — List user collections
-- [x] Create `src/server/collection/getCollectionById.ts` — Collection detail with wallpapers
+- [x] Create `src/server/collection/getCollectionById.ts` — Collection detail with wallpapers (resolved image URLs)
 - [x] Create `src/server/collection/createCollection.ts` — Create collection
 - [x] Create `src/server/collection/updateCollection.ts` — Update collection
 - [x] Create `src/server/collection/deleteCollection.ts` — Delete collection
@@ -156,36 +172,38 @@
 
 ### Phase 6: User Dashboard ✅ Complete
 
-- [x] Create `src/server/user/getUserWallpapers.ts` — Paginated user uploads (session-aware)
-- [x] Create `src/server/user/getUserLikes.ts` — Paginated user likes (session-aware)
-- [x] Create `src/server/user/getUserDownloads.ts` — Paginated user downloads (session-aware)
-- [x] Create `src/components/Dashboard/DashboardNav.tsx` — Sidebar nav with active state
-- [x] Create `src/app/(private)/dashboard/layout.tsx` — Sidebar + content layout (responsive)
+- [x] Create `src/server/user/getUserWallpapers.ts` — Paginated user uploads (session-aware, resolved URLs)
+- [x] Create `src/server/user/getUserLikes.ts` — Paginated user likes (session-aware, resolved URLs)
+- [x] Create `src/server/user/getUserDownloads.ts` — Paginated user downloads (session-aware, resolved URLs)
+- [x] Create `src/components/Dashboard/DashboardNav.tsx` — Sidebar nav with active state (superseded by shadcn Sidebar)
+- [x] Create `src/app/(private)/dashboard/layout.tsx` — shadcn Sidebar layout with AppSidebar + MobileNav
 - [x] Create `src/app/(private)/dashboard/page.tsx` — Overview page with DashboardOverviewContent
 - [x] Create `src/app/(private)/dashboard/DashboardOverviewContent.tsx` — Stats cards (wallpapers, likes, downloads, collections)
 - [x] Create `src/app/(private)/dashboard/wallpapers/page.tsx` — Wallpapers listing page
 - [x] Create `src/app/(private)/dashboard/wallpapers/DashboardWallpapersContent.tsx` — Paginated wallpaper grid with empty state
 - [x] Create `src/app/(private)/dashboard/likes/page.tsx` — Liked wallpapers page
 - [x] Create `src/app/(private)/dashboard/likes/DashboardLikesContent.tsx` — Paginated likes grid with empty state
+- [x] **Refactored to shadcn Sidebar**: AppSidebar + MobileNav replacing custom DashboardNav
 
 ### Phase 7: Navigation Update ✅ Complete
 
 - [x] Refactor `src/components/Header/Header.tsx` with shadcn DropdownMenu — inline session, avatar + DropdownMenu for authenticated users, nav links (Wallpapers, Categories, Upload, Collections, Admin), logout with spinner
 - [x] Simplify `src/components/Auth/AuthHeader.tsx` — presentational sign-in/sign-up links only (no session logic)
+- [x] Change "Profile" dropdown item to "My Wallpapers" linking to `/dashboard/wallpapers`
 - [x] Lint verified — 0 errors, 0 warnings
 
 ### Phase 8: Admin Panel ✅ Complete
 
 - [x] Create admin overview page — `src/app/(private)/admin/page.tsx` (stats cards: users, wallpapers, categories, downloads)
-- [x] Create user management page — `src/app/(private)/admin/users/page.tsx` (uses `auth.api.listUsers()` + `UserTable` client component with role/ban actions via `authClient.admin.*`)
-- [x] Create category management page — `src/app/(private)/admin/categories/page.tsx` + `CategoryManager.tsx` (create/edit/delete with inline form)
-- [x] Create wallpaper management page — `src/app/(private)/admin/wallpapers/page.tsx` + `AdminWallpapersContent.tsx` (toggle featured, delete, pagination)
-- [x] Create UserTable component — `src/components/Admin/UserTable.tsx` (role toggle, ban/unban, loading states)
-- [x] Create admin server actions: `getAdminStats`, `getAllWallpapersAdmin`, `toggleFeatured`, `deleteWallpaperAdmin`, `createCategory`, `updateCategory`, `deleteCategory` — all in `src/server/admin/`
-- [x] Create `AdminSidebar` component — `src/components/Admin/AdminSidebar.tsx`
-- [x] Create admin layout with role guard — `src/app/(private)/admin/layout.tsx` (checks `role === "admin"`, redirects to `/`)
+- [x] Create user management page — `src/app/(private)/admin/users/page.tsx` (uses `auth.api.listUsers()` + `UserTable`)
+- [x] Create category management page — `src/app/(private)/admin/categories/page.tsx` + `CategoryManager.tsx`
+- [x] Create wallpaper management page — `src/app/(private)/admin/wallpapers/page.tsx` + `AdminWallpapersContent.tsx`
+- [x] Create UserTable component — `src/components/Admin/UserTable.tsx`
+- [x] Create admin server actions: `getAdminStats`, `getAllWallpapersAdmin`, `toggleFeatured`, `deleteWallpaperAdmin`, `createCategory`, `updateCategory`, `deleteCategory`
+- [x] Create `AdminSidebar` component — refactored to shadcn Sidebar with MobileNav
+- [x] Create admin layout with role guard + shadcn Sidebar
 - [x] Lint verified — 0 errors, 0 warnings
-- [x] Build verified — 4 new admin routes generated (`/admin`, `/admin/users`, `/admin/wallpapers`, `/admin/categories`)
+- [x] Build verified — 4 new admin routes generated
 
 ### Phase 9: Polish & Cleanup ✅ Complete
 
@@ -206,6 +224,29 @@
 - [x] Extract `slugify` to `src/lib/utils.ts` from admin server actions
 - [x] Sanitize admin server action error messages to generic text
 
+### Post-Phase 9: Layout & Sidebar Refactor ✅ Complete
+
+- [x] **Layout restructure**: Remove `100dvw` breakout hack; move `max-w-7xl` from root `<main>` to `(public)/layout.tsx`
+- [x] **shadcn Sidebar**: Install sidebar, sheet, tooltip components
+- [x] **Dashboard layout**: Refactor to shadcn Sidebar with collapsible AppSidebar + MobileNav
+- [x] **Admin layout**: Refactor to shadcn Sidebar with collapsible AdminSidebar + MobileNav
+- [x] **Delete implementation_plan.md** (outdated)
+
+### Post-Phase 9: S3 Image Proxy ✅ Complete
+
+- [x] **Create `/api/images/[...key]` route**: Streams images from S3 with auth-based access control
+- [x] **Create `resolveImageUrl.ts`**: Utility for converting S3 keys to proxy URLs
+- [x] **Update server actions**: All image URLs resolved through `resolveImageUrl()` before returning to client
+- [x] **Update `fileStorage.ts`**: `uploadFile()` returns proxy-compatible paths
+
+### Uncommitted — Login returnTo + Home page session check
+
+- [x] **Login page/LoginForm**: Added `searchParams` support for `?returnTo=` redirect param
+- [x] **Home page**: Session-aware CTA — redirects unauthenticated users to login with returnTo
+- [x] **Image proxy**: Added auth check for private wallpapers, streaming response, enhanced error handling
+- [x] **Header**: Changed "Profile" to "My Wallpapers" linking to `/dashboard/wallpapers`
+- [x] **resolveImageUrl.ts**: URI encoding for S3 keys, fixed S3 public URL extraction
+
 ### Future Considerations
 
 - [ ] **OAuth providers** (Google, GitHub login via Better Auth)
@@ -214,31 +255,36 @@
 - [ ] **Rate limiting to Redis** (persistent rate limits across server restarts)
 - [ ] **Unit/E2E tests**
 - [ ] **CI/CD pipeline**
+- [ ] **Image proxy**: Add `stale-while-revalidate` cache pattern
+- [ ] **Image proxy**: On-the-fly resizing with Sharp
 
 ## Current Status
 
 - **Phase**: 9 (Polish & Cleanup) — ✅ Complete
-- **Auth**: ✅ Complete (core flow functional)
-- **Implementation Plan**: ✅ Complete + Audited against Better Auth/Prisma/shadcn best practices
-- **UI**: ✅ All 13 shadcn components installed and available
+- **Auth**: ✅ Complete (core flow functional + returnTo redirect)
+- **Implementation Plan**: ✅ Complete
+- **UI**: ✅ All 16 shadcn components installed (13 core + sidebar, sheet, tooltip)
 - **Database**: ✅ Schema defined, seeded
 - **S3 Storage Deps**: ✅ @aws-sdk/client-s3 + @aws-sdk/s3-request-presigner installed
 - **Env Vars**: ✅ Server + client env configured for S3
 - **Image Processor**: ✅ Complete (Phase 1)
-- **File Storage**: ✅ Complete (Phase 1)
-- **Shared Types**: ✅ Complete (PageParams, ApiResponse types + wallpaper upload schema + category create schema + collection create schema)
+- **Image Proxy**: ✅ Complete — auth-guarded S3 proxy route with streaming
+- **File Storage**: ✅ Complete (Phase 1, updated for proxy URLs)
+- **Shared Types & Utils**: ✅ Complete (including resolveImageUrl)
 - **Wallpaper Upload**: ✅ Complete (Phase 2)
 - **Private Route Guard**: ✅ Complete (layout-level auth check)
-- **Wallpaper Browsing & Detail**: ✅ Complete (Phase 3)
+- **Wallpaper Browsing & Detail**: ✅ Complete (Phase 3, resolved URLs)
 - **Categories**: ✅ Complete (Phase 4)
-- **Collections**: ✅ Complete (Phase 5) — 7 server actions + 3 components + 2 pages
-- **Dashboard**: ✅ Complete (Phase 6) — 3 server actions + 1 component + 1 layout + 3 pages + 3 client content files
-- **Navigation Update**: ✅ Complete (Phase 7) — Header refactored with DropdownMenu, AuthHeader simplified
-- **Admin Panel**: ✅ Complete (Phase 8) — 7 server actions + 2 components + 1 layout + 4 pages + 1 client wallpaper content + 1 client category manager
-- **Polish & Cleanup**: ✅ Complete (Phase 9) — Build verified (18 pages), lint verified (0 errors)
-- **SEO Metadata**: ✅ Complete — template/generateMetadata on all pages
-- **UI Polish**: ✅ Complete — home page centered hero, backdrop-blur header, upload image preview, dropdown simplified
-- **Code Cleanup**: ✅ Complete — slugify extracted, error messages sanitized
+- **Collections**: ✅ Complete (Phase 5)
+- **Dashboard**: ✅ Complete (Phase 6, refactored to shadcn Sidebar)
+- **Navigation Update**: ✅ Complete (Phase 7)
+- **Admin Panel**: ✅ Complete (Phase 8, refactored to shadcn Sidebar)
+- **Polish & Cleanup**: ✅ Complete (Phase 9)
+- **SEO Metadata**: ✅ Complete
+- **Layout Refactor**: ✅ Complete — shadcn Sidebar for admin/dashboard, public max-w-7xl, no breakout hack
+- **S3 Image Proxy**: ✅ Complete
+- **Login returnTo**: ✅ Complete (uncommitted)
+- **Home session CTAs**: ✅ Complete (uncommitted)
 - **Testing**: ❌ None
 - **Production Deploy**: ❌ Not configured
 
@@ -251,6 +297,7 @@
 5. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]`
 6. **No E2E tests**: Manual verification only
 7. **No OAuth providers**: Email/password only
+8. **Uncommitted changes**: Login returnTo, home session check, image proxy auth enhancements, header label change, URL encoding fix — not yet committed
 
 ## Evolution of Project Decisions
 
@@ -284,25 +331,39 @@
 
 ### Why Use Better Auth Admin API Instead of Custom Server Actions for User Management?
 
-- Better Auth's admin plugin (`auth.api.listUsers()`, `auth.api.setRole()`, `auth.api.banUser()`, `auth.api.unbanUser()`) already provides full user CRUD with built-in pagination, search, filtering, and session revocation
-- Avoids duplicating logic that Better Auth handles (auth checks, session invalidation on ban, etc.)
-- Custom server actions only needed for domain-specific operations (wallpaper/collection/category management) not covered by Better Auth
+- Better Auth's admin plugin already provides full user CRUD with built-in pagination, search, filtering, and session revocation
+- Avoids duplicating logic that Better Auth handles
+- Custom server actions only needed for domain-specific operations
 
 ### Why node:crypto.randomUUID() instead of the uuid package?
 
 - Node.js 22+ has built-in `randomUUID()` via `node:crypto`
 - Avoids an extra dependency
-- Same API as `uuid.v4()` — returns a random UUID string
-- Used in `createWallpaper.ts` for generating unique file identifiers
+- Same API as `uuid.v4()`
 
 ### Why template-based metadata in root layout?
 
-- `title.template` in root layout eliminates repetition — each page only specifies its name, not the full "Page | DripWall"
-- Dynamic pages use `generateMetadata` to fetch entity names from DB for accurate page titles
-- SEO improvement without adding boilerplate to every page
+- Eliminates repetition — each page only specifies its name
+- Dynamic pages use `generateMetadata` to fetch entity names from DB
+- SEO improvement without adding boilerplate
 
 ### Why sanitize error messages in server actions?
 
-- Prevents leaking implementation details (DB errors, file paths, internal logic) to end users
+- Prevents leaking implementation details to end users
 - Original errors still logged to `console.error()` for debugging
 - Consistent user experience with generic fallback messages
+
+### Why shadcn Sidebar for admin/dashboard layouts?
+
+- Provides consistent, accessible navigation pattern
+- Built-in collapsible behavior with cookie-persisted state
+- Responsive: desktop sidebar + mobile sheet + bottom nav
+- Reusable components with proper ARIA attributes
+- Keyboard shortcut support (Ctrl+B to toggle)
+
+### Why S3 image proxy instead of direct S3 URLs?
+
+- Enables auth-based access control for private wallpapers
+- Cache control differentiation (public immutable vs private short-lived)
+- Consistent URL scheme (no dependency on S3_PUBLIC_URL being accessible)
+- Future-proof for on-the-fly image transformation
