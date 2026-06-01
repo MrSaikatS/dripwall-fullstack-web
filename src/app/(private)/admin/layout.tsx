@@ -20,25 +20,17 @@ const AdminLayout = async ({ children }: LayoutChildrenProps) => {
   }
 
   return (
-    <div
-      style={{
-        width: "100dvw",
-        marginLeft: "calc(-1 * (100dvw - 100%) / 2)",
-        marginRight: "calc(-1 * (100dvw - 100%) / 2)",
-      }}
-    >
-      <SidebarProvider>
-        <AdminSidebar />
-        <div className="flex flex-1 flex-col">
-          <header className="flex h-12 shrink-0 items-center gap-2 border-b px-6">
-            <SidebarTrigger className="max-md:text-foreground" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-          </header>
-          <div className="flex-1 p-6 pb-20 md:pb-6">{children}</div>
-        </div>
-        <MobileNav />
-      </SidebarProvider>
-    </div>
+    <SidebarProvider>
+      <AdminSidebar />
+      <div className="flex flex-1 flex-col">
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b px-6">
+          <SidebarTrigger className="max-md:text-foreground" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+        </header>
+        <div className="flex-1 p-6 pb-20 md:pb-6">{children}</div>
+      </div>
+      <MobileNav />
+    </SidebarProvider>
   );
 };
 

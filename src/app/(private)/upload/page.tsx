@@ -19,7 +19,7 @@ const UploadPage = async () => {
   });
 
   return (
-    <section className="py-8">
+    <section className="mx-auto max-w-7xl px-6 py-8">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-semibold">Upload Wallpaper</h1>
 

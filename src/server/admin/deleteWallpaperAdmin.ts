@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
 import { deleteFile } from "@/lib/fileStorage";
+import { extractS3Key } from "@/lib/resolveImageUrl";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
@@ -33,19 +34,12 @@ export const deleteWallpaperAdmin = async (
     }
 
     // Delete S3 files
-    const s3PublicUrl = process.env.NEXT_PUBLIC_S3_PUBLIC_URL;
-    if (s3PublicUrl) {
-      const imageKey = wallpaper.imageUrl.startsWith(s3PublicUrl)
-        ? wallpaper.imageUrl.slice(s3PublicUrl.length + 1)
-        : wallpaper.imageUrl;
-      await deleteFile(imageKey).catch(() => {});
+    const imageKey = extractS3Key(wallpaper.imageUrl);
+    await deleteFile(imageKey).catch(() => {});
 
-      if (wallpaper.thumbnailUrl) {
-        const thumbKey = wallpaper.thumbnailUrl.startsWith(s3PublicUrl)
-          ? wallpaper.thumbnailUrl.slice(s3PublicUrl.length + 1)
-          : wallpaper.thumbnailUrl;
-        await deleteFile(thumbKey).catch(() => {});
-      }
+    if (wallpaper.thumbnailUrl) {
+      const thumbKey = extractS3Key(wallpaper.thumbnailUrl);
+      await deleteFile(thumbKey).catch(() => {});
     }
 
     await prisma.wallpaper.delete({ where: { id: wallpaperId } });

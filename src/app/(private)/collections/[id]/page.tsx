@@ -35,7 +35,7 @@ const CollectionDetailPage = async ({ params }: PageParams<{ id: string }>) => {
   const { id } = await params;
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="mx-auto max-w-7xl space-y-8 p-6">
       <CollectionDetailContent
         collectionId={id}
         userId={session.user.id}

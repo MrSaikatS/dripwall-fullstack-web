@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import type { PaginatedResponse } from "@/lib/types";
 import { headers } from "next/headers";
 
@@ -98,7 +99,14 @@ export const getUserDownloads = async (
   ]);
 
   return {
-    data,
+    data: data.map((download) => ({
+      ...download,
+      wallpaper: {
+        ...download.wallpaper,
+        imageUrl: resolveImageUrl(download.wallpaper.imageUrl) ?? download.wallpaper.imageUrl,
+        thumbnailUrl: resolveImageUrl(download.wallpaper.thumbnailUrl),
+      },
+    })),
     total,
     page,
     pageSize,

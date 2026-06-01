@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import type { PaginatedResponse } from "@/lib/types";
 import { headers } from "next/headers";
 
@@ -80,7 +81,11 @@ export const getUserWallpapers = async (
   ]);
 
   return {
-    data,
+    data: data.map((wp) => ({
+      ...wp,
+      imageUrl: resolveImageUrl(wp.imageUrl) ?? wp.imageUrl,
+      thumbnailUrl: resolveImageUrl(wp.thumbnailUrl),
+    })),
     total,
     page,
     pageSize,

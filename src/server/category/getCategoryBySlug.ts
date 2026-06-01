@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/database/dbClient";
+import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import type { PaginatedResponse } from "@/lib/types";
 import type { WallpaperListItem } from "@/server/wallpaper/getWallpapers";
 
@@ -108,7 +109,11 @@ export const getCategoryBySlug = async (
   return {
     category,
     wallpapers: {
-      data,
+      data: data.map((wp) => ({
+        ...wp,
+        imageUrl: resolveImageUrl(wp.imageUrl) ?? wp.imageUrl,
+        thumbnailUrl: resolveImageUrl(wp.thumbnailUrl),
+      })),
       total,
       page,
       pageSize,

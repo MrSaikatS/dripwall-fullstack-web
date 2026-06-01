@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import { headers } from "next/headers";
 
 export type CollectionDetailItem = {
@@ -112,7 +113,21 @@ export const getCollectionById = async (
       return { success: false, error: "Collection not found" };
     }
 
-    return { success: true, data: collection };
+    return {
+      success: true,
+      data: {
+        ...collection,
+        items: collection.items.map((item) => ({
+          ...item,
+          wallpaper: {
+            ...item.wallpaper,
+            imageUrl:
+              resolveImageUrl(item.wallpaper.imageUrl) ?? item.wallpaper.imageUrl,
+            thumbnailUrl: resolveImageUrl(item.wallpaper.thumbnailUrl),
+          },
+        })),
+      },
+    };
   } catch (error) {
     console.error("Get collection by id error:", error);
     return {

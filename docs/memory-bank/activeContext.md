@@ -34,6 +34,7 @@ This matches the pattern used by `src/server/collection/getCollections.ts` and a
 
 ## Recent Changes
 
+- **Layout restructure (width fix)**: Fixed horizontal overflow on `/dashboard` and `/admin` by removing the `100dvw` breakout hack. Root layout's `max-w-7xl mx-auto` was moved from `<main>` into a new `(public)/layout.tsx`, so dashboard/admin layouts naturally span full width. `collections/` and `upload/` pages got explicit `mx-auto max-w-7xl` to preserve their constrained layout.
 - **Phase 4 complete**: Categories ✅
 - **Phase 5 complete**: Collections ✅
 - **Phase 6 complete**: Dashboard ✅ — 3 server actions + 1 layout + 1 component + 3 pages + 3 client content files

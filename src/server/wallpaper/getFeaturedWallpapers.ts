@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/database/dbClient";
+import { resolveImageUrl } from "@/lib/resolveImageUrl";
 
 export type FeaturedWallpaper = {
   id: string;
@@ -41,7 +42,10 @@ export const getFeaturedWallpapers = async (
       },
     });
 
-    return wallpapers;
+    return wallpapers.map((wp) => ({
+      ...wp,
+      thumbnailUrl: resolveImageUrl(wp.thumbnailUrl),
+    }));
   } catch (error) {
     console.error("Get featured wallpapers error:", error);
     return [];

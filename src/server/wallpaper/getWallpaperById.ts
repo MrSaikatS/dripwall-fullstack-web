@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/database/dbClient";
+import { resolveImageUrl } from "@/lib/resolveImageUrl";
 
 export type WallpaperDetailData = {
   id: string;
@@ -90,7 +91,11 @@ export const getWallpaperById = async (
       return null;
     }
 
-    return wallpaper;
+    return {
+      ...wallpaper,
+      imageUrl: resolveImageUrl(wallpaper.imageUrl) ?? wallpaper.imageUrl,
+      thumbnailUrl: resolveImageUrl(wallpaper.thumbnailUrl),
+    };
   } catch (error) {
     console.error("Get wallpaper by ID error:", error);
     return null;
