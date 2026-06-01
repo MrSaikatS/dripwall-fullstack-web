@@ -1,25 +1,32 @@
-import { DashboardNav } from "@/components/Dashboard/DashboardNav";
+import { AppSidebar } from "@/components/Dashboard/AppSidebar";
+import { MobileNav } from "@/components/Dashboard/MobileNav";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/shadcnui/sidebar";
 import { Separator } from "@/components/shadcnui/separator";
 import type { LayoutChildrenProps } from "@/lib/types";
 
 const DashboardLayout = ({ children }: LayoutChildrenProps) => {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
-      {/* Sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r p-4 md:block">
-        <DashboardNav />
-      </aside>
-
-      {/* Mobile nav */}
-      <div className="border-b p-4 md:hidden">
-        <DashboardNav />
-      </div>
-
-      {/* Main content */}
-      <main className="flex-1 p-6">
-        <Separator className="mb-6 md:hidden" />
-        {children}
-      </main>
+    <div
+      style={{
+        width: "100dvw",
+        marginLeft: "calc(-1 * (100dvw - 100%) / 2)",
+        marginRight: "calc(-1 * (100dvw - 100%) / 2)",
+      }}
+    >
+      <SidebarProvider>
+        <AppSidebar />
+        <div className="flex flex-1 flex-col">
+          <header className="flex h-12 shrink-0 items-center gap-2 border-b px-6">
+            <SidebarTrigger className="max-md:text-foreground" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+          </header>
+          <div className="flex-1 p-6 pb-20 md:pb-6">{children}</div>
+        </div>
+        <MobileNav />
+      </SidebarProvider>
     </div>
   );
 };

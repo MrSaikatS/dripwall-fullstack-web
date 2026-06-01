@@ -13,20 +13,57 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/shadcnui/sidebar";
-import { Images, LayoutDashboard, ShieldCheck, Users } from "lucide-react";
+import { Grid3X3, Heart, LayoutDashboard, LogOut, User2 } from "lucide-react";
 import { Route } from "next";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "react-toastify";
+import { authClient } from "@/lib/auth-client";
 
 const navItems = [
-  { href: "/admin" as const, label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/users" as const, label: "Users", icon: Users },
-  { href: "/admin/wallpapers" as const, label: "Wallpapers", icon: Images },
-  { href: "/admin/categories" as const, label: "Categories", icon: ShieldCheck },
+  {
+    href: "/dashboard" as const,
+    label: "Overview",
+    icon: LayoutDashboard,
+  },
+  {
+    href: "/dashboard/wallpapers" as const,
+    label: "My Wallpapers",
+    icon: Grid3X3,
+  },
+  {
+    href: "/dashboard/likes" as const,
+    label: "Liked Wallpapers",
+    icon: Heart,
+  },
 ];
 
-export const AdminSidebar = () => {
+export const AppSidebar = () => {
   const pathname = usePathname();
+  const { replace } = useRouter();
+  const [isLoggingOut, startLogoutTransition] = useTransition();
+
+  const logoutHandler = async () => {
+    try {
+      const { error } = await authClient.signOut();
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Logout successful!");
+        replace("/" as Route);
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred during logout";
+
+      toast.error(errorMessage);
+      console.error("Logout error:", err);
+    }
+  };
 
   return (
     <Sidebar
@@ -39,12 +76,12 @@ export const AdminSidebar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              render={<Link href={"/admin" as Route} />}
+              render={<Link href={"/dashboard" as Route} />}
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
-                <ShieldCheck className="size-4" />
+                <LayoutDashboard className="size-4" />
               </div>
-              <span className="font-semibold">Admin</span>
+              <span className="font-semibold">DripWall</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -52,7 +89,7 @@ export const AdminSidebar = () => {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
@@ -80,11 +117,21 @@ export const AdminSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              tooltip="Back to Dashboard"
-              render={<Link href={"/dashboard" as Route} />}
+              tooltip="Profile"
+              render={<Link href={"/dashboard/profile" as Route} />}
             >
-              <LayoutDashboard />
-              <span>Dashboard</span>
+              <User2 />
+              <span>Profile</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip="Sign Out"
+              onClick={logoutHandler}
+              disabled={isLoggingOut}
+            >
+              <LogOut />
+              <span>Sign Out</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

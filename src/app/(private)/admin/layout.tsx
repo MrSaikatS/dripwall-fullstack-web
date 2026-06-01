@@ -1,4 +1,9 @@
 import { AdminSidebar } from "@/components/Admin/AdminSidebar";
+import { MobileNav } from "@/components/Admin/MobileNav";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/shadcnui/sidebar";
 import { auth } from "@/lib/auth";
 import { Separator } from "@/components/shadcnui/separator";
 import type { LayoutChildrenProps } from "@/lib/types";
@@ -15,19 +20,24 @@ const AdminLayout = async ({ children }: LayoutChildrenProps) => {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
-      <aside className="hidden w-64 shrink-0 border-r p-4 md:block">
+    <div
+      style={{
+        width: "100dvw",
+        marginLeft: "calc(-1 * (100dvw - 100%) / 2)",
+        marginRight: "calc(-1 * (100dvw - 100%) / 2)",
+      }}
+    >
+      <SidebarProvider>
         <AdminSidebar />
-      </aside>
-
-      <div className="border-b p-4 md:hidden">
-        <AdminSidebar />
-      </div>
-
-      <main className="flex-1 p-6">
-        <Separator className="mb-6 md:hidden" />
-        {children}
-      </main>
+        <div className="flex flex-1 flex-col">
+          <header className="flex h-12 shrink-0 items-center gap-2 border-b px-6">
+            <SidebarTrigger className="max-md:text-foreground" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+          </header>
+          <div className="flex-1 p-6 pb-20 md:pb-6">{children}</div>
+        </div>
+        <MobileNav />
+      </SidebarProvider>
     </div>
   );
 };
