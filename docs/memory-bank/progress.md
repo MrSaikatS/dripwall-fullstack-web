@@ -322,7 +322,9 @@
 - Argon2 support out of the box
 - Simpler API surface for email/password auth
 
-### Why Prisma 7 + LibSQL + SQLite?
+### Historical: Why Prisma 7 + LibSQL + SQLite?
+
+*This was the initial database choice. The project has since migrated to Neon PostgreSQL (see below).*
 
 - Prisma 7 introduces driver adapters for better database compatibility
 - LibSQL provides SQLite-compatible driver with fewer dependencies

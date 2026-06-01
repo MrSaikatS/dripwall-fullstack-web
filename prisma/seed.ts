@@ -215,18 +215,20 @@ const main = async () => {
       },
     ];
 
-    // Delete existing demo data for idempotent re-runs
-    await prisma.wallpaper.deleteMany({
-      where: { userId: adminUser.id },
+    // Delete only seeded fixture data for idempotent re-runs
+    const seededImageUrls = sampleWallpapers.map((wp) => wp.imageUrl);
+
+    await prisma.like.deleteMany({
+      where: { userId: demoUser.id, wallpaper: { imageUrl: { in: seededImageUrls } } },
+    });
+    await prisma.download.deleteMany({
+      where: { userId: demoUser.id, wallpaper: { imageUrl: { in: seededImageUrls } } },
     });
     await prisma.collectionItem.deleteMany({
       where: { collectionId: "demo-collection" },
     });
-    await prisma.like.deleteMany({
-      where: { userId: demoUser.id },
-    });
-    await prisma.download.deleteMany({
-      where: { userId: demoUser.id },
+    await prisma.wallpaper.deleteMany({
+      where: { userId: adminUser.id, imageUrl: { in: seededImageUrls } },
     });
 
     console.log("Cleaned existing demo data");
