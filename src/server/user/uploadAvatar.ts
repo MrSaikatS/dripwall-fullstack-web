@@ -1,14 +1,14 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { uploadFile } from "@/lib/fileStorage";
+import prisma from "@/lib/database/dbClient";
+import { deleteFile, uploadFile } from "@/lib/fileStorage";
 import { validateImageBuffer } from "@/lib/imageProcessor";
 import { headers } from "next/headers";
 import { randomUUID } from "node:crypto";
 
 export type UploadAvatarResult = {
   success: boolean;
-  data?: { url: string };
   error?: string;
 };
 
@@ -72,7 +72,22 @@ export const uploadAvatar = async (
     const key = `avatars/${userId}/${safeFileName}`;
     const url = await uploadFile(buffer, key, file.type);
 
-    return { success: true, data: { url } };
+    try {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { image: url },
+      });
+    } catch (dbError) {
+      console.error("Failed to update user avatar in DB, cleaning up uploaded file:", dbError);
+      try {
+        await deleteFile(key);
+      } catch (deleteError) {
+        console.error("Failed to delete orphaned avatar file:", deleteError);
+      }
+      return { success: false, error: "Failed to save avatar. Please try again." };
+    }
+
+    return { success: true };
   } catch (error) {
     console.error("Upload avatar error:", error);
     return {

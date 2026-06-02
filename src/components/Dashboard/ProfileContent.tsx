@@ -8,7 +8,7 @@ import {
 } from "@/lib/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Button } from "@/components/shadcnui/button";
@@ -61,6 +61,7 @@ export const ProfileContent = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const avatarPreviewRef = useRef<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onNameSubmit = async (data: ProfileNameFormType) => {
@@ -104,7 +105,16 @@ export const ProfileContent = () => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (avatarPreviewRef.current) {
+        URL.revokeObjectURL(avatarPreviewRef.current);
+      }
+    };
+  }, []);
+
   const onDeleteAccount = async () => {
+    setIsDeleting(true);
     try {
       const { error } = await authClient.deleteUser();
 
@@ -130,7 +140,12 @@ export const ProfileContent = () => {
     const file = e.target.files?.[0];
 
     if (file) {
-      setAvatarPreview(URL.createObjectURL(file));
+      if (avatarPreviewRef.current) {
+        URL.revokeObjectURL(avatarPreviewRef.current);
+      }
+      const url = URL.createObjectURL(file);
+      avatarPreviewRef.current = url;
+      setAvatarPreview(url);
     }
   };
 
@@ -151,23 +166,19 @@ export const ProfileContent = () => {
 
       const result = await uploadAvatar(formData);
 
-      if (!result.success || !result.data) {
-        toast.error(result.error ?? "Failed to upload avatar");
-      } else {
-        const { error } = await authClient.updateUser({
-          image: result.data.url,
-        });
-
-        if (error) {
-          toast.error(error.message ?? "Failed to update profile picture");
-        } else {
-          toast.success("Profile picture updated");
-          setAvatarPreview(null);
-
-          if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-          }
+      if (result.success) {
+        toast.success("Profile picture updated");
+        if (avatarPreviewRef.current) {
+          URL.revokeObjectURL(avatarPreviewRef.current);
+          avatarPreviewRef.current = null;
         }
+        setAvatarPreview(null);
+
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      } else {
+        toast.error(result.error ?? "Failed to upload avatar");
       }
     } catch (err) {
       const message =

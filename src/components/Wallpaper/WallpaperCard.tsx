@@ -46,7 +46,7 @@ export const WallpaperCard = ({ wallpaper }: WallpaperCardProps) => {
         </CardContent>
 
         {/* Info */}
-        <CardFooter className="flex items-center gap-2 px-3 pb-3">
+        <CardFooter className="flex items-center gap-2 px-3 pb-3 pt-3">
           <Avatar size="sm">
             <AvatarImage
               src={wallpaper.user.image || undefined}

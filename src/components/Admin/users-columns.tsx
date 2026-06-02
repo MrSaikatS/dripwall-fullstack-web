@@ -30,11 +30,27 @@ export type UserTableUser = {
 
 export const useUserColumns = () => {
   const router = useRouter()
-  const [loadingUserId, setLoadingUserId] = useState<string | null>(null)
+  const [loadingUserIds, setLoadingUserIds] = useState<Set<string>>(new Set())
+
+  const markLoading = useCallback((id: string) => {
+    setLoadingUserIds((prev) => {
+      const next = new Set(prev)
+      next.add(id)
+      return next
+    })
+  }, [])
+
+  const clearLoading = useCallback((id: string) => {
+    setLoadingUserIds((prev) => {
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
+  }, [])
 
   const handleSetRole = useCallback(
     async (userId: string, role: "admin" | "user") => {
-      setLoadingUserId(userId)
+      markLoading(userId)
       try {
         const result = await authClient.admin.setRole({ userId, role })
         if (result.error) {
@@ -48,15 +64,15 @@ export const useUserColumns = () => {
       } catch {
         toast.error("Failed to update role")
       } finally {
-        setLoadingUserId(null)
+        clearLoading(userId)
       }
     },
-    [router],
+    [router, markLoading, clearLoading],
   )
 
   const handleBanToggle = useCallback(
     async (userId: string, currentlyBanned: boolean | null) => {
-      setLoadingUserId(userId)
+      markLoading(userId)
       try {
         if (currentlyBanned) {
           const result = await authClient.admin.unbanUser({ userId })
@@ -78,10 +94,10 @@ export const useUserColumns = () => {
       } catch {
         toast.error("Failed to update user")
       } finally {
-        setLoadingUserId(null)
+        clearLoading(userId)
       }
     },
-    [router],
+    [router, markLoading, clearLoading],
   )
 
   const columns: ColumnDef<UserTableUser>[] = [
@@ -131,7 +147,7 @@ export const useUserColumns = () => {
       header: "Actions",
       cell: ({ row }) => {
         const user = row.original
-        const isLoading = loadingUserId === user.id
+        const isLoading = loadingUserIds.has(user.id)
 
         if (isLoading) {
           return (

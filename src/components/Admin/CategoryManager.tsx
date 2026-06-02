@@ -99,15 +99,20 @@ export const CategoryManager = ({ categories }: CategoryManagerProps) => {
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     setIsDeleting(true);
-    const result = await deleteCategory(deleteTarget.id);
-    if (result.success) {
-      toast.success("Category deleted");
-      router.refresh();
-    } else {
-      toast.error(result.error ?? "Failed to delete category");
+    try {
+      const result = await deleteCategory(deleteTarget.id);
+      if (result.success) {
+        toast.success("Category deleted");
+        router.refresh();
+      } else {
+        toast.error(result.error ?? "Failed to delete category");
+      }
+    } catch {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsDeleting(false);
+      setDeleteTarget(null);
     }
-    setIsDeleting(false);
-    setDeleteTarget(null);
   };
 
   return (
@@ -224,6 +229,7 @@ export const CategoryManager = ({ categories }: CategoryManagerProps) => {
                         type="submit"
                         size="sm"
                         disabled={editForm.formState.isSubmitting}
+                        aria-label={editForm.formState.isSubmitting ? "Saving" : "Save"}
                       >
                         {editForm.formState.isSubmitting ? (
                           <LoaderIcon className="h-4 w-4 animate-spin" />
@@ -236,6 +242,7 @@ export const CategoryManager = ({ categories }: CategoryManagerProps) => {
                         size="sm"
                         type="button"
                         onClick={cancelEdit}
+                        aria-label="Cancel"
                       >
                         <XIcon className="h-4 w-4" />
                       </Button>
@@ -256,6 +263,7 @@ export const CategoryManager = ({ categories }: CategoryManagerProps) => {
                         variant="ghost"
                         size="sm"
                         onClick={() => startEdit(cat)}
+                        aria-label={`Edit category ${cat.name}`}
                       >
                         <EditIcon className="h-4 w-4" />
                       </Button>
@@ -276,6 +284,7 @@ export const CategoryManager = ({ categories }: CategoryManagerProps) => {
                                   name: cat.name,
                                 })
                               }
+                              aria-label={`Delete category ${cat.name}`}
                             >
                               <TrashIcon className="h-4 w-4 text-destructive" />
                             </Button>

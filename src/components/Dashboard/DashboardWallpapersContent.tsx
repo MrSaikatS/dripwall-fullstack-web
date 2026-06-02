@@ -27,7 +27,11 @@ export const DashboardWallpapersContent = ({
   const handlePageChange = async (newPage: number) => {
     setLoading(true);
     try {
-      const result = await getUserWallpapers(newPage);
+      let result = await getUserWallpapers(newPage);
+      if (result.totalPages > 0 && result.page > result.totalPages) {
+        const safePage = Math.max(1, Math.min(result.page, result.totalPages));
+        result = await getUserWallpapers(safePage);
+      }
       setWallpapers(result.data);
       setTotal(result.total);
       setPage(result.page);

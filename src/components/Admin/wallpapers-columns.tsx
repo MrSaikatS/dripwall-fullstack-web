@@ -16,11 +16,28 @@ import { ExternalLinkIcon, LoaderIcon, StarIcon, TrashIcon } from "lucide-react"
 
 export const useWallpaperColumns = () => {
   const router = useRouter()
-  const [loadingId, setLoadingId] = useState<string | null>(null)
+  const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set())
+
+  const markLoading = useCallback((id: string) => {
+    setLoadingIds((prev) => {
+      const next = new Set(prev)
+      next.add(id)
+      return next
+    })
+  }, [])
+
+  const clearLoading = useCallback((id: string) => {
+    setLoadingIds((prev) => {
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
+  }, [])
 
   const handleToggleFeatured = useCallback(
     async (id: string) => {
-      setLoadingId(`featured-${id}`)
+      const key = `featured-${id}`
+      markLoading(key)
       try {
         const result = await toggleFeatured(id)
         if (result.success) {
@@ -36,16 +53,17 @@ export const useWallpaperColumns = () => {
       } catch {
         toast.error("Failed to toggle featured")
       } finally {
-        setLoadingId(null)
+        clearLoading(key)
       }
     },
-    [router],
+    [router, markLoading, clearLoading],
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
       if (!confirm("Delete this wallpaper permanently?")) return
-      setLoadingId(`delete-${id}`)
+      const key = `delete-${id}`
+      markLoading(key)
       try {
         const result = await deleteWallpaperAdmin(id)
         if (result.success) {
@@ -57,10 +75,10 @@ export const useWallpaperColumns = () => {
       } catch {
         toast.error("Failed to delete wallpaper")
       } finally {
-        setLoadingId(null)
+        clearLoading(key)
       }
     },
-    [router],
+    [router, markLoading, clearLoading],
   )
 
   const columns: ColumnDef<AdminWallpaperItem>[] = [
@@ -140,7 +158,7 @@ export const useWallpaperColumns = () => {
         const wp = row.original
         return (
           <div className="flex gap-1">
-            {loadingId === `featured-${wp.id}` ? (
+            {loadingIds.has(`featured-${wp.id}`) ? (
               <Button variant="ghost" size="sm" disabled>
                 <LoaderIcon className="h-3 w-3 animate-spin" />
               </Button>
@@ -161,7 +179,7 @@ export const useWallpaperColumns = () => {
                 <ExternalLinkIcon className="h-3 w-3" />
               </Button>
             </Link>
-            {loadingId === `delete-${wp.id}` ? (
+            {loadingIds.has(`delete-${wp.id}`) ? (
               <Button variant="ghost" size="sm" disabled>
                 <LoaderIcon className="h-3 w-3 animate-spin" />
               </Button>
