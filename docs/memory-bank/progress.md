@@ -4,7 +4,7 @@
 
 ### Authentication
 
-- [x] Better Auth configuration (Prisma adapter, SQLite, Argon2 hashing)
+- [x] Better Auth configuration (Prisma adapter, Neon PostgreSQL, Argon2 hashing)
 - [x] Email/password registration (`authClient.signUp.email()`)
 - [x] Email/password login (`authClient.signIn.email()`)
 - [x] Session management (7-day expiry, daily refresh, cookie cache)
@@ -14,6 +14,7 @@
 - [x] Admin plugin (role field, user banning, impersonation)
 - [x] Remember me functionality
 - [x] **Login returnTo flow** — `/login?returnTo=/upload` redirects after successful auth
+- [x] **Open redirect prevention** — `returnTo` validated as relative path via `URL.canParse()`
 
 ### UI Components
 
@@ -43,7 +44,7 @@
 
 ### Forms (Zod + react-hook-form + Controller pattern)
 
-- [x] Login form (with returnTo redirect support)
+- [x] Login form (with returnTo redirect support, open redirect validation)
 - [x] Register form (with confirm password validation)
 - [x] Forgot password form
 - [x] Reset password form (with confirm password validation)
@@ -53,7 +54,7 @@
 ### Pages
 
 - [x] Home page (hero-only, session-aware CTA: Upload redirects to login if unauthenticated)
-- [x] Login page (supports `?returnTo=` query param)
+- [x] Login page (supports `?returnTo=` query param, open redirect safe)
 - [x] Register page
 - [x] Forgot Password page (implemented)
 - [x] Reset Password page
@@ -69,7 +70,7 @@
 ### API Routes
 
 - [x] `/api/auth/[...all]` — Better Auth handler
-- [x] `/api/images/[...key]` — S3 image proxy with auth-based access control
+- [x] `/api/images/[...key]` — S3 image proxy with auth-based access control (public/private wallpapers, streaming, cache headers, error differentiation)
 
 ### Infrastructure
 
@@ -84,15 +85,16 @@
 ### Database
 
 - [x] Prisma schema with all models
-- [x] SQLite database configured (dev.db)
-- [x] Prisma 7 with LibSQL driver adapter
-- [x] Database migrations applied
-- [x] Seed script (admin user + demo user + categories + tags)
+- [x] Neon PostgreSQL serverless database configured
+- [x] Prisma 7 with PrismaNeon adapter
+- [x] PostgreSQL migrations applied
+- [x] Seed script (admin/demo users, categories, tags via Postgres)
 
 ### Dependencies (Phase 0)
 
 - [x] shadcn components installed: dropdown-menu, dialog, badge, select, textarea, **sidebar, sheet, tooltip**
 - [x] npm packages installed: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
+- [x] Neon adapter installed: `@neondatabase/serverless`, `@prisma/adapter-neon`
 - [x] serverEnv.ts configured with Backblaze B2 env vars
 - [x] clientEnv.ts configured with NEXT_PUBLIC_S3_PUBLIC_URL
 
@@ -239,18 +241,29 @@
 - [x] **Update server actions**: All image URLs resolved through `resolveImageUrl()` before returning to client
 - [x] **Update `fileStorage.ts`**: `uploadFile()` returns proxy-compatible paths
 
-### Uncommitted — Login returnTo + Home page session check
+### Post-Phase 9: returnTo + Home Session ✅ Complete
 
 - [x] **Login page/LoginForm**: Added `searchParams` support for `?returnTo=` redirect param
 - [x] **Home page**: Session-aware CTA — redirects unauthenticated users to login with returnTo
-- [x] **Image proxy**: Added auth check for private wallpapers, streaming response, enhanced error handling
+- [x] **Image proxy**: Added auth guard for private wallpapers (session + ownership check), streaming response, cache headers (public immutable vs private short-lived), 404/500 error differentiation
 - [x] **Header**: Changed "Profile" to "My Wallpapers" linking to `/dashboard/wallpapers`
 - [x] **resolveImageUrl.ts**: URI encoding for S3 keys, fixed S3 public URL extraction
+
+### Security Fixes ✅ Complete
+
+- [x] **Open redirect prevention**: `returnTo` validated using `URL.canParse()` — only relative paths starting with `/` are allowed
+- [x] **S3 key matching fix**: Image proxy uses `endsWith()` instead of `includes()` to prevent false-positive matches on partial key prefixes
+
+### All Changes Committed ✅
+
+- [x] All previously uncommitted changes now committed in `8f7e4dd`
+- [x] Security fixes committed in `de32e4b`
+- [x] Merged to main via PR #16 (`f9a56e6`)
+- [x] No uncommitted changes remaining
 
 ### Future Considerations
 
 - [ ] **OAuth providers** (Google, GitHub login via Better Auth)
-- [ ] **PostgreSQL/MySQL migration** (replace SQLite for production)
 - [ ] **Image CDN** (optimized image delivery)
 - [ ] **Rate limiting to Redis** (persistent rate limits across server restarts)
 - [ ] **Unit/E2E tests**
@@ -261,14 +274,14 @@
 ## Current Status
 
 - **Phase**: 9 (Polish & Cleanup) — ✅ Complete
-- **Auth**: ✅ Complete (core flow functional + returnTo redirect)
+- **Auth**: ✅ Complete (core flow functional + returnTo redirect + open redirect prevention)
 - **Implementation Plan**: ✅ Complete
 - **UI**: ✅ All 16 shadcn components installed (13 core + sidebar, sheet, tooltip)
 - **Database**: ✅ Schema defined, seeded
 - **S3 Storage Deps**: ✅ @aws-sdk/client-s3 + @aws-sdk/s3-request-presigner installed
 - **Env Vars**: ✅ Server + client env configured for S3
 - **Image Processor**: ✅ Complete (Phase 1)
-- **Image Proxy**: ✅ Complete — auth-guarded S3 proxy route with streaming
+- **Image Proxy**: ✅ Complete — auth-guarded S3 proxy route with streaming, cache headers, error handling, secure key matching
 - **File Storage**: ✅ Complete (Phase 1, updated for proxy URLs)
 - **Shared Types & Utils**: ✅ Complete (including resolveImageUrl)
 - **Wallpaper Upload**: ✅ Complete (Phase 2)
@@ -283,8 +296,11 @@
 - **SEO Metadata**: ✅ Complete
 - **Layout Refactor**: ✅ Complete — shadcn Sidebar for admin/dashboard, public max-w-7xl, no breakout hack
 - **S3 Image Proxy**: ✅ Complete
-- **Login returnTo**: ✅ Complete (uncommitted)
-- **Home session CTAs**: ✅ Complete (uncommitted)
+- **Login returnTo**: ✅ Complete
+- **Home session CTAs**: ✅ Complete
+- **Open redirect prevention**: ✅ Complete
+- **All changes committed**: ✅ Complete — no uncommitted changes
+- **Git Branch**: `maintenance` (merged to main via PR #16)
 - **Testing**: ❌ None
 - **Production Deploy**: ❌ Not configured
 
@@ -292,12 +308,10 @@
 
 1. **Email Verification**: Disabled (TODO in auth.ts line 28)
 2. **Password Reset**: Uses console-based token display (no email sending service configured)
-3. **SQLite**: Only suitable for development, not production
-4. **Rate Limiting**: In-memory, resets on server restart
-5. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]`
-6. **No E2E tests**: Manual verification only
-7. **No OAuth providers**: Email/password only
-8. **Uncommitted changes**: Login returnTo, home session check, image proxy auth enhancements, header label change, URL encoding fix — not yet committed
+3. **Rate Limiting**: In-memory, resets on server restart
+4. **Upload redirect**: Currently navigates to `/` after upload; should navigate to `/wallpapers/[id]`
+5. **No E2E tests**: Manual verification only
+6. **No OAuth providers**: Email/password only
 
 ## Evolution of Project Decisions
 
@@ -308,12 +322,22 @@
 - Argon2 support out of the box
 - Simpler API surface for email/password auth
 
-### Why Prisma 7 + LibSQL + SQLite?
+### Historical: Why Prisma 7 + LibSQL + SQLite?
+
+*Initial database choice; migrated to Neon PostgreSQL (see below).*
 
 - Prisma 7 introduces driver adapters for better database compatibility
 - LibSQL provides SQLite-compatible driver with fewer dependencies
 - SQLite is ideal for development (zero configuration, file-based)
 - Easy to swap to PostgreSQL/MySQL later by changing the adapter
+
+### Why Migrate to Neon PostgreSQL?
+
+- Neon provides serverless PostgreSQL with automatic scalability
+- Compatible with Prisma via `@prisma/adapter-neon` driver adapter
+- Built-in connection pooling and autoscaling for production workloads
+- Production-grade reliability without managing database infrastructure
+- Easy migration path from SQLite using standard Prisma migrations
 
 ### Why shadcn Nova (Base UI) over Radix UI?
 
