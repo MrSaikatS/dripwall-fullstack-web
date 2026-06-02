@@ -2,65 +2,42 @@
 
 import { Button } from "@/components/shadcnui/button";
 import { Card } from "@/components/shadcnui/card";
-import { Skeleton } from "@/components/shadcnui/skeleton";
+import type { PaginatedResponse } from "@/lib/types";
 import type { UserWallpaperItem } from "@/server/user/getUserWallpapers";
 import { getUserWallpapers } from "@/server/user/getUserWallpapers";
 import { Heart, Upload } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export const DashboardWallpapersContent = () => {
-  const [wallpapers, setWallpapers] = useState<UserWallpaperItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+type DashboardWallpapersContentProps = {
+  initialData: PaginatedResponse<UserWallpaperItem>;
+};
 
-  useEffect(() => {
-    let cancelled = false;
+export const DashboardWallpapersContent = ({
+  initialData,
+}: DashboardWallpapersContentProps) => {
+  const [wallpapers, setWallpapers] = useState<UserWallpaperItem[]>(
+    initialData.data,
+  );
+  const [total, setTotal] = useState(initialData.total);
+  const [page, setPage] = useState(initialData.page);
+  const [totalPages, setTotalPages] = useState(initialData.totalPages);
+  const [loading, setLoading] = useState(false);
 
-    const load = async () => {
-      try {
-        const result = await getUserWallpapers(page);
-        if (!cancelled) {
-          setWallpapers(result.data);
-          setTotal(result.total);
-          setTotalPages(result.totalPages);
-        }
-      } catch (error) {
-        console.error("Load wallpapers error:", error);
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [page]);
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">My Wallpapers</h1>
-          <Skeleton className="mt-2 h-4 w-40" />
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton
-              key={i}
-              className="aspect-4/3 w-full rounded-xl"
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const handlePageChange = async (newPage: number) => {
+    setLoading(true);
+    try {
+      const result = await getUserWallpapers(newPage);
+      setWallpapers(result.data);
+      setTotal(result.total);
+      setPage(result.page);
+      setTotalPages(result.totalPages);
+    } catch (error) {
+      console.error("Load wallpapers error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -97,7 +74,7 @@ export const DashboardWallpapersContent = () => {
             <Link
               key={wp.id}
               href={`/wallpapers/${wp.id}` as const}>
-              <Card className="group cursor-pointer overflow-hidden transition-shadow hover:shadow-md">
+              <Card className="group cursor-pointer overflow-hidden p-0 transition-shadow hover:shadow-md">
                 <div className="bg-muted aspect-4/3 overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -137,8 +114,8 @@ export const DashboardWallpapersContent = () => {
           <Button
             variant="outline"
             size="sm"
-            disabled={page <= 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}>
+            disabled={page <= 1 || loading}
+            onClick={() => handlePageChange(page - 1)}>
             Previous
           </Button>
           <span className="text-sm">
@@ -147,8 +124,8 @@ export const DashboardWallpapersContent = () => {
           <Button
             variant="outline"
             size="sm"
-            disabled={page >= totalPages}
-            onClick={() => setPage((p) => p + 1)}>
+            disabled={page >= totalPages || loading}
+            onClick={() => handlePageChange(page + 1)}>
             Next
           </Button>
         </div>

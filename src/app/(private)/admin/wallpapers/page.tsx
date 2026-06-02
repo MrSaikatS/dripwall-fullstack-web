@@ -1,6 +1,6 @@
 import { getAllWallpapersAdmin } from "@/server/admin/getAllWallpapersAdmin";
 import type { Metadata } from "next";
-import { AdminWallpapersContent } from "./AdminWallpapersContent";
+import { AdminWallpapersContent } from "@/components/Admin/AdminWallpapersContent";
 
 export const metadata: Metadata = {
   title: "Admin — Wallpapers",

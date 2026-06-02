@@ -4,7 +4,7 @@ import type { PageParams } from "@/lib/types";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { CollectionDetailContent } from "./CollectionDetailContent";
+import { CollectionDetailContent } from "@/components/Collection/CollectionDetailContent";
 
 export async function generateMetadata({
   params,

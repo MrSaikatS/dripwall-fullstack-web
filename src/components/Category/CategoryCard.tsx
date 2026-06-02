@@ -14,9 +14,9 @@ type CategoryCardProps = {
 export const CategoryCard = ({ category }: CategoryCardProps) => {
   return (
     <Link href={`/categories/${category.slug}`}>
-      <Card className="group cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
+      <Card className="group cursor-pointer overflow-hidden p-0 transition-shadow hover:shadow-lg">
         <div className="bg-muted relative flex aspect-video items-center justify-center">
-          {category.imageUrl ? (
+          {category.imageUrl ?
             <Image
               src={category.imageUrl}
               alt={category.name}
@@ -24,9 +24,7 @@ export const CategoryCard = ({ category }: CategoryCardProps) => {
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             />
-          ) : (
-            <ImageIcon className="text-muted-foreground size-12" />
-          )}
+          : <ImageIcon className="text-muted-foreground size-12" />}
         </div>
         <div className="flex items-center justify-between p-4">
           <div className="min-w-0 flex-1">
@@ -37,7 +35,9 @@ export const CategoryCard = ({ category }: CategoryCardProps) => {
               </p>
             )}
           </div>
-          <Badge variant="secondary" className="ml-3 shrink-0">
+          <Badge
+            variant="secondary"
+            className="ml-3 shrink-0">
             {category._count.wallpapers}
           </Badge>
         </div>

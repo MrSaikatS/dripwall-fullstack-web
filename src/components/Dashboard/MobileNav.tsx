@@ -1,6 +1,6 @@
 "use client";
 
-import { Grid3X3, Heart, LayoutDashboard } from "lucide-react";
+import { Grid3X3, Heart, LayoutDashboard, UserIcon } from "lucide-react";
 import { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,6 +20,11 @@ const navItems = [
     href: "/dashboard/likes" as const,
     label: "Likes",
     icon: Heart,
+  },
+  {
+    href: "/dashboard/profile" as const,
+    label: "Profile",
+    icon: UserIcon,
   },
 ];
 

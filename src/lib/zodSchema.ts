@@ -110,3 +110,33 @@ export const collectionCreateSchema = z.object({
 });
 
 export type CollectionCreateFormType = z.infer<typeof collectionCreateSchema>;
+
+export const profileNameSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(5, { error: "Name must be at least 5 characters long" })
+    .max(32, { error: "Name must not exceed 32 characters" }),
+});
+
+export type ProfileNameFormType = z.infer<typeof profileNameSchema>;
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(1, { error: "Current password is required" }),
+    newPassword: z
+      .string()
+      .min(8, { error: "Password must be minimum 8 characters long" })
+      .max(128, { error: "Password must not exceed 128 characters" }),
+    confirmPassword: z
+      .string()
+      .min(1, { error: "Please confirm your new password" }),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    error: "Passwords didn't match",
+    path: ["confirmPassword"],
+  });
+
+export type ChangePasswordFormType = z.infer<typeof changePasswordSchema>;

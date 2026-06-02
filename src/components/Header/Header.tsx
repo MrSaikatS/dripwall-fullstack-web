@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "react-toastify";
 import ThemeToggleButton from "../Buttons/ThemeToggleButton";
-import { Avatar, AvatarFallback } from "../shadcnui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../shadcnui/avatar";
 import { Button } from "../shadcnui/button";
 import {
   DropdownMenu,
@@ -106,6 +106,7 @@ const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger className="ring-border hover:ring-foreground/30 flex cursor-pointer items-center gap-1 rounded-full p-0.5 pr-2 ring-1 transition-all">
                 <Avatar size="sm">
+                  {data.user.image && <AvatarImage src={data.user.image} />}
                   <AvatarFallback>
                     {data.user.name?.charAt(0)?.toUpperCase() || "U"}
                   </AvatarFallback>
@@ -139,6 +140,10 @@ const Header = () => {
 
                   <DropdownMenuItem onClick={() => push("/dashboard/wallpapers" as Route)}>
                     <UserIcon /> My Wallpapers
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem onClick={() => push("/dashboard/profile" as Route)}>
+                    <UserIcon /> Profile
                   </DropdownMenuItem>
 
                   {isAdmin && (

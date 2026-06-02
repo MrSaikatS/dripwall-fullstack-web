@@ -1,6 +1,6 @@
 import { getCategories } from "@/server/category/getCategories";
 import type { Metadata } from "next";
-import { CategoryManager } from "./CategoryManager";
+import { CategoryManager } from "@/components/Admin/CategoryManager";
 
 export const metadata: Metadata = {
   title: "Admin — Categories",

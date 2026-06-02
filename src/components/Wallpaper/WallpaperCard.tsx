@@ -6,9 +6,10 @@ import {
   AvatarImage,
 } from "@/components/shadcnui/avatar";
 import { Badge } from "@/components/shadcnui/badge";
-import { Card } from "@/components/shadcnui/card";
+import { Card, CardContent, CardFooter } from "@/components/shadcnui/card";
 import { clientEnv } from "@/lib/env/clientEnv";
 import type { WallpaperListItem } from "@/server/wallpaper/getWallpapers";
+import { Route } from "next";
 import Link from "next/link";
 
 type WallpaperCardProps = {
@@ -27,13 +28,11 @@ export const WallpaperCard = ({ wallpaper }: WallpaperCardProps) => {
   );
 
   return (
-    <Link href={`/wallpapers/${wallpaper.id}` as const}>
-      <Card
-        size="sm"
-        className="group cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
+    <Link href={`/wallpapers/${wallpaper.id}` as Route}>
+      <Card className="group cursor-pointer overflow-hidden p-0 transition-shadow hover:shadow-lg">
         {/* Thumbnail */}
-        <div
-          className={`bg-muted relative overflow-hidden ${aspectRatioClass}`}>
+        <CardContent
+          className={`bg-muted relative overflow-hidden px-0 ${aspectRatioClass}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={thumbnailUrl}
@@ -44,10 +43,10 @@ export const WallpaperCard = ({ wallpaper }: WallpaperCardProps) => {
           {wallpaper.isFeatured && (
             <Badge className="absolute top-2 left-2">Featured</Badge>
           )}
-        </div>
+        </CardContent>
 
         {/* Info */}
-        <div className="flex items-center gap-2 px-3 pb-3">
+        <CardFooter className="flex items-center gap-2 px-3 pb-3">
           <Avatar size="sm">
             <AvatarImage
               src={wallpaper.user.image || undefined}
@@ -67,7 +66,7 @@ export const WallpaperCard = ({ wallpaper }: WallpaperCardProps) => {
             <span>♥</span>
             <span>{wallpaper._count.likes}</span>
           </div>
-        </div>
+        </CardFooter>
       </Card>
     </Link>
   );
