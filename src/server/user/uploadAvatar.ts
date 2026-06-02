@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
 import { deleteFile, uploadFile } from "@/lib/fileStorage";
+import { extractS3Key } from "@/lib/resolveImageUrl";
 import { validateImageBuffer } from "@/lib/imageProcessor";
 import { headers } from "next/headers";
 import { randomUUID } from "node:crypto";
@@ -25,6 +26,12 @@ export const uploadAvatar = async (
     }
 
     const userId = session.user.id;
+
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { image: true },
+    });
+    const previousImageUrl = existingUser?.image;
 
     const file = formData.get("avatar") as File | null;
 
@@ -85,6 +92,17 @@ export const uploadAvatar = async (
         console.error("Failed to delete orphaned avatar file:", deleteError);
       }
       return { success: false, error: "Failed to save avatar. Please try again." };
+    }
+
+    if (previousImageUrl) {
+      try {
+        const previousKey = extractS3Key(previousImageUrl);
+        if (previousKey !== key) {
+          await deleteFile(previousKey);
+        }
+      } catch (cleanupError) {
+        console.error("Failed to delete previous avatar:", cleanupError);
+      }
     }
 
     return { success: true };

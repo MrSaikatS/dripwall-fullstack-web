@@ -18,7 +18,7 @@ export const AdminWallpapersContent = ({
   currentPage,
   totalPages,
 }: AdminWallpapersContentProps) => {
-  const columns = useWallpaperColumns();
+  const { columns, renderDeleteDialog } = useWallpaperColumns();
 
   if (wallpapers.length === 0) {
     return (
@@ -35,6 +35,7 @@ export const AdminWallpapersContent = ({
         data={wallpapers}
         showPagination={false}
       />
+      {renderDeleteDialog()}
 
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2">

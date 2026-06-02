@@ -38,7 +38,7 @@ import { CameraIcon, Loader2Icon, PencilIcon, Trash2Icon } from "lucide-react";
 import type { Route } from "next";
 
 export const ProfileContent = () => {
-  const { data: session, isPending: sessionLoading } = authClient.useSession();
+  const { data: session, isPending: sessionLoading, refetch } = authClient.useSession();
   const { push } = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
@@ -173,6 +173,7 @@ export const ProfileContent = () => {
           avatarPreviewRef.current = null;
         }
         setAvatarPreview(null);
+        await refetch();
 
         if (fileInputRef.current) {
           fileInputRef.current.value = "";

@@ -1,6 +1,7 @@
 # Progress
 
 ## What Works
+
 - ✅ Next.js 16 App Router with route groups (public/private)
 - ✅ Database schema and Prisma 7 configuration
 - ✅ Better Auth with email/password, admin plugin, rate limiting
@@ -21,21 +22,24 @@
 - ✅ Form patterns with react-hook-form + zod
 
 ## What's Left to Build
+
 - ⬜ Email verification flow (currently disabled)
 - ⬜ Production deployment configuration
 - ⬜ Search functionality for wallpapers
 - ⬜ Tag-based filtering/browsing
-- ⬜ User avatar upload (server action exists but integration TBD)
+- ✅ User avatar upload with old-avatar cleanup from S3 storage
 - ⬜ OAuth providers (Google, GitHub, etc.)
 - ⬜ Analytics / view tracking refinements
 - ⬜ Rate limit tuning for production
 
 ## Known Issues
+
 - `prismaAdapter` provider string is `"sqlite"` despite using PostgreSQL — may need correction
 - Email verification is disabled — should be enabled for production
 - No automated test suite configured
 
 ## Evolution of Decisions
+
 - Moved from REST API routes to Server Actions for all mutations
 - Custom shadcnui path chosen over default `@/components/ui`
 - S3 proxy pattern chosen for auth-aware image serving
