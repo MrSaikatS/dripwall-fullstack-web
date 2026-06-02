@@ -4,7 +4,7 @@
 
 ### Authentication
 
-- [x] Better Auth configuration (Prisma adapter, SQLite, Argon2 hashing)
+- [x] Better Auth configuration (Prisma adapter, Neon PostgreSQL, Argon2 hashing)
 - [x] Email/password registration (`authClient.signUp.email()`)
 - [x] Email/password login (`authClient.signIn.email()`)
 - [x] Session management (7-day expiry, daily refresh, cookie cache)
@@ -324,7 +324,7 @@
 
 ### Historical: Why Prisma 7 + LibSQL + SQLite?
 
-*This was the initial database choice. The project has since migrated to Neon PostgreSQL (see below).*
+*Initial database choice; migrated to Neon PostgreSQL (see below).*
 
 - Prisma 7 introduces driver adapters for better database compatibility
 - LibSQL provides SQLite-compatible driver with fewer dependencies

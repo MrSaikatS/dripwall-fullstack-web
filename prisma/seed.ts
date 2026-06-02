@@ -219,13 +219,13 @@ const main = async () => {
     const seededImageUrls = sampleWallpapers.map((wp) => wp.imageUrl);
 
     await prisma.like.deleteMany({
-      where: { userId: demoUser.id, wallpaper: { imageUrl: { in: seededImageUrls } } },
+      where: { wallpaper: { imageUrl: { in: seededImageUrls } } },
     });
     await prisma.download.deleteMany({
-      where: { userId: demoUser.id, wallpaper: { imageUrl: { in: seededImageUrls } } },
+      where: { wallpaper: { imageUrl: { in: seededImageUrls } } },
     });
     await prisma.collectionItem.deleteMany({
-      where: { collectionId: "demo-collection" },
+      where: { wallpaper: { imageUrl: { in: seededImageUrls } } },
     });
     await prisma.wallpaper.deleteMany({
       where: { userId: adminUser.id, imageUrl: { in: seededImageUrls } },
