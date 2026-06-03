@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DashboardLikesContent } from "./DashboardLikesContent";
+import { DashboardLikesContent } from "@/components/Dashboard/DashboardLikesContent";
 
 export const metadata: Metadata = {
   title: "Liked Wallpapers",

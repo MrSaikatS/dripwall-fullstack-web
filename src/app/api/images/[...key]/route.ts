@@ -16,26 +16,34 @@ export const GET = async (
     const { key } = await params;
     const s3Key = key.join("/");
 
-    const wallpaper = await prisma.wallpaper.findFirst({
-      where: {
-        OR: [
-          { imageUrl: s3Key },
-          { thumbnailUrl: s3Key },
-        ],
-      },
-      select: { isPublic: true, userId: true },
-    });
+    let isPublic = false;
 
-    if (!wallpaper) {
-      return new NextResponse("Not Found", { status: 404 });
-    }
-
-    if (!wallpaper.isPublic) {
-      const session = await auth.api.getSession({
-        headers: request.headers,
+    if (s3Key.startsWith("avatars/")) {
+      isPublic = true;
+    } else {
+      const wallpaper = await prisma.wallpaper.findFirst({
+        where: {
+          OR: [
+            { imageUrl: s3Key },
+            { thumbnailUrl: s3Key },
+          ],
+        },
+        select: { isPublic: true, userId: true },
       });
-      if (!session?.user?.id || session.user.id !== wallpaper.userId) {
-        return new NextResponse("Forbidden", { status: 403 });
+
+      if (!wallpaper) {
+        return new NextResponse("Not Found", { status: 404 });
+      }
+
+      isPublic = wallpaper.isPublic;
+
+      if (!isPublic) {
+        const session = await auth.api.getSession({
+          headers: request.headers,
+        });
+        if (!session?.user?.id || session.user.id !== wallpaper.userId) {
+          return new NextResponse("Forbidden", { status: 403 });
+        }
       }
     }
 
@@ -66,7 +74,7 @@ export const GET = async (
       status: 200,
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": wallpaper.isPublic
+        "Cache-Control": isPublic
           ? "public, max-age=31536000, immutable"
           : "private, max-age=3600",
       },

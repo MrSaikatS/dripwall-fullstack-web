@@ -1,6 +1,7 @@
 import { getAllWallpapersAdmin } from "@/server/admin/getAllWallpapersAdmin";
 import type { Metadata } from "next";
-import { AdminWallpapersContent } from "./AdminWallpapersContent";
+import { redirect } from "next/navigation";
+import { AdminWallpapersContent } from "@/components/Admin/AdminWallpapersContent";
 
 export const metadata: Metadata = {
   title: "Admin — Wallpapers",
@@ -8,13 +9,19 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; sort?: string; order?: string }>;
 };
 
 const AdminWallpapersPage = async ({ searchParams }: Props) => {
   const params = await searchParams;
   const page = Number(params.page) || 1;
-  const result = await getAllWallpapersAdmin(page);
+  const sortField = params.sort;
+  const sortOrder = params.order;
+  const result = await getAllWallpapersAdmin(page, 20, sortField, sortOrder);
+
+  if (result && result.page !== page) {
+    redirect(`/admin/wallpapers?page=${result.page}`);
+  }
 
   if (!result) {
     return (
@@ -37,6 +44,8 @@ const AdminWallpapersPage = async ({ searchParams }: Props) => {
         wallpapers={result.data}
         currentPage={result.page}
         totalPages={result.totalPages}
+        sortField={sortField}
+        sortOrder={sortOrder as "asc" | "desc" | undefined}
       />
     </div>
   );

@@ -1,7 +1,15 @@
 "use client";
 
 import type { WallpaperListItem } from "@/server/wallpaper/getWallpapers";
+import Masonry from "react-masonry-css";
 import { WallpaperCard } from "./WallpaperCard";
+
+const breakpointCols = {
+  default: 3,
+  1024: 3,
+  768: 2,
+  640: 1,
+};
 
 type WallpaperGridProps = {
   wallpapers: WallpaperListItem[];
@@ -19,13 +27,16 @@ export const WallpaperGrid = ({ wallpapers }: WallpaperGridProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <Masonry
+      breakpointCols={breakpointCols}
+      className="masonry-grid"
+      columnClassName="masonry-grid-column">
       {wallpapers.map((wallpaper) => (
         <WallpaperCard
           key={wallpaper.id}
           wallpaper={wallpaper}
         />
       ))}
-    </div>
+    </Masonry>
   );
 };

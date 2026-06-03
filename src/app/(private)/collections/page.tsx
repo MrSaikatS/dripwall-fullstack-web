@@ -1,6 +1,6 @@
 import { Separator } from "@/components/shadcnui/separator";
 import type { Metadata } from "next";
-import { CollectionsPageContent } from "./CollectionsPageContent";
+import { CollectionsPageContent } from "@/components/Collection/CollectionsPageContent";
 
 export const metadata: Metadata = {
   title: "Collections",
