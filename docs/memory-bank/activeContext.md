@@ -2,23 +2,28 @@
 
 ## Current Focus
 
-Polish and bug-fix pass across admin tables, profile page, and avatar upload. Accessibility improvements (aria-labels), loading state correctness, memory leak fixes, and error handling hardening.
+Bug fixes and server-side sorting for admin wallpapers table. Pagination UX hardening (stranded-page recovery after deletion) and replacing client-side-only sorting with server-driven URL-based sorting.
 
 ## Recent Changes
 
-- **Profile page** (`ProfileContent.tsx`): Added `refetch` from `authClient.useSession()` and calls `await refetch()` after successful avatar upload so `session.user.image` updates immediately in the UI
-- **Avatar upload** (`uploadAvatar.ts`): Added cleanup of previous avatar file from S3 storage — fetches existing user record before upload, extracts S3 key from old image URL via `extractS3Key`, and calls `deleteFile` after successful DB update (guarded: skips if no previous image, avoids deleting the new file, failures never block success)
+- **Server-side sorting** (`AdminWallpapersContent.tsx`, `getAllWallpapersAdmin.ts`, `data-table.tsx`, `admin/wallpapers/page.tsx`):
+  - Replaced client-side-only `getSortedRowModel()` sorting with server-driven URL-based sorting
+  - Added `manualSorting`, `sorting`, `onSortingChange` props to shared `DataTable` component (backward compatible)
+  - `getAllWallpapersAdmin` accepts `sortField`/`sortOrder` params, builds dynamic Prisma `orderBy` (supports `title`, `downloadCount`, `likes._count`)
+  - Sort state read from URL `?sort=X&order=Y` search params; sorting a column navigates via `router.push`, resetting to `page=1`
+  - Pagination links (`Previous`/`Next`) preserve sort params so sort persists across pages
+- **Pagination after deletion fix** (`AdminWallpapersContent.tsx`, `getAllWallpapersAdmin.ts`, `admin/wallpapers/page.tsx`):
+  - Removed early return when `wallpapers.length === 0` — empty message rendered inline, pagination still visible when `currentPage > 1`
+  - Added server-side page clamping: when `currentPage > totalPages` and `totalPages > 0`, server re-fetches the last valid page
+  - Added `redirect()` in page component when server clamped the page, keeping URL in sync
+- **Profile page** (`ProfileContent.tsx`): Added `refetch` from `authClient.useSession()` and calls `await refetch()` after successful avatar upload so `session.user.image` updates immediately in the UI (previous)
+- **Avatar upload** (`uploadAvatar.ts`): Added cleanup of previous avatar file from S3 storage (previous)
 - **AGENTS.md**: Added nextjs-agent-rules, form-patterns, bun, and Memory Bank sections (previous)
-- **Admin tables** (`users-columns.tsx`, `wallpapers-columns.tsx`): Refactored loading state from single `string | null` to `Set<string>` for correct per-row loading indicators (previous)
-- **Admin CategoryManager**: Wrapped delete in try/catch/finally; added aria-labels to action buttons (previous)
-- **Profile page** (`ProfileContent.tsx`): Fixed `URL.createObjectURL` memory leak via `revokeObjectURL` in cleanup effect; simplified avatar upload flow (previous)
-- **Avatar upload** (`uploadAvatar.ts`): Server action now persists the S3 URL to the user DB record directly and cleans up orphaned S3 files on DB failure; removed `data.url` from return type (previous)
-- **Dashboard wallpapers** (`DashboardWallpapersContent.tsx`): Added safe page fallback when current page exceeds totalPages (previous)
-- Previous work: Neon PostgreSQL migration, seed refactoring, shadcn reinstall, admin panel, landing page, SEO polish, layout refactoring to shadcn sidebar
+- **Admin tables** (`users-columns.tsx`, `wallpapers-columns.tsx`): Refactored loading state from single `string | null` to `Set<string>` (previous)
 
 ## Next Steps
 
-- Awaiting user direction — uncommitted polish changes ready for review/commit
+- Awaiting user direction
 
 ## Active Decisions
 
@@ -31,9 +36,16 @@ Polish and bug-fix pass across admin tables, profile page, and avatar upload. Ac
 - After successful avatar upload, client calls `refetch()` from `authClient.useSession()` to sync `session.user.image` immediately
 - Server-side old-avatar cleanup after successful upload+DB write, using `extractS3Key` to derive the storage key from the stored URL
 - Per-row loading state using `Set<string>` instead of single `string | null` for concurrent operation safety in admin tables
+- **Admin sorting is URL-driven**: sort state lives in `searchParams` (`?sort=X&order=Y`), not in component state. The `DataTable` component supports `manualSorting` prop that skips `getSortedRowModel()` and uses controlled `sorting`/`onSortingChange` props. Sorting changes navigate via `router.push`, causing a server re-render with correctly sorted data.
+- **Pagination preserves sort**: Previous/Next links include current `sort`/`order` params so the sort state persists across page navigation.
+- **Server-side page clamping**: When `currentPage` exceeds `totalPages` (e.g., after deleting last items on a page), `getAllWallpapersAdmin` clamps to the last valid page. The page component then redirects to sync the URL.
 
 ## Considerations
 
 - Email verification is currently disabled (`requireEmailVerification: false`) — should be enabled for production
 - `prismaAdapter(prisma, { provider: "sqlite" })` uses "sqlite" string despite being PostgreSQL — this works with Prisma's adapter but should be noted
 - Rate limiting is configured but could be tuned further based on usage patterns
+
+## Learnings
+
+- **PowerShell heredoc quirk**: Bash heredocs (`cat <<'EOF'`) don't work inside PowerShell `$(...)` subexpressions. For multi-line git commit messages in this environment, use `git commit -m "title" -m "body"` with separate `-m` flags instead.

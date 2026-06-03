@@ -14,7 +14,7 @@
 - ✅ Download tracking
 - ✅ Collections CRUD
 - ✅ Category browsing
-- ✅ Admin panel (stats, wallpaper management, category management, user management)
+- ✅ Admin panel (stats, wallpaper management with server-side sorting & pagination, category management, user management)
 - ✅ User dashboard (overview, wallpapers, likes, profile)
 - ✅ Dark/light theme (dark default)
 - ✅ Responsive layout with sidebar navigation
@@ -47,3 +47,7 @@
 - Avatar upload refactored to persist URL to DB inside the server action (avoids dual client/server writes)
 - Admin table loading states moved from single `string | null` to `Set<string>` for concurrent-operation safety
 - Profile page object URL lifecycle managed with `useRef` + cleanup `useEffect` to prevent memory leaks
+- **Admin sorting moved from client-side to server-side**: The shared `DataTable` component gained `manualSorting`/`sorting`/`onSortingChange` props to support URL-driven server-side sorting instead of `getSortedRowModel` on the current page only.
+- **Admin pagination preserves sort**: Previous/Next links include sort params to maintain sort state across pages.
+- **Admin empty-state no longer short-circuits**: `AdminWallpapersContent` shows pagination even when `wallpapers.length === 0` if `currentPage > 1`, preventing users from being stranded after deletion.
+- **Server-side page clamping added**: `getAllWallpapersAdmin` re-fetches the last valid page when `currentPage > totalPages`, with a page-level redirect to sync the URL.

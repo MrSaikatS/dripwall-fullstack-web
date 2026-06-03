@@ -44,6 +44,19 @@ All data mutations use `"use server"` functions in `src/server/`, organized by d
 - Shared shadcn UI components in `src/components/shadcnui/`
 - Providers (Theme, Toast) in `src/components/Providers/`
 
+### DataTable Controlled Sorting Pattern
+
+The shared `DataTable` component supports both client-side and server-side sorting:
+
+- **Default mode** (backward compatible): Uses `getSortedRowModel()` and internal `useState<SortingState>` — pure client-side sorting.
+- **Manual/server-side mode**: Pass `manualSorting`, `sorting`, and `onSortingChange` props. This skips `getSortedRowModel()` and uses the provided `sorting` as controlled state. Changes call `onSortingChange` which the parent uses to navigate (e.g., `router.push` with sort params), triggering a server re-render with correctly sorted data.
+- **Admin wallpapers** uses the server-side mode: sort state lives in URL `searchParams` (`?sort=X&order=Y`), pagination links preserve sort params, and sort changes reset to `page=1`.
+
+### Admin Pagination / Empty-State Pattern
+
+- **No early return on empty**: `AdminWallpapersContent` renders the empty-state message inline rather than early-returning, so pagination controls remain visible when `currentPage > 1` even if the current page has no data (post-deletion recovery).
+- **Server-side page clamping**: `getAllWallpapersAdmin` clamps `currentPage` to `totalPages` when it exceeds the valid range. The page component redirects to sync the URL when clamping occurs.
+
 ### Loading State Pattern (Admin Tables)
 
 - Per-row loading tracked via `Set<string>` in state (not single `string | null`) to support concurrent operations
