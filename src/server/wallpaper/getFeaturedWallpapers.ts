@@ -1,21 +1,20 @@
 "use server";
 
 import prisma from "@/lib/database/dbClient";
+import { Prisma } from "@generated/prisma/client";
 import { resolveImageUrl } from "@/lib/resolveImageUrl";
 
-export type FeaturedWallpaper = {
-  id: string;
-  title: string;
-  thumbnailUrl: string | null;
-  width: number | null;
-  height: number | null;
-  downloadCount: number;
-  user: {
-    id: string;
-    name: string;
-    image: string | null;
+export type FeaturedWallpaper = Prisma.WallpaperGetPayload<{
+  select: {
+    id: true;
+    title: true;
+    thumbnailUrl: true;
+    width: true;
+    height: true;
+    downloadCount: true;
+    user: { select: { id: true; name: true; image: true } };
   };
-};
+}>;
 
 export const getFeaturedWallpapers = async (
   limit: number = 8,

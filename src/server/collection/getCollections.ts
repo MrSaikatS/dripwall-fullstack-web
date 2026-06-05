@@ -2,19 +2,20 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { Prisma } from "@generated/prisma/client";
 import { headers } from "next/headers";
 
-export type CollectionListItem = {
-  id: string;
-  name: string;
-  description: string | null;
-  isPublic: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  _count: {
-    items: number;
+export type CollectionListItem = Prisma.CollectionGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    description: true;
+    isPublic: true;
+    createdAt: true;
+    updatedAt: true;
+    _count: { select: { items: true } };
   };
-};
+}>;
 
 export const getCollections = async (): Promise<
   | { success: true; data: CollectionListItem[] }

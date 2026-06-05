@@ -2,32 +2,29 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { Prisma } from "@generated/prisma/client";
 import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import type { PaginatedResponse } from "@/lib/types";
 import { headers } from "next/headers";
 
-export type UserWallpaperItem = {
-  id: string;
-  title: string;
-  description: string | null;
-  thumbnailUrl: string | null;
-  imageUrl: string;
-  width: number | null;
-  height: number | null;
-  format: string | null;
-  isFeatured: boolean;
-  downloadCount: number;
-  viewCount: number;
-  createdAt: Date;
-  category: {
-    id: string;
-    name: string;
-    slug: string;
-  } | null;
-  _count: {
-    likes: number;
+export type UserWallpaperItem = Prisma.WallpaperGetPayload<{
+  select: {
+    id: true;
+    title: true;
+    description: true;
+    thumbnailUrl: true;
+    imageUrl: true;
+    width: true;
+    height: true;
+    format: true;
+    isFeatured: true;
+    downloadCount: true;
+    viewCount: true;
+    createdAt: true;
+    category: { select: { id: true; name: true; slug: true } };
+    _count: { select: { likes: true } };
   };
-};
+}>;
 
 export const getUserWallpapers = async (
   page: number = 1,

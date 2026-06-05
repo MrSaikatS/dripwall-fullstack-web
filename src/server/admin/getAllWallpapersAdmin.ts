@@ -2,21 +2,26 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { Prisma } from "@generated/prisma/client";
 import type { PaginatedResponse } from "@/lib/types";
 import { headers } from "next/headers";
 
-export type AdminWallpaperItem = {
-  id: string;
-  title: string;
-  isFeatured: boolean;
-  isPublic: boolean;
-  downloadCount: number;
-  viewCount: number;
-  createdAt: Date;
-  user: { id: string; name: string };
-  category: { id: string; name: string } | null;
-  _count: { likes: number };
-};
+const adminWallpaperSelect = {
+  id: true,
+  title: true,
+  isFeatured: true,
+  isPublic: true,
+  downloadCount: true,
+  viewCount: true,
+  createdAt: true,
+  user: { select: { id: true, name: true } },
+  category: { select: { id: true, name: true } },
+  _count: { select: { likes: true } },
+} satisfies Prisma.WallpaperSelect;
+
+export type AdminWallpaperItem = Prisma.WallpaperGetPayload<{
+  select: typeof adminWallpaperSelect;
+}>;
 
 export const getAllWallpapersAdmin = async (
   page: number = 1,
@@ -49,18 +54,7 @@ export const getAllWallpapersAdmin = async (
         orderBy,
         skip,
         take: pageSize,
-        select: {
-          id: true,
-          title: true,
-          isFeatured: true,
-          isPublic: true,
-          downloadCount: true,
-          viewCount: true,
-          createdAt: true,
-          user: { select: { id: true, name: true } },
-          category: { select: { id: true, name: true } },
-          _count: { select: { likes: true } },
-        },
+        select: adminWallpaperSelect,
       }),
       prisma.wallpaper.count(),
     ]);
@@ -76,18 +70,7 @@ export const getAllWallpapersAdmin = async (
           orderBy,
           skip: clampedSkip,
           take: pageSize,
-          select: {
-            id: true,
-            title: true,
-            isFeatured: true,
-            isPublic: true,
-            downloadCount: true,
-            viewCount: true,
-            createdAt: true,
-            user: { select: { id: true, name: true } },
-            category: { select: { id: true, name: true } },
-            _count: { select: { likes: true } },
-          },
+          select: adminWallpaperSelect,
         }),
       ]);
       return {

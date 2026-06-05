@@ -2,45 +2,44 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { Prisma } from "@generated/prisma/client";
 import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import { headers } from "next/headers";
 
-export type CollectionDetailItem = {
-  id: string;
-  name: string;
-  description: string | null;
-  isPublic: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: string;
-  items: {
-    collectionId: string;
-    wallpaperId: string;
-    createdAt: Date;
-    wallpaper: {
-      id: string;
-      title: string;
-      thumbnailUrl: string | null;
-      imageUrl: string;
-      width: number | null;
-      height: number | null;
-      format: string | null;
-      downloadCount: number;
-      viewCount: number;
-      user: {
-        id: string;
-        name: string;
-        image: string | null;
-      };
-      _count: {
-        likes: number;
+export type CollectionDetailItem = Prisma.CollectionGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    description: true;
+    isPublic: true;
+    createdAt: true;
+    updatedAt: true;
+    userId: true;
+    items: {
+      select: {
+        collectionId: true;
+        wallpaperId: true;
+        createdAt: true;
+        wallpaper: {
+          select: {
+            id: true;
+            title: true;
+            thumbnailUrl: true;
+            imageUrl: true;
+            width: true;
+            height: true;
+            format: true;
+            downloadCount: true;
+            viewCount: true;
+            user: { select: { id: true; name: true; image: true } };
+            _count: { select: { likes: true } };
+          };
+        };
       };
     };
-  }[];
-  _count: {
-    items: number;
+    _count: { select: { items: true } };
   };
-};
+}>;
 
 export const getCollectionById = async (
   id: string,
@@ -122,7 +121,8 @@ export const getCollectionById = async (
           wallpaper: {
             ...item.wallpaper,
             imageUrl:
-              resolveImageUrl(item.wallpaper.imageUrl) ?? item.wallpaper.imageUrl,
+              resolveImageUrl(item.wallpaper.imageUrl) ??
+              item.wallpaper.imageUrl,
             thumbnailUrl: resolveImageUrl(item.wallpaper.thumbnailUrl),
           },
         })),

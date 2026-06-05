@@ -2,39 +2,34 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { Prisma } from "@generated/prisma/client";
 import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import type { PaginatedResponse } from "@/lib/types";
 import { headers } from "next/headers";
 
-export type UserDownloadItem = {
-  id: string;
-  downloadedAt: Date;
-  wallpaper: {
-    id: string;
-    title: string;
-    thumbnailUrl: string | null;
-    imageUrl: string;
-    width: number | null;
-    height: number | null;
-    format: string | null;
-    isFeatured: boolean;
-    downloadCount: number;
-    viewCount: number;
-    user: {
-      id: string;
-      name: string;
-      image: string | null;
-    };
-    category: {
-      id: string;
-      name: string;
-      slug: string;
-    } | null;
-    _count: {
-      likes: number;
+export type UserDownloadItem = Prisma.DownloadGetPayload<{
+  select: {
+    id: true;
+    downloadedAt: true;
+    wallpaper: {
+      select: {
+        id: true;
+        title: true;
+        thumbnailUrl: true;
+        imageUrl: true;
+        width: true;
+        height: true;
+        format: true;
+        isFeatured: true;
+        downloadCount: true;
+        viewCount: true;
+        user: { select: { id: true; name: true; image: true } };
+        category: { select: { id: true; name: true; slug: true } };
+        _count: { select: { likes: true } };
+      };
     };
   };
-};
+}>;
 
 export const getUserDownloads = async (
   page: number = 1,
@@ -103,7 +98,9 @@ export const getUserDownloads = async (
       ...download,
       wallpaper: {
         ...download.wallpaper,
-        imageUrl: resolveImageUrl(download.wallpaper.imageUrl) ?? download.wallpaper.imageUrl,
+        imageUrl:
+          resolveImageUrl(download.wallpaper.imageUrl) ??
+          download.wallpaper.imageUrl,
         thumbnailUrl: resolveImageUrl(download.wallpaper.thumbnailUrl),
       },
     })),
