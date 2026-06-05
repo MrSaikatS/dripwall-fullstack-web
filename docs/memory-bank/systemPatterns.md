@@ -32,6 +32,34 @@ All data mutations use `"use server"` functions in `src/server/`, organized by d
 2. Serve: S3 proxy via `/api/images/[...key]` with auth-aware caching
 3. URL resolution: `resolveImageUrl()` handles S3 key → proxy URL mapping
 
+### Prisma Type Derivation Pattern
+
+For server queries that return a Prisma-shaped DTO, derive the TS type from the query itself instead of hand-writing an interface:
+
+```ts
+import { Prisma } from "@generated/prisma/client";
+
+export type CategoryListItem = Prisma.CategoryGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    slug: true;
+    description: true;
+    imageUrl: true;
+    _count: { select: { wallpapers: true } };
+  };
+}>;
+```
+
+Rules:
+
+- Import `Prisma` from `@generated/prisma/client` (the project's custom Prisma client path, not the bare `prisma` runtime package).
+- Mirror the `select` shape **exactly** (including nested `_count` selects) so the inferred type matches the runtime result.
+- Keep the type co-located with the query file (e.g. `getCategories.ts` exports both the type and the function). Don't re-declare the type in a shared types module.
+- Use this for any function whose return type is a Prisma `find*` / `findFirst` / `findUnique` result. Skip it for true mutations where the caller only needs a hand-picked subset of fields (those keep manual types).
+- Hand-written `{ id: string; ... }` interfaces in this pattern are considered a regression — replace with `GetPayload` derives when refactoring adjacent code.
+- **Shared select shape** (when the same select is reused in multiple queries in the same file): extract it into a `const` typed with `satisfies Prisma.XxxSelect` and reference it via `typeof` in the `GetPayload`. This prevents drift between the type and the queries (see `getAllWallpapersAdmin.ts`).
+
 ### Form Pattern (docs/form-patterns.md)
 
 - `react-hook-form` + `zodResolver` + `Controller` pattern

@@ -2,38 +2,33 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/database/dbClient";
+import { Prisma } from "@generated/prisma/client";
 import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import type { PaginatedResponse } from "@/lib/types";
 import { headers } from "next/headers";
 
-export type UserLikeItem = {
-  createdAt: Date;
-  wallpaper: {
-    id: string;
-    title: string;
-    thumbnailUrl: string | null;
-    imageUrl: string;
-    width: number | null;
-    height: number | null;
-    format: string | null;
-    isFeatured: boolean;
-    downloadCount: number;
-    viewCount: number;
-    user: {
-      id: string;
-      name: string;
-      image: string | null;
-    };
-    category: {
-      id: string;
-      name: string;
-      slug: string;
-    } | null;
-    _count: {
-      likes: number;
+export type UserLikeItem = Prisma.LikeGetPayload<{
+  select: {
+    createdAt: true;
+    wallpaper: {
+      select: {
+        id: true;
+        title: true;
+        thumbnailUrl: true;
+        imageUrl: true;
+        width: true;
+        height: true;
+        format: true;
+        isFeatured: true;
+        downloadCount: true;
+        viewCount: true;
+        user: { select: { id: true; name: true; image: true } };
+        category: { select: { id: true; name: true; slug: true } };
+        _count: { select: { likes: true } };
+      };
     };
   };
-};
+}>;
 
 export const getUserLikes = async (
   page: number = 1,
@@ -101,7 +96,8 @@ export const getUserLikes = async (
       ...like,
       wallpaper: {
         ...like.wallpaper,
-        imageUrl: resolveImageUrl(like.wallpaper.imageUrl) ?? like.wallpaper.imageUrl,
+        imageUrl:
+          resolveImageUrl(like.wallpaper.imageUrl) ?? like.wallpaper.imageUrl,
         thumbnailUrl: resolveImageUrl(like.wallpaper.thumbnailUrl),
       },
     })),

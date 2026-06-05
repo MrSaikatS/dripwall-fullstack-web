@@ -1,17 +1,20 @@
 "use server";
 
 import prisma from "@/lib/database/dbClient";
+import { Prisma } from "@generated/prisma/client";
 import { resolveImageUrl } from "@/lib/resolveImageUrl";
 import type { PaginatedResponse } from "@/lib/types";
 import type { WallpaperListItem } from "@/server/wallpaper/getWallpapers";
 
-export type CategoryDetailData = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  imageUrl: string | null;
-};
+export type CategoryDetailData = Prisma.CategoryGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    slug: true;
+    description: true;
+    imageUrl: true;
+  };
+}>;
 
 export type CategoryWallpaperItem = WallpaperListItem;
 

@@ -6,6 +6,8 @@ Bug fixes and server-side sorting for admin wallpapers table. Pagination UX hard
 
 ## Recent Changes
 
+- **Prisma type derivation** (`getCategories.ts`): Replaced hand-written `CategoryListItem` interface with `Prisma.CategoryGetPayload<{ select: ... }>` so the return type stays in sync with the query's `select` shape. Established as the project pattern for Prisma-backed DTOs.
+- **Prisma type derivation sweep** (10 files in `src/server/`): Replaced hand-written interfaces with `Prisma.XxxGetPayload<{ select: ... }>` derivations across `getCollections`, `getCollectionById`, `getCategoryBySlug`, `getUserDownloads`, `getUserLikes`, `getUserWallpapers`, `getFeaturedWallpapers`, `getWallpaperById`, `getWallpapers`, `getAllWallpapersAdmin`. `getAllWallpapersAdmin` also extracts the duplicated select into a shared `adminWallpaperSelect` const typed with `satisfies Prisma.WallpaperSelect` and reused in both queries + the type derivation to prevent drift.
 - **Server-side sorting** (`AdminWallpapersContent.tsx`, `getAllWallpapersAdmin.ts`, `data-table.tsx`, `admin/wallpapers/page.tsx`):
   - Replaced client-side-only `getSortedRowModel()` sorting with server-driven URL-based sorting
   - Added `manualSorting`, `sorting`, `onSortingChange` props to shared `DataTable` component (backward compatible)
@@ -47,5 +49,3 @@ Bug fixes and server-side sorting for admin wallpapers table. Pagination UX hard
 - Rate limiting is configured but could be tuned further based on usage patterns
 
 ## Learnings
-
-- **PowerShell heredoc quirk**: Bash heredocs (`cat <<'EOF'`) don't work inside PowerShell `$(...)` subexpressions. For multi-line git commit messages in this environment, use `git commit -m "title" -m "body"` with separate `-m` flags instead.
