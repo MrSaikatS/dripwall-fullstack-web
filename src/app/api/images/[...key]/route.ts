@@ -21,9 +21,23 @@ export const GET = async (
     if (s3Key.startsWith("avatars/")) {
       isPublic = true;
     } else {
-      const possibleImageUrls = [s3Key, `/api/images/${s3Key}`];
+      const encodedS3Key = s3Key.split("/").map(encodeURIComponent).join("/");
+
+      const possibleImageUrls = [
+        s3Key,
+        encodedS3Key,
+        `/api/images/${s3Key}`,
+        `/api/images/${encodedS3Key}`,
+      ];
+
       if (serverEnv.S3_PUBLIC_URL) {
-        possibleImageUrls.push(`${serverEnv.S3_PUBLIC_URL}/${s3Key}`);
+        const trimmed = serverEnv.S3_PUBLIC_URL.replace(/\/+$/, "");
+        possibleImageUrls.push(
+          `${trimmed}/${s3Key}`,
+          `${trimmed}//${s3Key}`,
+          `${trimmed}/${encodedS3Key}`,
+          `${trimmed}//${encodedS3Key}`,
+        );
       }
 
       const wallpaper = await prisma.wallpaper.findFirst({
