@@ -21,11 +21,16 @@ export const GET = async (
     if (s3Key.startsWith("avatars/")) {
       isPublic = true;
     } else {
+      const possibleImageUrls = [s3Key, `/api/images/${s3Key}`];
+      if (serverEnv.S3_PUBLIC_URL) {
+        possibleImageUrls.push(`${serverEnv.S3_PUBLIC_URL}/${s3Key}`);
+      }
+
       const wallpaper = await prisma.wallpaper.findFirst({
         where: {
           OR: [
-            { imageUrl: s3Key },
-            { thumbnailUrl: s3Key },
+            { imageUrl: { in: possibleImageUrls } },
+            { thumbnailUrl: { in: possibleImageUrls } },
           ],
         },
         select: { isPublic: true, userId: true },
@@ -74,14 +79,18 @@ export const GET = async (
       status: 200,
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": isPublic
-          ? "public, max-age=31536000, immutable"
+        "Cache-Control":
+          isPublic ?
+            "public, max-age=31536000, immutable"
           : "private, max-age=3600",
       },
     });
   } catch (error) {
     console.error("Image proxy error:", error);
-    if (error instanceof Error && (error.name === "NoSuchKey" || error.name === "NotFound")) {
+    if (
+      error instanceof Error &&
+      (error.name === "NoSuchKey" || error.name === "NotFound")
+    ) {
       return new NextResponse("Not Found", { status: 404 });
     }
     return new NextResponse("Internal Server Error", { status: 500 });
