@@ -12,6 +12,7 @@ export type LikeWallpaperResult = {
     likesCount: number;
   };
   error?: string;
+  code?: string;
 };
 
 export const likeWallpaper = async (
@@ -26,6 +27,7 @@ export const likeWallpaper = async (
       return {
         success: false,
         error: "You must be logged in to like wallpapers",
+        code: "UNAUTHORIZED",
       };
     }
 

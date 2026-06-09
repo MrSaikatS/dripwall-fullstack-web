@@ -144,7 +144,7 @@ const LoginForm = ({ returnTo }: { returnTo?: string }) => {
         disabled={isSubmitting || !isValid}>
         {isSubmitting ?
           <>
-            <Loader2Icon className="animate-spin" /> Logging in ..
+            <Loader2Icon className="animate-spin" /> Logging in...
           </>
         : <>
             <LockIcon /> Login

@@ -2,6 +2,7 @@ import ForgotPasswordForm from "@/components/Auth/ForgotPasswordForm";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/shadcnui/card";
@@ -21,9 +22,9 @@ const ForgotPasswordPage = () => {
         className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Forgot password?</CardTitle>
-          <p className="text-muted-foreground mt-1.5 text-sm">
+          <CardDescription>
             Enter your email address to receive a password reset link.
-          </p>
+          </CardDescription>
         </CardHeader>
 
         <CardContent>

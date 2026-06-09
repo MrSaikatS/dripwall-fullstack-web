@@ -17,7 +17,7 @@ const RegisterForm = () => {
   const {
     handleSubmit,
     control,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
     reset,
   } = useForm({
     resolver: zodResolver(registerFormSchema),
@@ -145,7 +145,7 @@ const RegisterForm = () => {
       <Button
         className="w-full"
         type="submit"
-        disabled={isSubmitting}>
+        disabled={isSubmitting || !isValid}>
         {isSubmitting ?
           <>
             <Loader2Icon className="animate-spin" /> Registering

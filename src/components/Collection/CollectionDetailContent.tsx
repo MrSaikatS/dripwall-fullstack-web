@@ -9,10 +9,18 @@ import type { CollectionDetailItem } from "@/server/collection/getCollectionById
 import { getCollectionById } from "@/server/collection/getCollectionById";
 import { removeFromCollection } from "@/server/collection/removeFromCollection";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/shadcnui/dialog";
+import {
   ArrowLeftIcon,
   BookHeartIcon,
   FolderLockIcon,
   GlobeIcon,
+  HeartIcon,
   LoaderIcon,
   Trash2Icon,
   XIcon,
@@ -39,6 +47,7 @@ export const CollectionDetailContent = ({
   const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,11 +90,8 @@ export const CollectionDetailContent = ({
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Delete this collection? This cannot be undone.")) {
-      return;
-    }
-
+  const handleDeleteConfirm = async () => {
+    setDeleteDialogOpen(false);
     setDeleting(true);
     const result = await deleteCollection(collectionId);
     setDeleting(false);
@@ -164,16 +170,43 @@ export const CollectionDetailContent = ({
         </div>
 
         {isOwner && (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleDelete}
-            disabled={deleting}>
-            {deleting ?
-              <LoaderIcon className="animate-spin" />
-            : <Trash2Icon />}
-            Delete
-          </Button>
+          <Dialog
+            open={deleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setDeleteDialogOpen(true)}
+              disabled={deleting}>
+              {deleting ?
+                <LoaderIcon className="animate-spin" />
+              : <Trash2Icon />}
+              Delete
+            </Button>
+
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete Collection</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete &ldquo;{collection.name}
+                  &rdquo;? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setDeleteDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDeleteConfirm}>
+                  Delete Collection
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
 
@@ -219,7 +252,8 @@ export const CollectionDetailContent = ({
                     <div className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
                       <span>by {wallpaper.user.name}</span>
                       <span>&middot;</span>
-                      <span>&hearts; {wallpaper._count.likes}</span>
+                      <HeartIcon className="h-3 w-3" />
+                      <span>{wallpaper._count.likes}</span>
                     </div>
                   </div>
                 </Link>
@@ -229,7 +263,7 @@ export const CollectionDetailContent = ({
                     type="button"
                     onClick={() => handleRemove(item.wallpaperId)}
                     disabled={removingId === item.wallpaperId}
-                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/70 disabled:opacity-50"
+                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white opacity-70 transition-opacity hover:bg-black/70 hover:opacity-100 disabled:opacity-50"
                     aria-label={`Remove ${wallpaper.title} from collection`}>
                     {removingId === item.wallpaperId ?
                       <LoaderIcon className="h-3.5 w-3.5 animate-spin" />
