@@ -37,7 +37,6 @@ export const createWallpaper = async (
     const title = formData.get("title") as string | null;
     const description = formData.get("description") as string | null;
     const categoryId = formData.get("categoryId") as string | null;
-    const tagsRaw = formData.get("tags") as string | null;
 
     if (!title || title.trim().length < 3) {
       return { success: false, error: "Title must be at least 3 characters" };
@@ -62,11 +61,11 @@ export const createWallpaper = async (
     }
 
     // Validate file size (max 50MB)
-    const MAX_FILE_SIZE = 50 * 1024 * 1024;
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
       return {
         success: false,
-        error: "Image must be less than 50MB",
+        error: "Image must be less than 10MB",
       };
     }
 
@@ -140,16 +139,6 @@ export const createWallpaper = async (
         format: processed.metadata.format,
         userId,
         categoryId: categoryId || undefined,
-        tags:
-          tagsRaw ?
-            {
-              create: (JSON.parse(tagsRaw) as string[]).map(
-                (tagId: string) => ({
-                  tagId,
-                }),
-              ),
-            }
-          : undefined,
       },
       select: {
         id: true,

@@ -44,7 +44,6 @@ const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
       title: "",
       description: "",
       categoryId: "",
-      tags: [],
     },
     mode: "all",
   });
@@ -53,7 +52,7 @@ const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
     readAs: "DataURL",
     accept: [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".tiff"],
     multiple: false,
-    maxFileSize: 50,
+    maxFileSize: 10,
     onFilesSuccessfullySelected: () => setIsFile(true),
     onClear: () => setIsFile(false),
   });
@@ -81,9 +80,6 @@ const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
         fd.append("description", formData.description);
       }
       fd.append("categoryId", formData.categoryId);
-      if (formData.tags && formData.tags.length > 0) {
-        fd.append("tags", JSON.stringify(formData.tags));
-      }
       fd.append("file", file);
 
       const result = await createWallpaper(fd);
@@ -134,7 +130,7 @@ const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
               Click to select an image (JPEG, PNG, WebP, GIF, AVIF, TIFF)
             </p>
 
-            <p className="text-muted-foreground text-xs">Max file size: 50MB</p>
+            <p className="text-muted-foreground text-xs">Max file size: 10MB</p>
           </div>
         : <div className="relative aspect-video w-full">
             {filesContent.map((file, idx) => (
@@ -216,7 +212,8 @@ const WallpaperUploadForm = ({ categories }: WallpaperUploadFormProps) => {
               aria-invalid={fieldState.invalid}>
               <SelectTrigger className="w-full">
                 <span data-slot="select-value">
-                  {categories.find((cat) => cat.id === field.value)?.name || "Select a category"}
+                  {categories.find((cat) => cat.id === field.value)?.name ||
+                    "Select a category"}
                 </span>
               </SelectTrigger>
 

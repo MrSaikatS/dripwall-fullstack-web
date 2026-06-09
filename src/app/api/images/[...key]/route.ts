@@ -60,7 +60,11 @@ export const GET = async (
         const session = await auth.api.getSession({
           headers: request.headers,
         });
-        if (!session?.user?.id || session.user.id !== wallpaper.userId) {
+        if (
+          !session?.user?.id ||
+          (session.user.id !== wallpaper.userId &&
+            session.user.role !== "admin")
+        ) {
           return new NextResponse("Forbidden", { status: 403 });
         }
       }

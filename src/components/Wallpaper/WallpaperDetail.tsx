@@ -40,13 +40,20 @@ export const WallpaperDetail = ({
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       {/* Main Image */}
-      <div className="bg-muted overflow-hidden rounded-xl">
+      <div className="bg-muted relative overflow-hidden rounded-xl">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={wallpaper.imageUrl}
           alt={wallpaper.title}
           className="h-auto w-full object-contain"
         />
+        {wallpaper.isFeatured && (
+          <Badge
+            className="absolute top-4 right-4"
+            variant="default">
+            Featured
+          </Badge>
+        )}
       </div>
 
       {/* Title and Actions */}
@@ -189,15 +196,6 @@ export const WallpaperDetail = ({
             </div>
           </div>
         </>
-      )}
-
-      {/* Featured Badge */}
-      {wallpaper.isFeatured && (
-        <Badge
-          className="absolute top-4 right-4"
-          variant="default">
-          Featured
-        </Badge>
       )}
     </div>
   );
