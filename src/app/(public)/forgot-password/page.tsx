@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 const ForgotPasswordPage = () => {
   return (
-    <section className="flex min-h-dvh items-center justify-center px-4">
+    <section className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4">
       <Card
         size="default"
         className="w-full max-w-sm">

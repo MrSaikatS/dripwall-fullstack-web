@@ -107,6 +107,7 @@ See existing examples under `src/components/Auth/`.
 - `src/app/(private)/` — `layout.tsx` redirects to `/login` if no session. **Any page that requires auth must live under `(private)/`**.
 - `src/app/api/images/[...key]/route.ts` — proxy/auth-gate for S3 objects when `S3_PUBLIC_URL` isn't set. Forces `runtime = "nodejs"` (needed for AWS SDK + stream conversion). Any route using `sharp`, `@node-rs/argon2`, or AWS SDK must also set `runtime = "nodejs"`.
 - `next.config.ts` allows `images.remotePatterns` `{ protocol: "https", hostname: "**" }`.
+- `typedRoutes: true` is on — dynamic `href` strings (e.g. `` `/categories/${slug}` ``) require `as unknown as never` cast. Seen throughout the codebase; do not "fix" by removing the cast.
 
 ## Server actions (`src/server/`)
 
@@ -122,17 +123,20 @@ See existing examples under `src/components/Auth/`.
 - Tailwind v4: all config lives in `src/app/globals.css` via `@theme inline` and `@custom-variant`. PostCSS plugin is `@tailwindcss/postcss`. There is no `tailwind.config.ts` — do not create one.
 - `globals.css` imports `shadcn/tailwind.css` and `tw-animate-css`; removing either breaks the Base Rhea tokens or animations.
 - Prettier: `singleAttributePerLine: true`, `bracketSameLine: true`, `experimentalTernaries: true`, `prettier-plugin-tailwindcss` enabled. New JSX: one prop per line, closing bracket on the same line as the tag.
+- Images from dynamic sources (S3) use `<img>` with `eslint-disable-next-line @next/next/no-img-element` — not `next/image`. Do not "fix" these.
 
 ## shadcn / Base UI
 
 - `components.json` sets `style: "base-rhea"`, `ui` → `@/components/shadcnui` (not the default `@/components/ui`), `hooks` → `@/hooks`. Add components with `bunx shadcn add ...`; they land in `src/components/shadcnui/`.
 - Primitives come from `@base-ui/react` (e.g. `Button as ButtonPrimitive` from `@base-ui/react/button`). Do not introduce Radix or `react-aria` primitives — they don't share Base Rhea styling.
 - App components live under `src/components/<Domain>/<Name>.tsx` (PascalCase folders and files). Only shadcnui primitives use kebab-case filenames.
+- Base UI `TooltipTrigger` does **not** support `asChild` — pass `className` directly to the trigger component instead.
 
 ## Notable dependencies
 
 - **`react-masonry-css`** — wallpaper grid layout. Import from `react-masonry-css` (no types needed).
 - **`use-file-picker`** — file selection in upload forms. See existing forms under `src/components/Wallpaper/`.
+- **`date-fns`** (v4) — date formatting in wallpaper detail and other components. Import named functions: `import { format, formatDistanceToNow } from "date-fns"`.
 - **`@tanstack/react-table`** — admin data tables. See `src/components/Admin/`.
 - **`lucide-react`** — icon library used throughout.
 

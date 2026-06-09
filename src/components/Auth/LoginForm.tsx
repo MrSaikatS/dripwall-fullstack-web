@@ -58,7 +58,9 @@ const LoginForm = ({ returnTo }: { returnTo?: string }) => {
         reset();
 
         replace(
-          (returnTo && isSafeRedirect(returnTo) ? returnTo : "/") as Route,
+          (returnTo && isSafeRedirect(returnTo) ? returnTo : (
+            "/wallpapers"
+          )) as Route,
         );
       }
     } catch (err) {

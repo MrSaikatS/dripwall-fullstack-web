@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 export const DashboardLikesContent = () => {
   const [likes, setLikes] = useState<UserLikeItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -29,6 +30,9 @@ export const DashboardLikesContent = () => {
         }
       } catch (error) {
         console.error("Load likes error:", error);
+        if (!cancelled) {
+          setError(true);
+        }
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -57,6 +61,30 @@ export const DashboardLikesContent = () => {
               className="aspect-4/3 w-full rounded-xl"
             />
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Liked Wallpapers</h1>
+        </div>
+        <div className="flex flex-col items-center gap-4 py-12 text-center">
+          <p className="text-muted-foreground">
+            Failed to load liked wallpapers. Please try again.
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setError(false);
+              setPage(1);
+              setLoading(true);
+            }}>
+            Retry
+          </Button>
         </div>
       </div>
     );

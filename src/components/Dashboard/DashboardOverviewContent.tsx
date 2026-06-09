@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/shadcnui/button";
 import { Card } from "@/components/shadcnui/card";
 import { Skeleton } from "@/components/shadcnui/skeleton";
 import { getCollections } from "@/server/collection/getCollections";
@@ -35,6 +36,7 @@ export const DashboardOverviewContent = () => {
     collectionCount: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,6 +60,9 @@ export const DashboardOverviewContent = () => {
         }
       } catch (error) {
         console.error("Dashboard load error:", error);
+        if (!cancelled) {
+          setError(true);
+        }
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -123,6 +128,27 @@ export const DashboardOverviewContent = () => {
               <Skeleton className="h-8 w-16" />
             </Card>
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold">Dashboard Overview</h1>
+        <div className="flex flex-col items-center gap-4 py-12 text-center">
+          <p className="text-muted-foreground">
+            Failed to load dashboard data. Please try again.
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setError(false);
+              setLoading(true);
+            }}>
+            Retry
+          </Button>
         </div>
       </div>
     );

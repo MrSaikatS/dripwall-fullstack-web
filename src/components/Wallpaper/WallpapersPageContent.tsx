@@ -84,7 +84,7 @@ export const WallpapersPageContent = ({
           <Select
             value={searchParams.get("sortBy") || "newest"}
             onValueChange={handleSortChange}>
-            <SelectTrigger className="w-35">
+            <SelectTrigger className="w-35 capitalize">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>

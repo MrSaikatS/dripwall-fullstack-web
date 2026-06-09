@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/shadcnui/skeleton";
 import { Separator } from "@/components/shadcnui/separator";
 import { getWallpapers } from "@/server/wallpaper/getWallpapers";
 import type { Metadata } from "next";
@@ -50,8 +51,13 @@ const WallpapersPage = async ({ searchParams }: WallpapersPageProps) => {
 
       <Suspense
         fallback={
-          <div className="flex min-h-100 items-center justify-center">
-            <p className="text-muted-foreground">Loading wallpapers...</p>
+          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton
+                key={i}
+                className="mb-4 h-64 w-full rounded-xl"
+              />
+            ))}
           </div>
         }>
         <WallpapersPageContent initialData={initialData} />

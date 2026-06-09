@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "react-toastify";
 import ThemeToggleButton from "../Buttons/ThemeToggleButton";
@@ -41,6 +41,7 @@ import { Skeleton } from "../shadcnui/skeleton";
 const Header = () => {
   const { data, isPending } = authClient.useSession();
   const [isLoggingOut, startLogoutTransition] = useTransition();
+  const pathname = usePathname();
   const { replace, push } = useRouter();
 
   const isAdmin = data?.user?.role === "admin";
@@ -81,13 +82,27 @@ const Header = () => {
           <nav className="hidden items-center gap-6 md:flex">
             <Link
               href={"/wallpapers" as Route}
-              className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+              className={`text-sm font-medium transition-colors ${
+                (
+                  pathname === "/wallpapers" ||
+                  pathname.startsWith("/wallpapers/")
+                ) ?
+                  "text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+              }`}>
               Wallpapers
             </Link>
 
             <Link
               href={"/categories" as Route}
-              className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+              className={`text-sm font-medium transition-colors ${
+                (
+                  pathname === "/categories" ||
+                  pathname.startsWith("/categories/")
+                ) ?
+                  "text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+              }`}>
               Categories
             </Link>
 
@@ -95,13 +110,24 @@ const Header = () => {
               <>
                 <Link
                   href={"/upload" as Route}
-                  className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+                  className={`text-sm font-medium transition-colors ${
+                    pathname === "/upload" ? "text-foreground" : (
+                      "text-muted-foreground hover:text-foreground"
+                    )
+                  }`}>
                   Upload
                 </Link>
 
                 <Link
                   href={"/collections" as Route}
-                  className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+                  className={`text-sm font-medium transition-colors ${
+                    (
+                      pathname === "/collections" ||
+                      pathname.startsWith("/collections/")
+                    ) ?
+                      "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                  }`}>
                   Collections
                 </Link>
               </>
@@ -224,17 +250,17 @@ const Header = () => {
                     onClick={() => push("/dashboard/profile" as Route)}>
                     <UserIcon /> Profile
                   </DropdownMenuItem>
-
-                  {isAdmin && (
-                    <>
-                      <DropdownMenuSeparator />
-
-                      <DropdownMenuItem onClick={() => push("/admin" as Route)}>
-                        <ShieldIcon /> Admin
-                      </DropdownMenuItem>
-                    </>
-                  )}
                 </DropdownMenuGroup>
+
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuItem onClick={() => push("/admin" as Route)}>
+                      <ShieldIcon /> Admin
+                    </DropdownMenuItem>
+                  </>
+                )}
 
                 <DropdownMenuSeparator />
 
