@@ -16,6 +16,7 @@ export const DashboardLikesContent = () => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,7 +46,7 @@ export const DashboardLikesContent = () => {
     return () => {
       cancelled = true;
     };
-  }, [page]);
+  }, [page, retryCount]);
 
   if (loading) {
     return (
@@ -82,6 +83,7 @@ export const DashboardLikesContent = () => {
               setError(false);
               setPage(1);
               setLoading(true);
+              setRetryCount((c) => c + 1);
             }}>
             Retry
           </Button>

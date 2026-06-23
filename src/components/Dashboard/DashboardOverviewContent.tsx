@@ -37,6 +37,7 @@ export const DashboardOverviewContent = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -75,7 +76,7 @@ export const DashboardOverviewContent = () => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [retryCount]);
 
   const statCards: StatCard[] = [
     {
@@ -146,6 +147,7 @@ export const DashboardOverviewContent = () => {
             onClick={() => {
               setError(false);
               setLoading(true);
+              setRetryCount((c) => c + 1);
             }}>
             Retry
           </Button>

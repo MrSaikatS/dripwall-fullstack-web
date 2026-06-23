@@ -5,8 +5,8 @@ export const serverEnv = createEnv({
   server: {
     DATABASE_URL: z
       .string()
-      .startsWith("postgres", {
-        error: "DATABASE_URL must start with postgres://",
+      .regex(/^postgres(?:ql)?:\/\//, {
+        error: "DATABASE_URL must start with postgres:// or postgresql://",
       })
       .min(1, { error: "DATABASE_URL is required" }),
     CHECKPOINT_DISABLE: z.enum(["1", "0"]).optional(),

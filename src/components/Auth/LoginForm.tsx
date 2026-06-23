@@ -13,11 +13,34 @@ import { Button } from "../shadcnui/button";
 import { Field, FieldError, FieldLabel } from "../shadcnui/field";
 import { Input } from "../shadcnui/input";
 
-const isSafeRedirect = (dest: string): boolean =>
-  dest.startsWith("/") &&
-  !dest.startsWith("//") &&
-  !dest.includes("://") &&
-  !dest.includes("@");
+const ALLOWED_PREFIXES = ["/wallpapers", "/categories", "/upload"] as const;
+const EXACT_ALLOWED = ["/"] as const;
+
+const isSafeRedirect = (dest: string): boolean => {
+  if (!dest) return false;
+  if (dest.includes("#") || dest.includes("\\")) return false;
+
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(dest);
+  } catch {
+    return false;
+  }
+
+  if (
+    decoded.includes("://") ||
+    decoded.startsWith("//") ||
+    decoded.startsWith("\\") ||
+    decoded.includes("@")
+  )
+    return false;
+  if (!decoded.startsWith("/")) return false;
+
+  return (
+    ALLOWED_PREFIXES.some((prefix) => decoded.startsWith(prefix)) ||
+    EXACT_ALLOWED.some((path) => decoded === path)
+  );
+};
 
 const LoginForm = ({ returnTo }: { returnTo?: string }) => {
   const { replace } = useRouter();
