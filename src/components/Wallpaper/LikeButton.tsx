@@ -34,12 +34,10 @@ export const LikeButton = ({
         setLiked(result.data.liked);
         setLikesCount(result.data.likesCount);
         router.refresh();
+      } else if (result.code === "UNAUTHORIZED") {
+        toast.error("Please sign in to like wallpapers");
       } else {
-        if (result.error?.includes("logged in")) {
-          toast.error("Please sign in to like wallpapers");
-        } else {
-          toast.error(result.error || "Failed to toggle like");
-        }
+        toast.error(result.error || "Failed to toggle like");
       }
     } catch (error) {
       console.error("Like button error:", error);

@@ -13,6 +13,12 @@ import { CalendarIcon, EyeIcon, RulerIcon } from "lucide-react";
 import Link from "next/link";
 import { DownloadButton } from "./DownloadButton";
 import { LikeButton } from "./LikeButton";
+import { format, formatDistanceToNow } from "date-fns";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/shadcnui/tooltip";
 
 type WallpaperDetailProps = {
   wallpaper: WallpaperDetailData;
@@ -24,12 +30,9 @@ export const WallpaperDetail = ({
   wallpaper,
   isLiked,
 }: WallpaperDetailProps) => {
-  const formatDate = (date: Date) =>
-    new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(new Date(date));
+  const createdAt = new Date(wallpaper.createdAt);
+  const dateFull = format(createdAt, "PP");
+  const dateRelative = formatDistanceToNow(createdAt, { addSuffix: true });
 
   const formatFileSize = (bytes: number | null) => {
     if (!bytes) return "Unknown";
@@ -40,13 +43,20 @@ export const WallpaperDetail = ({
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       {/* Main Image */}
-      <div className="bg-muted overflow-hidden rounded-xl">
+      <div className="bg-muted relative overflow-hidden rounded-xl">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={wallpaper.imageUrl}
           alt={wallpaper.title}
           className="h-auto w-full object-contain"
         />
+        {wallpaper.isFeatured && (
+          <Badge
+            className="absolute top-4 right-4"
+            variant="default">
+            Featured
+          </Badge>
+        )}
       </div>
 
       {/* Title and Actions */}
@@ -74,9 +84,9 @@ export const WallpaperDetail = ({
 
       {/* Metadata */}
       <Card className="p-6">
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
           {/* Uploader */}
-          <div className="col-span-2 space-y-2 sm:col-span-1 md:col-span-2">
+          <div className="space-y-1.5">
             <p className="text-muted-foreground text-xs font-medium uppercase">
               Uploaded by
             </p>
@@ -94,25 +104,29 @@ export const WallpaperDetail = ({
                   {wallpaper.user.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">{wallpaper.user.name}</span>
+              <span className="truncate text-sm font-medium">
+                {wallpaper.user.name}
+              </span>
             </Link>
           </div>
 
           {/* Dimensions */}
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <p className="text-muted-foreground text-xs font-medium uppercase">
               Dimensions
             </p>
             <div className="flex items-center gap-1 text-sm">
-              <RulerIcon className="h-3.5 w-3.5" />
-              {wallpaper.width && wallpaper.height ?
-                `${wallpaper.width} × ${wallpaper.height}`
-              : "Unknown"}
+              <RulerIcon className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">
+                {wallpaper.width && wallpaper.height ?
+                  `${wallpaper.width} × ${wallpaper.height}`
+                : "Unknown"}
+              </span>
             </div>
           </div>
 
           {/* File Size */}
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <p className="text-muted-foreground text-xs font-medium uppercase">
               File Size
             </p>
@@ -120,7 +134,7 @@ export const WallpaperDetail = ({
           </div>
 
           {/* Format */}
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <p className="text-muted-foreground text-xs font-medium uppercase">
               Format
             </p>
@@ -132,43 +146,44 @@ export const WallpaperDetail = ({
           </div>
 
           {/* Views */}
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <p className="text-muted-foreground text-xs font-medium uppercase">
               Views
             </p>
             <div className="flex items-center gap-1 text-sm">
-              <EyeIcon className="h-3.5 w-3.5" />
+              <EyeIcon className="h-3.5 w-3.5 shrink-0" />
               {wallpaper.viewCount}
             </div>
           </div>
 
           {/* Date */}
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <p className="text-muted-foreground text-xs font-medium uppercase">
               Uploaded
             </p>
-            <div className="flex items-center gap-1 text-sm">
-              <CalendarIcon className="h-3.5 w-3.5" />
-              {formatDate(wallpaper.createdAt)}
-            </div>
+            <Tooltip>
+              <TooltipTrigger className="flex items-center gap-1 text-sm">
+                <CalendarIcon className="h-3.5 w-3.5 shrink-0" />
+                {dateRelative}
+              </TooltipTrigger>
+              <TooltipContent>{dateFull}</TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Category */}
-          {wallpaper.category && (
-            <>
-              <div className="space-y-1">
-                <p className="text-muted-foreground text-xs font-medium uppercase">
-                  Category
-                </p>
-                <Link
-                  href={
-                    `/categories/${wallpaper.category.slug}` as unknown as never
-                  }>
-                  <Badge variant="secondary">{wallpaper.category.name}</Badge>
-                </Link>
-              </div>
-            </>
-          )}
+          <div className="space-y-1.5">
+            <p className="text-muted-foreground text-xs font-medium uppercase">
+              Category
+            </p>
+            {wallpaper.category ?
+              <Link
+                href={
+                  `/categories/${wallpaper.category.slug}` as unknown as never
+                }>
+                <Badge variant="secondary">{wallpaper.category.name}</Badge>
+              </Link>
+            : <p className="text-muted-foreground text-sm">—</p>}
+          </div>
         </div>
       </Card>
 
@@ -189,15 +204,6 @@ export const WallpaperDetail = ({
             </div>
           </div>
         </>
-      )}
-
-      {/* Featured Badge */}
-      {wallpaper.isFeatured && (
-        <Badge
-          className="absolute top-4 right-4"
-          variant="default">
-          Featured
-        </Badge>
       )}
     </div>
   );

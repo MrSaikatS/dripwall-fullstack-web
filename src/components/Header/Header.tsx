@@ -3,20 +3,30 @@
 import { authClient } from "@/lib/auth-client";
 import {
   ChevronDownIcon,
+  Grid3X3Icon,
   LayoutDashboardIcon,
   Loader2Icon,
   LogOutIcon,
+  MenuIcon,
   ShieldIcon,
   UserIcon,
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "react-toastify";
 import ThemeToggleButton from "../Buttons/ThemeToggleButton";
 import { Avatar, AvatarFallback, AvatarImage } from "../shadcnui/avatar";
 import { Button } from "../shadcnui/button";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../shadcnui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +41,7 @@ import { Skeleton } from "../shadcnui/skeleton";
 const Header = () => {
   const { data, isPending } = authClient.useSession();
   const [isLoggingOut, startLogoutTransition] = useTransition();
+  const pathname = usePathname();
   const { replace, push } = useRouter();
 
   const isAdmin = data?.user?.role === "admin";
@@ -71,13 +82,27 @@ const Header = () => {
           <nav className="hidden items-center gap-6 md:flex">
             <Link
               href={"/wallpapers" as Route}
-              className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+              className={`text-sm font-medium transition-colors ${
+                (
+                  pathname === "/wallpapers" ||
+                  pathname.startsWith("/wallpapers/")
+                ) ?
+                  "text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+              }`}>
               Wallpapers
             </Link>
 
             <Link
               href={"/categories" as Route}
-              className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+              className={`text-sm font-medium transition-colors ${
+                (
+                  pathname === "/categories" ||
+                  pathname.startsWith("/categories/")
+                ) ?
+                  "text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+              }`}>
               Categories
             </Link>
 
@@ -85,18 +110,96 @@ const Header = () => {
               <>
                 <Link
                   href={"/upload" as Route}
-                  className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+                  className={`text-sm font-medium transition-colors ${
+                    pathname === "/upload" ? "text-foreground" : (
+                      "text-muted-foreground hover:text-foreground"
+                    )
+                  }`}>
                   Upload
                 </Link>
 
                 <Link
                   href={"/collections" as Route}
-                  className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
+                  className={`text-sm font-medium transition-colors ${
+                    (
+                      pathname === "/collections" ||
+                      pathname.startsWith("/collections/")
+                    ) ?
+                      "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                  }`}>
                   Collections
                 </Link>
               </>
             )}
           </nav>
+
+          {/* Mobile nav */}
+          <Sheet>
+            <SheetTrigger
+              className="md:hidden"
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Open navigation menu">
+                  <MenuIcon className="h-5 w-5" />
+                </Button>
+              }
+            />
+
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle>DripWall</SheetTitle>
+              </SheetHeader>
+
+              <nav className="mt-6 flex flex-col gap-1">
+                <SheetClose
+                  render={
+                    <Link
+                      href={"/wallpapers" as Route}
+                      className="text-muted-foreground hover:text-foreground rounded-lg px-3 py-2 text-sm font-medium transition-colors">
+                      Wallpapers
+                    </Link>
+                  }
+                />
+
+                <SheetClose
+                  render={
+                    <Link
+                      href={"/categories" as Route}
+                      className="text-muted-foreground hover:text-foreground rounded-lg px-3 py-2 text-sm font-medium transition-colors">
+                      Categories
+                    </Link>
+                  }
+                />
+
+                {data && (
+                  <>
+                    <SheetClose
+                      render={
+                        <Link
+                          href={"/upload" as Route}
+                          className="text-muted-foreground hover:text-foreground rounded-lg px-3 py-2 text-sm font-medium transition-colors">
+                          Upload
+                        </Link>
+                      }
+                    />
+
+                    <SheetClose
+                      render={
+                        <Link
+                          href={"/collections" as Route}
+                          className="text-muted-foreground hover:text-foreground rounded-lg px-3 py-2 text-sm font-medium transition-colors">
+                          Collections
+                        </Link>
+                      }
+                    />
+                  </>
+                )}
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
 
         <div className="flex items-center gap-4">
@@ -138,24 +241,26 @@ const Header = () => {
                     <LayoutDashboardIcon /> Dashboard
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={() => push("/dashboard/wallpapers" as Route)}>
-                    <UserIcon /> My Wallpapers
+                  <DropdownMenuItem
+                    onClick={() => push("/dashboard/wallpapers" as Route)}>
+                    <Grid3X3Icon /> My Wallpapers
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={() => push("/dashboard/profile" as Route)}>
+                  <DropdownMenuItem
+                    onClick={() => push("/dashboard/profile" as Route)}>
                     <UserIcon /> Profile
                   </DropdownMenuItem>
-
-                  {isAdmin && (
-                    <>
-                      <DropdownMenuSeparator />
-
-                      <DropdownMenuItem onClick={() => push("/admin" as Route)}>
-                        <ShieldIcon /> Admin
-                      </DropdownMenuItem>
-                    </>
-                  )}
                 </DropdownMenuGroup>
+
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuItem onClick={() => push("/admin" as Route)}>
+                      <ShieldIcon /> Admin
+                    </DropdownMenuItem>
+                  </>
+                )}
 
                 <DropdownMenuSeparator />
 

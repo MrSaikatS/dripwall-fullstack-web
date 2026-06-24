@@ -77,7 +77,6 @@ export const wallpaperUploadSchema = z.object({
     .max(500, { error: "Description must not exceed 500 characters" })
     .optional(),
   categoryId: z.string().uuid({ error: "Invalid category" }),
-  tags: z.array(z.string().uuid({ error: "Invalid tag" })).optional(),
 });
 
 export type WallpaperUploadFormType = z.infer<typeof wallpaperUploadSchema>;

@@ -7,6 +7,7 @@ import {
 } from "@/components/shadcnui/avatar";
 import { Badge } from "@/components/shadcnui/badge";
 import { Card, CardContent, CardFooter } from "@/components/shadcnui/card";
+import { Heart } from "lucide-react";
 import { clientEnv } from "@/lib/env/clientEnv";
 import type { WallpaperListItem } from "@/server/wallpaper/getWallpapers";
 import { Route } from "next";
@@ -46,7 +47,7 @@ export const WallpaperCard = ({ wallpaper }: WallpaperCardProps) => {
         </CardContent>
 
         {/* Info */}
-        <CardFooter className="flex items-center gap-2 px-3 pb-3 pt-3">
+        <CardFooter className="flex items-center gap-2 px-3 pt-3 pb-3">
           <Avatar size="sm">
             <AvatarImage
               src={wallpaper.user.image || undefined}
@@ -63,7 +64,7 @@ export const WallpaperCard = ({ wallpaper }: WallpaperCardProps) => {
             </p>
           </div>
           <div className="text-muted-foreground flex items-center gap-1 text-xs">
-            <span>♥</span>
+            <Heart className="h-3 w-3" />
             <span>{wallpaper._count.likes}</span>
           </div>
         </CardFooter>

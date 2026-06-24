@@ -2,6 +2,7 @@ import ResetPasswordForm from "@/components/Auth/ResetPasswordForm";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/shadcnui/card";
@@ -16,15 +17,13 @@ export const metadata: Metadata = {
 
 const ResetPasswordPage = () => {
   return (
-    <section className="flex min-h-dvh items-center justify-center px-4">
+    <section className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4">
       <Card
         size="default"
         className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Reset your password</CardTitle>
-          <p className="text-muted-foreground mt-1.5 text-sm">
-            Enter your new password below.
-          </p>
+          <CardDescription>Enter your new password below.</CardDescription>
         </CardHeader>
 
         <CardContent>

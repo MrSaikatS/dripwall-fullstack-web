@@ -1,6 +1,6 @@
 "use client";
 
-import { WallpaperCard } from "@/components/Wallpaper/WallpaperCard";
+import { WallpaperGrid } from "@/components/Wallpaper/WallpaperGrid";
 import { Pagination } from "@/components/Wallpaper/Pagination";
 import type { PaginatedResponse } from "@/lib/types";
 import type {
@@ -28,11 +28,7 @@ export const CategoryWallpapersContent = ({
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {initialData.data.map((wallpaper) => (
-          <WallpaperCard key={wallpaper.id} wallpaper={wallpaper} />
-        ))}
-      </div>
+      <WallpaperGrid wallpapers={initialData.data} />
 
       <Pagination
         currentPage={initialData.page}

@@ -97,13 +97,15 @@ export const CollectionsPageContent = () => {
       </div>
 
       {collections.length === 0 ?
-        <div className="py-12 text-center">
+        <div className="flex flex-col items-center gap-4 py-12 text-center">
           <p className="text-muted-foreground">
             You haven&rsquo;t created any collections yet.
           </p>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Click &ldquo;New Collection&rdquo; to get started.
-          </p>
+          <Button
+            variant="outline"
+            onClick={() => setDialogOpen(true)}>
+            <PlusIcon /> Create Your First Collection
+          </Button>
         </div>
       : <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {collections.map((collection) => (

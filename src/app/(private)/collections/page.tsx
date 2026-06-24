@@ -13,7 +13,7 @@ const CollectionsPage = () => {
       <div>
         <h1 className="text-3xl font-bold">My Collections</h1>
         <p className="text-muted-foreground mt-2">
-          Organize your favorite wallpapers into collections
+          Organize your favorite wallpapers into collections.
         </p>
       </div>
 

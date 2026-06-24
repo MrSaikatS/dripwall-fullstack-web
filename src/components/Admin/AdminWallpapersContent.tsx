@@ -30,9 +30,12 @@ export const AdminWallpapersContent = ({
   const { columns, renderDeleteDialog } = useWallpaperColumns();
 
   const sorting: SortingState =
-    sortField && sortOrder ? [{ id: sortField, desc: sortOrder === "desc" }] : [];
+    sortField && sortOrder ?
+      [{ id: sortField, desc: sortOrder === "desc" }]
+    : [];
 
-  const sortParam = sortField && sortOrder ? `&sort=${sortField}&order=${sortOrder}` : "";
+  const sortParam =
+    sortField && sortOrder ? `&sort=${sortField}&order=${sortOrder}` : "";
 
   const handleSortingChange = useCallback(
     (newSorting: SortingState) => {
@@ -50,12 +53,11 @@ export const AdminWallpapersContent = ({
 
   return (
     <div className="space-y-4">
-      {wallpapers.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 py-12 text-muted-foreground">
+      {wallpapers.length === 0 ?
+        <div className="text-muted-foreground flex flex-col items-center gap-2 py-12">
           <p>No wallpapers found</p>
         </div>
-      ) : (
-        <>
+      : <>
           <DataTable
             columns={columns}
             data={wallpapers}
@@ -66,23 +68,45 @@ export const AdminWallpapersContent = ({
           />
           {renderDeleteDialog()}
         </>
-      )}
+      }
 
-      {(totalPages > 1 || currentPage > 1) && (
+      {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2">
-          {currentPage > 1 && (
-            <Link href={`/admin/wallpapers?page=${currentPage - 1}${sortParam}`}>
-              <Button variant="outline" size="sm">Previous</Button>
+          {currentPage > 1 ?
+            <Link
+              href={`/admin/wallpapers?page=${currentPage - 1}${sortParam}`}>
+              <Button
+                variant="outline"
+                size="sm">
+                Previous
+              </Button>
             </Link>
-          )}
-          <span className="text-sm text-muted-foreground">
+          : <Button
+              variant="outline"
+              size="sm"
+              disabled>
+              Previous
+            </Button>
+          }
+          <span className="text-muted-foreground text-sm">
             Page {currentPage} of {totalPages}
           </span>
-          {currentPage < totalPages && (
-            <Link href={`/admin/wallpapers?page=${currentPage + 1}${sortParam}`}>
-              <Button variant="outline" size="sm">Next</Button>
+          {currentPage < totalPages ?
+            <Link
+              href={`/admin/wallpapers?page=${currentPage + 1}${sortParam}`}>
+              <Button
+                variant="outline"
+                size="sm">
+                Next
+              </Button>
             </Link>
-          )}
+          : <Button
+              variant="outline"
+              size="sm"
+              disabled>
+              Next
+            </Button>
+          }
         </div>
       )}
     </div>

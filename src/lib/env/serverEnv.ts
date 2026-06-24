@@ -5,8 +5,9 @@ export const serverEnv = createEnv({
   server: {
     DATABASE_URL: z
       .string()
-      .url()
-      .startsWith("postgres")
+      .regex(/^postgres(?:ql)?:\/\//, {
+        error: "DATABASE_URL must start with postgres:// or postgresql://",
+      })
       .min(1, { error: "DATABASE_URL is required" }),
     CHECKPOINT_DISABLE: z.enum(["1", "0"]).optional(),
     BETTER_AUTH_SECRET: z
@@ -23,9 +24,7 @@ export const serverEnv = createEnv({
     S3_SECRET_ACCESS_KEY: z
       .string()
       .min(1, { error: "S3_SECRET_ACCESS_KEY is required" }),
-    S3_BUCKET_NAME: z
-      .string()
-      .min(1, { error: "S3_BUCKET_NAME is required" }),
+    S3_BUCKET_NAME: z.string().min(1, { error: "S3_BUCKET_NAME is required" }),
     S3_PUBLIC_URL: z.url().optional(),
   },
   experimental__runtimeEnv: process.env,

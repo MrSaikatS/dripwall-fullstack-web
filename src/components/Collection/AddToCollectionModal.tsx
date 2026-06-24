@@ -12,7 +12,7 @@ import { addToCollection } from "@/server/collection/addToCollection";
 import type { CollectionListItem } from "@/server/collection/getCollections";
 import { getCollections } from "@/server/collection/getCollections";
 import { BookHeartIcon, LoaderIcon, PlusIcon } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { CollectionForm } from "./CollectionForm";
 
@@ -29,7 +29,12 @@ export const AddToCollectionModal = ({
   const [adding, setAdding] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const cancelledRef = useRef(false);
-  const initialisedRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      cancelledRef.current = true;
+    };
+  }, []);
 
   const loadCollections = useCallback(async () => {
     cancelledRef.current = false;
@@ -48,7 +53,6 @@ export const AddToCollectionModal = ({
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
     if (newOpen) {
-      initialisedRef.current = true;
       loadCollections();
     }
   };
