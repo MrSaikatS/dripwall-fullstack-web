@@ -81,7 +81,6 @@ export const DashboardLikesContent = () => {
             variant="outline"
             onClick={() => {
               setError(false);
-              setPage(1);
               setLoading(true);
               setRetryCount((c) => c + 1);
             }}>

@@ -263,7 +263,7 @@ export const CollectionDetailContent = ({
                     type="button"
                     onClick={() => handleRemove(item.wallpaperId)}
                     disabled={removingId === item.wallpaperId}
-                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/70 disabled:opacity-50"
+                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/70 focus-visible:opacity-100 disabled:opacity-50"
                     aria-label={`Remove ${wallpaper.title} from collection`}>
                     {removingId === item.wallpaperId ?
                       <LoaderIcon className="h-3.5 w-3.5 animate-spin" />

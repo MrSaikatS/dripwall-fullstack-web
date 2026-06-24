@@ -68,11 +68,12 @@ See existing examples under `src/components/Auth/`.
 - **Lint**: `bun lint` — ESLint with `eslint-config-next` core-web-vitals + typescript.
 - **Type gate**: `bun run build` — runs `prisma generate && next build`. No separate `typecheck` script and no test framework; TypeScript errors surface only during build.
 - **Full prod**: `bun prod` — `prisma generate && eslint && next build && next start`. Run before schema or env changes.
+- **Format**: `prettier --write .` (runs `prettier-plugin-tailwindcss`). Config: `singleAttributePerLine`, `bracketSameLine`, `experimentalTernaries`.
 - No CI workflows. `.github/dependabot.yml` is the only thing under `.github/` (daily npm updates).
 
 ## Prisma (v7, custom output, Neon)
 
-- Generator: `provider = "prisma-client"`, `output = "../generated/prisma"`. This is the Prisma 7 generator, **not** `prisma-client-js`. Import as `import { PrismaClient } from "@generated/prisma/client"` — never from `@prisma/client` (even though it's in deps).
+- Generator: `provider = "prisma-client"`, `output = "../generated/prisma"`. This is the Prisma 7 generator, **not** `prisma-client-js`. Import as `import { PrismaClient } from "@generated/prisma/client"` — never from `@prisma/client` (even though it's in deps). Getting this wrong = build failure.
 - `prisma/schema.prisma` has **no** `datasource.url`. URLs are wired through `prisma.config.ts` and the runtime client separately:
   - `prisma.config.ts` uses `env("DIRECT_URL")` — the **unpooled** Neon URL, for the Prisma CLI (`migrate`, `studio`, `db seed`).
   - `src/lib/database/dbClient.ts` uses `serverEnv.DATABASE_URL` — the **pooled** Neon URL, for runtime queries via `PrismaNeon` adapter.
@@ -83,7 +84,7 @@ See existing examples under `src/components/Auth/`.
 - `bun seed` runs `prisma db seed`, which `prisma.config.ts` resolves to `bun prisma/seed.ts`.
 - `generated/**` is gitignored and excluded from ESLint. Do not hand-edit generated files.
 - `build` and `prod` scripts prepend `prisma generate` — raw `next build` will fail with missing types if the client is stale.
-- Quirk: `src/lib/auth.ts` passes `prismaAdapter(prisma, { provider: "sqlite" })` even though the DB is Postgres. This is intentional for the current Better Auth wiring — don't "correct" it without testing.
+- **Quirk**: `src/lib/auth.ts` passes `prismaAdapter(prisma, { provider: "sqlite" })` even though the DB is Postgres. This is intentional for the current Better Auth wiring — don't "correct" it without testing.
 
 ## Env validation (T3 env)
 
@@ -122,7 +123,6 @@ See existing examples under `src/components/Auth/`.
 
 - Tailwind v4: all config lives in `src/app/globals.css` via `@theme inline` and `@custom-variant`. PostCSS plugin is `@tailwindcss/postcss`. There is no `tailwind.config.ts` — do not create one.
 - `globals.css` imports `shadcn/tailwind.css` and `tw-animate-css`; removing either breaks the Base Rhea tokens or animations.
-- Prettier: `singleAttributePerLine: true`, `bracketSameLine: true`, `experimentalTernaries: true`, `prettier-plugin-tailwindcss` enabled. New JSX: one prop per line, closing bracket on the same line as the tag.
 - Images from dynamic sources (S3) use `<img>` with `eslint-disable-next-line @next/next/no-img-element` — not `next/image`. Do not "fix" these.
 
 ## shadcn / Base UI
@@ -157,7 +157,7 @@ See existing examples under `src/components/Auth/`.
 
 ## Misc
 
-- ESLint ignores: `.next/**`, `out/**`, `build/**`, `next-env.d.ts`, `generated/**`.
+- ESLint ignores: `.next/**`, `out/**`, `build/**`, `next-env.d.ts`, `generated/**`. Uses flat config format (`eslint.config.mjs`).
 - `.env` is gitignored; `.env.example` is the committed template. Do not commit secrets.
 - `CHECKPOINT_DISABLE=1` silences Prisma telemetry; `BETTER_AUTH_TELEMETRY=0` silences Better Auth telemetry.
 - VSCode: `typescript.tsdk` set to `node_modules/typescript/lib`.

@@ -72,37 +72,41 @@ export const AdminWallpapersContent = ({
 
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2">
-          <Link
-            href={
-              currentPage > 1 ?
-                `/admin/wallpapers?page=${currentPage - 1}${sortParam}`
-              : "#"
-            }
-            aria-disabled={currentPage <= 1}>
-            <Button
+          {currentPage > 1 ?
+            <Link
+              href={`/admin/wallpapers?page=${currentPage - 1}${sortParam}`}>
+              <Button
+                variant="outline"
+                size="sm">
+                Previous
+              </Button>
+            </Link>
+          : <Button
               variant="outline"
               size="sm"
-              disabled={currentPage <= 1}>
+              disabled>
               Previous
             </Button>
-          </Link>
+          }
           <span className="text-muted-foreground text-sm">
             Page {currentPage} of {totalPages}
           </span>
-          <Link
-            href={
-              currentPage < totalPages ?
-                `/admin/wallpapers?page=${currentPage + 1}${sortParam}`
-              : "#"
-            }
-            aria-disabled={currentPage >= totalPages}>
-            <Button
+          {currentPage < totalPages ?
+            <Link
+              href={`/admin/wallpapers?page=${currentPage + 1}${sortParam}`}>
+              <Button
+                variant="outline"
+                size="sm">
+                Next
+              </Button>
+            </Link>
+          : <Button
               variant="outline"
               size="sm"
-              disabled={currentPage >= totalPages}>
+              disabled>
               Next
             </Button>
-          </Link>
+          }
         </div>
       )}
     </div>
